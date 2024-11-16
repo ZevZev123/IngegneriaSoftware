@@ -1,3 +1,5 @@
+package code;
+
 import javax.print.attribute.standard.NumberOfDocuments;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +14,7 @@ public class Main {
     static String[][] edgesValues;
 
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("src/inputData.txt");
+        File file = new File("code/inputData.txt");
         Scanner scanner = new Scanner(file);
         initialise(scanner);
 
