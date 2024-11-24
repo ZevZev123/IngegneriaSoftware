@@ -1,0 +1,25 @@
+.BlackBorder {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    
+}
+
+.RedBorder {
+    -fx-border-color: red;
+    -fx-border-width: 2px;
+}
+
+.BlueBorder {
+    -fx-border-color: blue;
+    -fx-border-width: 2px;
+}
+
+.YellowBorder {
+    -fx-border-color: yellow;
+    -fx-border-width: 2px;
+}
+
+.GreenBorder {
+    -fx-border-color: green;
+    -fx-border-width: 2px;
+}

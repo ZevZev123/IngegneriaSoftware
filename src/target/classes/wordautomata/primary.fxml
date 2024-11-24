@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wordautomata.PrimaryController">
-   <children>
-      <Label text="Primary View" />
-      <Button fx:id="primaryButton" text="Switch to Secondary View" onAction="#switchToSecondary"/>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wordautomata.PrimaryController">
+    <!-- Top Section -->
+   <top>
+      <HBox spacing="10" styleClass="RedBorder">
+         <Button text="Button 1" />
+         <Button text="Button 2" />
+         <Button text="Button 3" />
+         <Button text="..." />
+         <Region HBox.hgrow="ALWAYS" />
+         <Button text="Menu" />
+      </HBox>
+   </top>
+
+   <center>
+      <HBox spacing="10" styleClass="BlueBorder" alignment="CENTER">
+         <!-- Left Section -->
+         <GridPane styleClass="GreenBorder" HBox.hgrow="ALWAYS">
+               <!-- Prima riga: Label e Button sulla stessa riga -->
+               <Label text="Search" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+               <Button text="Option" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+               <!-- Seconda riga: Main Content -->
+               <VBox spacing="10" styleClass="YellowBorder" VBox.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                  <Label text="Main Content" 
+                        maxWidth="Infinity" 
+                        maxHeight="Infinity" 
+                        VBox.vgrow="ALWAYS"/>
+               </VBox>
+         </GridPane>
+         <!-- Right Section -->
+         <VBox spacing="10" styleClass="RedBorder" alignment="CENTER_RIGHT">
+               <Button text="Sidebar 1" />
+               <Button text="Sidebar 2" />
+               <Button text="Sidebar 3" />
+               <Button text="Sidebar 4" />
+         </VBox>
+      </HBox>
+   </center>
+
+
+
+</BorderPane>
