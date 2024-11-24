@@ -5,6 +5,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
@@ -12,16 +15,30 @@
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wordautomata.PrimaryController">
-    <!-- Top Section -->
    <top>
-      <HBox spacing="10" styleClass="RedBorder">
-         <Button text="Button 1" />
-         <Button text="Button 2" />
-         <Button text="Button 3" />
-         <Region HBox.hgrow="ALWAYS" /> <!-- spazio tra i bottoni prima e menu -->
-         <Label text="STATUS:" />
-         <Label fx:id="statusLabel" text="not running"/>
-      </HBox>
+      <VBox>
+         <MenuBar>
+            <!-- Menu Items -->
+            <Menu text="File">
+               <MenuItem text="Open" />
+               <MenuItem text="Save" />
+               <MenuItem text="Exit" />
+            </Menu>
+            <Menu text="Edit">
+               <MenuItem text="Undo" />
+               <MenuItem text="Redo" />
+            </Menu>
+            <Menu text="Help">
+               <MenuItem text="About" />
+            </Menu>
+         </MenuBar>
+
+         <!-- Status Label aligned to the right -->
+         <HBox alignment="CENTER_RIGHT" spacing="10">
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="statusLabel" text="STATUS: not running" styleClass="status-label" />
+         </HBox>
+      </VBox>
    </top>
 
    <center>
@@ -30,7 +47,7 @@
          <GridPane styleClass="GreenBorder">
             <!-- Prima riga: Label e Button sulla stessa riga -->
             <Button styleClass="RunButton" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-            <Button styleClass="BlackBorder" text="Option" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+            <Label styleClass="NodeHistory" text="History" GridPane.rowIndex="0" GridPane.columnIndex="1" />
             <!-- Seconda riga: Main Content -->
             <VBox spacing="10" styleClass="YellowBorder" VBox.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2">
                   <Label text="Main Content" 

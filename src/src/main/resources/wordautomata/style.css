@@ -6,9 +6,12 @@
     -fx-max-height: 40px;
 }
 
+.NodeHistory {
+    -fx-min-height: 40px;
+    -fx-max-height: 40px;
+}
+
 .RunButton {
-    -fx-border-color: black;
-    -fx-border-width: 2px;
     -fx-padding: 10px;
     -fx-background-image: url("images/run_icon.png");
     -fx-background-repeat: no-repeat;
