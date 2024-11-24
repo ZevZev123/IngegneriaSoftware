@@ -1,12 +1,6 @@
-.BlackBorder {
-    -fx-border-color: black;
-    -fx-border-width: 2px;
-    -fx-padding: 10px;
-    -fx-min-height: 40px;
-    -fx-max-height: 40px;
-}
-
 .NodeHistory {
+    -fx-border-color: green;
+    -fx-border-width: 2px;
     -fx-min-height: 40px;
     -fx-max-height: 40px;
 }
@@ -20,7 +14,22 @@
     -fx-min-height: 40px;
     -fx-max-width: 40px;
     -fx-max-height: 40px;
+}
 
+.loadingButton {
+    -fx-padding: 10px;
+    -fx-background-image: url("images/loading.gif");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 40px;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+}
+
+.BlackBorder {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
 }
 
 .RedBorder {
