@@ -1,7 +1,23 @@
 .BlackBorder {
     -fx-border-color: black;
     -fx-border-width: 2px;
-    
+    -fx-padding: 10px;
+    -fx-min-height: 40px;
+    -fx-max-height: 40px;
+}
+
+.RunButton {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-padding: 10px;
+    -fx-background-image: url("images/run_icon.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 40px;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+
 }
 
 .RedBorder {
