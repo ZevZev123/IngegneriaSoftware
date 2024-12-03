@@ -17,6 +17,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        stage.setMinHeight(300);
+        stage.setMinWidth(400);
         scene = new Scene(loadFXML("primary"), 800, 600);
         scene.getStylesheets().add(getClass().getResource("/wordautomata/style.css").toExternalForm());
         stage.setScene(scene);
