@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.brunomnsilva.smartgraph.example;
+package code.example;
 
 import com.brunomnsilva.smartgraph.graphview.SmartLabelSource;
 

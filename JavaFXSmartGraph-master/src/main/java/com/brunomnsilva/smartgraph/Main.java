@@ -77,7 +77,7 @@ public class Main extends Application {
         Stage stage = new Stage(StageStyle.DECORATED);
         stage.setTitle("JavaFX SmartGraph Visualization");
         stage.setMinHeight(500);
-        stage.setMinWidth(800);
+        stage.setMinWidth(700);
         stage.setScene(scene);
         stage.show();
 

@@ -52,7 +52,7 @@
             <Button fx:id="runButton" styleClass="RunButton" onAction="#changeIcon" GridPane.rowIndex="0" GridPane.columnIndex="0" />
             <Label fx:id="history" styleClass="NodeHistory" text="History" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
             <!-- Seconda riga: Main Content -->
-            <VBox styleClass="BlackBorder" spacing="10" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2">
+            <VBox fx:id="GraphViewBox" styleClass="BlackBorder" spacing="10" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2">
                   <Label text="Main Content" maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS"/>
             </VBox>
          </GridPane>

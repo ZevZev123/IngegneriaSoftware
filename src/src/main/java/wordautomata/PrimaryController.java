@@ -1,17 +1,22 @@
 package wordautomata;
 
+import wordautomata.containers.SmartGraphDemoContainer;
 import wordautomata.graph.*;
 import wordautomata.graphview.*;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class PrimaryController {
     @FXML private VBox nodeEdgeList;
+    @FXML private VBox GraphViewBox;
     @FXML private Label statusLabel;
 
     @FXML private Button runButton;
@@ -28,9 +33,6 @@ public class PrimaryController {
             nodeEdgeList.getChildren().add(label); // Aggiungi la Label alla VBox
         }
 
-        // -------------------------------
-        // CODICE PER VISUALIZZARE I GRAFI
-        // -------------------------------
         Graph<String, String> g = build_flower_graph();
         //Graph<String, String> g = build_flower_graph();
         System.out.println(g);
@@ -52,10 +54,26 @@ public class PrimaryController {
         }
 
         /*
+        Basic usage:            
+        Use SmartGraphDemoContainer if you want zoom capabilities and automatic layout toggling
+        */
+        //Scene scene = new Scene(graphView, 1024, 768);
+        Scene scene = new Scene(new SmartGraphDemoContainer(graphView), 1024, 768);
+
+        Stage stage = new Stage(StageStyle.DECORATED);
+        stage.setTitle("JavaFX SmartGraph Visualization");
+        stage.setMinHeight(500);
+        stage.setMinWidth(700);
+        stage.setScene(scene);
+        stage.show();
+
+        GraphViewBox.getChildren().add(scene.getRoot());
+
+        /*
         IMPORTANT: Must call init() after scene is displayed, so we can have width and height values
         to initially place the vertices according to the placement strategy.
         */
-        graphView.init();
+        //graphView.init();
 
         /*
         Bellow you can see how to attach actions for when vertices and edges are double-clicked
@@ -80,10 +98,12 @@ public class PrimaryController {
         graphView.setEdgeDoubleClickAction(graphEdge -> {
             System.out.println("Edge contains element: " + graphEdge.getUnderlyingEdge().element());
             //dynamically change the style when clicked; style propagated to the arrows
-            graphEdge.setStyleClass("myEdge");
-
+            if ( !graphEdge.removeStyleClass("myEdge")) {
+                graphEdge.addStyleClass("myEdge");
+            }
+            
             // can apply different styling to the arrows programmatically.
-            // graphEdge.getStylableArrow().setStyleClass("arrow");
+            //graphEdge.getStylableArrow().setStyleClass("arrow");
             
             //uncomment to see edges being removed after click
             //Edge<String, String> underlyingEdge = graphEdge.getUnderlyingEdge();
@@ -97,13 +117,6 @@ public class PrimaryController {
          */
         //graphView.setAutomaticLayout(true);
 
-        /* 
-        Uncomment lines to test adding of new elements
-         */
-        //continuously_test_adding_elements(g, graphView);
-        //stage.setOnCloseRequest(event -> {
-        //    running = false;
-        //});
     }
 
     @FXML
