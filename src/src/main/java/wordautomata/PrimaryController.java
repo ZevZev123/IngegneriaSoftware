@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -66,6 +67,8 @@ public class PrimaryController {
         //stage.setMinWidth(600);
         //stage.setScene(scene);
         //stage.show();
+
+        GraphViewBox.setVgrow(scene.getRoot(), Priority.ALWAYS);
 
         GraphViewBox.getChildren().add(scene.getRoot());
 
