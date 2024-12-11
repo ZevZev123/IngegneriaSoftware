@@ -60,12 +60,12 @@ public class PrimaryController {
         //Scene scene = new Scene(graphView, 1024, 768);
         Scene scene = new Scene(new SmartGraphDemoContainer(graphView), 1024, 768);
 
-        Stage stage = new Stage(StageStyle.DECORATED);
-        stage.setTitle("JavaFX SmartGraph Visualization");
-        stage.setMinHeight(500);
-        stage.setMinWidth(700);
-        stage.setScene(scene);
-        stage.show();
+        //Stage stage = new Stage(StageStyle.DECORATED);
+        //stage.setTitle("JavaFX SmartGraph Visualization");
+        //stage.setMinHeight(400);
+        //stage.setMinWidth(600);
+        //stage.setScene(scene);
+        //stage.show();
 
         GraphViewBox.getChildren().add(scene.getRoot());
 
@@ -73,7 +73,7 @@ public class PrimaryController {
         IMPORTANT: Must call init() after scene is displayed, so we can have width and height values
         to initially place the vertices according to the placement strategy.
         */
-        //graphView.init();
+        graphView.init();
 
         /*
         Bellow you can see how to attach actions for when vertices and edges are double-clicked
@@ -115,7 +115,7 @@ public class PrimaryController {
         Should proceed with automatic layout or keep original placement?
         If using SmartGraphDemoContainer you can toggle this in the UI 
          */
-        //graphView.setAutomaticLayout(true);
+        graphView.setAutomaticLayout(true);
 
     }
 

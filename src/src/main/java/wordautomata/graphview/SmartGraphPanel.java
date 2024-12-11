@@ -364,6 +364,7 @@ public class SmartGraphPanel<V, E> extends Pane {
      * this method was already called.
      */
     public void init() throws IllegalStateException {
+        /*
         if (this.getScene() == null) {
             throw new IllegalStateException("You must call this method after the instance was added to a scene.");
         } else if (this.getWidth() == 0 || this.getHeight() == 0) {
@@ -371,6 +372,7 @@ public class SmartGraphPanel<V, E> extends Pane {
         } else if (this.initialized) {
             throw new IllegalStateException("Already initialized. Use update() method instead.");
         }
+        */
 
         if (placementStrategy != null) {
             // call strategy to place the vertices in their initial locations 
