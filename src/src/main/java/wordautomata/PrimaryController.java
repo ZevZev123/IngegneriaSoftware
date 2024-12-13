@@ -23,6 +23,8 @@ public class PrimaryController {
     @FXML private Button runButton;
     @FXML private Label history;
 
+    private SmartGraphPanel<String, String> graphView;
+
     @FXML
     private void initialize(){
         updateToolTip();
@@ -34,9 +36,7 @@ public class PrimaryController {
             nodeEdgeList.getChildren().add(label); // Aggiungi la Label alla VBox
         }
 
-        Graph<String, String> g = build_flower_graph();
-        //Graph<String, String> g = build_flower_graph();
-        System.out.println(g);
+        wordautomata.graph.Graph<String, String> g = build_sample_digraph();
         
         SmartPlacementStrategy initialPlacement = new SmartCircularSortedPlacementStrategy();
         //SmartPlacementStrategy initialPlacement = new SmartRandomPlacementStrategy();
@@ -44,7 +44,7 @@ public class PrimaryController {
         ForceDirectedLayoutStrategy<String> automaticPlacementStrategy = new ForceDirectedSpringGravityLayoutStrategy<>();
         //ForceDirectedLayoutStrategy<String> automaticPlacementStrategy = new ForceDirectedSpringSystemLayoutStrategy<>();
 
-        SmartGraphPanel<String, String> graphView = new SmartGraphPanel<>(g, initialPlacement, automaticPlacementStrategy);
+        graphView = new SmartGraphPanel<>(g, initialPlacement, automaticPlacementStrategy);
 
         /*
         After creating, you can change the styling of some element.
@@ -120,6 +120,7 @@ public class PrimaryController {
          */
         graphView.setAutomaticLayout(true);
 
+        System.out.println("PROVA 1");
     }
 
     @FXML
@@ -145,6 +146,35 @@ public class PrimaryController {
         App.setRoot("secondary");
     }
     */
+
+    
+    private Graph<String, String> build_sample_digraph() {
+
+        Digraph<String, String> g = new DigraphEdgeList<>();
+
+        g.insertVertex("A");
+        g.insertVertex("B");
+        g.insertVertex("C");
+        g.insertVertex("D");
+        g.insertVertex("E");
+        g.insertVertex("F");
+
+        g.insertEdge("A", "B", "AB");
+        g.insertEdge("B", "A", "AB2");
+        g.insertEdge("A", "C", "AC");
+        g.insertEdge("A", "D", "AD");
+        g.insertEdge("B", "C", "BC");
+        g.insertEdge("C", "D", "CD");
+        g.insertEdge("B", "E", "BE");
+        g.insertEdge("F", "D", "DF");
+        g.insertEdge("F", "D", "DF2");
+
+        //yep, its a loop!
+        g.insertEdge("A", "A", "Loop");
+
+        return g;
+    }
+
 
     private Graph<String, String> build_flower_graph() {
 
@@ -185,5 +215,9 @@ public class PrimaryController {
         //g.insertVertex("ISOLATED");
         
         return g;
+    }
+
+    public SmartGraphPanel<String, String> getGraphView(){
+        return graphView;
     }
 }
