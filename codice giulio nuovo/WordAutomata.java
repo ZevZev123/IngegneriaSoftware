@@ -4,40 +4,49 @@ import java.util.HashMap;
 import java.util.List;
 
 public class WordAutomata {
-    private Graph graph;
-    public WordAutomata(Graph graph) {
-        this.graph = graph;
+    private final int numberOfNodes;
+    private final ArrayList<Node> nodeList;
+    private Node startingNode;
+
+    public WordAutomata(ArrayList<Node> nodeList) {
+        this.nodeList = nodeList;
+        numberOfNodes = nodeList.size();
+        startingNode = null;
+        for (Node n : nodeList)
+            if (n.isInitial())
+                startingNode = n;
     }
-    public void setGraph(Graph newGraph) { this.graph = newGraph; }
 
     private ArrayList<Node> nodeHistory;
     private ArrayList<String> stringHistory;
 
-    public void run(String word) {
+    public boolean run(String word) {
         nodeHistory = new ArrayList<>();
         stringHistory = new ArrayList<>();
 
-        ArrayList<Node> nodeList = graph.getNodes();
-        int numberOfNodes = nodeList.size();
-
-        Node startingNode = null;
-        ArrayList<Node> endingNodes = new ArrayList<>();
-        for (Node n : nodeList) {
-            if (n.isInitial())
-                startingNode = n;
-            if (n.isFinal())
-                endingNodes.add(n);
-        }
-        int startingNodeListIndex = nodeList.indexOf(startingNode);
-
         List<String>[][] graphMatrix = matrixInitialiser(numberOfNodes, nodeList);
 
-        int currentNode = startingNodeListIndex;
+        int tempIndex, currentNodeIndex = nodeList.indexOf(startingNode);
         String remainingWord, subWord;
         remainingWord = word;
-        while(!remainingWord.isEmpty()) {
-            // da completare
+        boolean found;
+        while (!remainingWord.isEmpty()) {
+            found = false;
+            for (int i = remainingWord.length(); i > 0; i--) {
+                subWord = remainingWord.substring(0, i);
+                for (tempIndex = 0; tempIndex < numberOfNodes && !found; tempIndex++)
+                    found = graphMatrix[currentNodeIndex][tempIndex].contains(subWord);
+                if (found) {
+                    nodeHistory.add(nodeList.get(currentNodeIndex));
+                    stringHistory.add(subWord);
+                    remainingWord = remainingWord.replaceFirst(subWord, "");
+                    currentNodeIndex = tempIndex - 1;
+                    break;
+                }
+            }
+            if (!found) return false;
         }
+        return nodeList.get(currentNodeIndex).isFinal();
     }
 
     private List<String>[][] matrixInitialiser(int n, ArrayList<Node> nodeList) {
@@ -57,4 +66,7 @@ public class WordAutomata {
 
         return graphMatrix;
     }
+
+    public ArrayList<Node> getNodeHistory() { return nodeHistory; }
+    public ArrayList<String> getStringHistory() { return stringHistory; }
 }

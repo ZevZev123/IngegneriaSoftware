@@ -7,17 +7,14 @@ public class Node {
     private boolean isFinal;
     private HashMap<String, Node> edges;
 
-    public Node(String nodeName, boolean isInitial, boolean isFinal, HashMap<String, Node> edges) {
+    public Node(String nodeName, boolean isInitial, boolean isFinal) {
         this.nodeName = nodeName;
         this.isInitial = isInitial;
         this.isFinal = isFinal;
-        this.edges = edges;
-    }
-    public Node(String nodeName, HashMap<String, Node> edges) {
-        this(nodeName, false, false, edges);
+        edges = new HashMap<String, Node>();
     }
     public Node(String nodeName) {
-        this(nodeName, false, false, new HashMap<>());
+        this(nodeName, false, false);
     }
 
     public void setName(String nodeName) { this.nodeName = nodeName; }
@@ -33,4 +30,6 @@ public class Node {
     public boolean isInitial() { return isInitial; }
     public boolean isFinal() { return isFinal; }
     public HashMap<String, Node> getEdges() { return edges; }
+    @Override
+    public String toString() { return nodeName; }
 }
