@@ -1,5 +1,8 @@
 package wordautomata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -22,33 +25,39 @@ public class PrimaryController {
     @FXML private Button runButton;
     @FXML private Label history;
 
+    private List<Group> nodeList = new ArrayList<>();
+    private List<Line> lineList = new ArrayList<>();
+
     @FXML
     private void initialize(){
         updateToolTip();
 
-        Label label;
-        for (int i = 1; i <= 50; i++) {
-            label = new Label("Label " + i); // Crea una nuova Label
-            label.setTextAlignment(TextAlignment.LEFT); // Assicura che il testo sia allineato a sinistra
-            nodeEdgeList.getChildren().add(label); // Aggiungi la Label alla VBox
+        Pane graphPane = new Pane();
+
+        nodeList.add(createNode(50, 50, 15, "F"));
+        nodeList.add(createNode(150, 150, 15, "A"));
+        nodeList.add(createNode(150, 200, 15 , "B"));
+        nodeList.add(createNode(150, 278, 15, "C"));
+        nodeList.add(createNode(200, 278, 15, "O"));
+        
+        lineList.add(new Line(50, 50, 150, 150));
+
+        for (Line edge: lineList) {
+            graphPane.getChildren().add(edge);
         }
 
-        // Creazione di un grafico semplice per esempio
-        Pane graphPane = new Pane(); // Contenitore per il grafico
+        for (Group node: nodeList) {
+            graphPane.getChildren().add(node);
+        }
 
-        // Aggiungi nodi
-        Group node1 = createNode(50, 50, 15, "CIAOOO",  Color.BLUE); // Nodo 1
-        Circle node2 = new Circle(150, 150, 15, Color.RED); // Nodo 2
-        Circle node3 = new Circle(150, 200, 15, Color.PURPLE); // Nodo 2
-
-        // Aggiungi arco
-        Line edge = new Line(50, 50, 150, 150);
-
-        // Aggiungi i componenti al contenitore del grafo
-        graphPane.getChildren().addAll(edge, node1, node2, node3);
-
-        // Aggiungi il contenitore del grafo alla VBox
         GraphViewBox.getChildren().add(graphPane);
+
+        Label label;
+        for (Group node: nodeList) {
+            label = new Label(getNodeText(node));
+            label.setTextAlignment(TextAlignment.LEFT);
+            nodeEdgeList.getChildren().add(label);
+        }
     }
 
     @FXML
@@ -61,13 +70,16 @@ public class PrimaryController {
         }
     }
 
-    private Group createNode(double x, double y, double radius, String name, Color color){
+    private Group createNode(double x, double y, double radius, String name){
         // Crea il cerchio
-        Circle circle = new Circle(x, y, radius, color);
+        Circle circle = new Circle(x, y, radius, Color.WHITE);
+
+        circle.setStroke(Color.BLACK);
+        circle.setStrokeWidth(2);
 
         // Crea il testo
         Text text = new Text(x, y, name);
-        text.setFill(Color.WHITE); // Colore del testo
+        text.setFill(Color.BLACK); // Colore del testo
         text.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
 
         // Centra il testo nel cerchio
@@ -77,6 +89,36 @@ public class PrimaryController {
         Group node = new Group(circle, text);
 
         return node;
+    }
+
+    public static double[] getNodeCoordinates(Group node) {
+        for (var child : node.getChildren()) {
+            if (child instanceof Circle) {
+                Circle circle = (Circle) child;
+                return new double[]{circle.getCenterX(), circle.getCenterY()};
+            }
+        }
+        return null;
+    }
+
+    private String getNodeText(Group node) {
+        for (var child : node.getChildren()) {
+            if (child instanceof Text) {
+                Text textNode = (Text) child;
+                return textNode.getText();
+            }
+        }
+        return null;
+    }
+
+    private void setNodeText(Group node, String newText) {
+        for (var child: node.getChildren()) {
+            if (child instanceof Text) {
+                Text textNode = (Text) child;
+                textNode.setText(newText);
+                break;
+            }
+        }
     }
 
     private void updateToolTip(){
