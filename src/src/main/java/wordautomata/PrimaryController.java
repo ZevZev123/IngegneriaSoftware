@@ -105,22 +105,36 @@ public class PrimaryController {
     }
 
     private void setNodeStart(Circle circle, MouseButton command) { // metodo per nodo Start e End
-        if (command == javafx.scene.input.MouseButton.PRIMARY){
-            if (!circle.getStyleClass().contains("Start")) {
-                circle.getStyleClass().remove("End");
-                circle.getStyleClass().add("Start");
-                circle.setFill(Color.YELLOW);
-            } else {
+        if (command == javafx.scene.input.MouseButton.PRIMARY){ // nodo Start disdegnato
+            if (circle.getStyleClass().contains("Start")) {
                 circle.getStyleClass().remove("Start");
                 circle.setFill(Color.WHITE);
             }
+            else { // controllo se esiste gia' il nodo Start
+                Boolean startAlreadyExist = false;
+                for (Group node: nodeList) {
+                    for (var child: node.getChildren()){
+                        if (child instanceof Circle) {
+                            if (child.getStyleClass().contains("Start")){
+                                System.out.println("Start gia' presente");
+                                startAlreadyExist = true;
+                            }
+                        }
+                    }
+                }
+                if (!startAlreadyExist){ // nodo Start assegnato
+                    circle.getStyleClass().remove("End");
+                    circle.getStyleClass().add("Start");
+                    circle.setFill(Color.YELLOW);
+                }
+            }
         }
-        else if (command == javafx.scene.input.MouseButton.SECONDARY){
-            if (!circle.getStyleClass().contains("End")){
+        else if (command == javafx.scene.input.MouseButton.SECONDARY){ 
+            if (!circle.getStyleClass().contains("End")){ // nodo End assegnato
                 circle.getStyleClass().remove("Start");
                 circle.getStyleClass().add("End");
                 circle.setFill(Color.GREEN);
-            } else {
+            } else { // nodo End disdegnato
                 circle.getStyleClass().remove("End");
                 circle.setFill(Color.WHITE);
             }
