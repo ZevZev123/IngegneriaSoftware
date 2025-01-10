@@ -57,7 +57,7 @@
          
          <!-- Right Section -->
          <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefWidth="100" maxWidth="200" minWidth="100" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-            <VBox fx:id="nodeEdgeList" spacing="10" alignment="TOP_LEFT">
+            <VBox fx:id="nodeEdgeList" alignment="TOP_LEFT">
                <!-- Elementi aggiunti dinamicamente nel Controller -->
             </VBox>
          </ScrollPane>

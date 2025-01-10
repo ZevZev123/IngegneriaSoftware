@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import javafx.scene.Group;
 import javafx.scene.text.TextAlignment;
 
 public class PrimaryController {
@@ -56,6 +57,11 @@ public class PrimaryController {
         for (Group node: nodeList) {
             label = new Label(getNodeText(node));
             label.setTextAlignment(TextAlignment.LEFT);
+            label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            label.setMaxWidth(Double.MAX_VALUE);
+            label.setPadding(new Insets(0, 0, 0, 10));
+            
+            VBox.setVgrow(label, Priority.ALWAYS);
             nodeEdgeList.getChildren().add(label);
         }
     }
