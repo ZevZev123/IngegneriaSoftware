@@ -45,6 +45,30 @@ public class PrimaryController {
 
         graphPane = new Pane(); // creazione del foglio
 
+        graphPane.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 && event.getTarget() == graphPane) {
+                // creazione nodo
+                Group nodo = createNode(0, 0, 15, "0");
+                nodeList.add(nodo);
+
+                // mostra graficamente il nodo nel Pane
+                graphPane.getChildren().add(nodo);
+                paneWidth = GraphViewBox.getWidth();
+                paneHeight = GraphViewBox.getHeight();
+                reposition();
+
+                // aggiunto il nuovo nodo nella nodeEdgeList
+                Label label = new Label("0");
+                label.setTextAlignment(TextAlignment.LEFT);
+                label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+                label.setMaxWidth(Double.MAX_VALUE);
+                label.setPadding(new Insets(0, 0, 0, 10));
+
+                VBox.setVgrow(label, Priority.ALWAYS);
+                nodeEdgeList.getChildren().add(label);
+            }
+        });
+
         nodeList.add(createNode(0, 0, 15, "F"));
         nodeList.add(createNode(0, 0, 15, "A"));
         nodeList.add(createNode(0, 0, 15, "B"));
@@ -143,12 +167,6 @@ public class PrimaryController {
         Group node = new Group(circle, text);
         
         node.setOnMouseEntered(event -> node.setCursor(javafx.scene.Cursor.HAND));
-
-        node.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                System.out.println("NUOVO NODO");
-            }
-        });
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
