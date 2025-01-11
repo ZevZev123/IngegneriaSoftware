@@ -3,6 +3,7 @@ package wordautomata;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -19,6 +20,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
+
 public class PrimaryController {
     @FXML private VBox nodeEdgeList;
     @FXML private VBox GraphViewBox;
@@ -30,19 +35,24 @@ public class PrimaryController {
     private List<Group> nodeList = new ArrayList<>();
     private List<Line> lineList = new ArrayList<>();
 
+    private Pane graphPane;
+    private double paneWidth = 0;
+    private double paneHeight = 0;
+
     @FXML
-    private void initialize(){
+    private void initialize() {
         updateToolTip();
 
-        Pane graphPane = new Pane(); // creazione del foglio
+        graphPane = new Pane(); // creazione del foglio
 
-        nodeList.add(createNode(50, 50, 15, "F"));
-        nodeList.add(createNode(150, 150, 15, "A"));
-        nodeList.add(createNode(150, 200, 15 , "B"));
-        nodeList.add(createNode(150, 278, 15, "C"));
-        nodeList.add(createNode(200, 278, 15, "O"));
+        nodeList.add(createNode(0, 0, 15, "F"));
+        nodeList.add(createNode(0, 0, 15, "A"));
+        nodeList.add(createNode(0, 0, 15, "B"));
+        nodeList.add(createNode(0, 0, 15, "C"));
+        nodeList.add(createNode(0, 0, 15, "T"));
+        nodeList.add(createNode(0, 0, 15, "F"));
         
-        lineList.add(new Line(50, 50, 150, 150));
+        // lineList.add(new Line(50, 50, 150, 150));
 
         for (Line edge: lineList) {
             graphPane.getChildren().add(edge); // aggiunta di tutti gli edge nel foglio
@@ -53,6 +63,7 @@ public class PrimaryController {
         }
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
+        VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
 
         // CREAZIONE LISTA DI NODI E EDGE
         Label label;
@@ -66,10 +77,29 @@ public class PrimaryController {
             VBox.setVgrow(label, Priority.ALWAYS);
             nodeEdgeList.getChildren().add(label);
         }
+
+        // Codice eseguito al termine della creazione della finestra
+        // Serve per poter prendere le grandezze della GraphViewBox e organizzare i nodi
+        Platform.runLater(() -> {
+            paneWidth = GraphViewBox.getWidth();
+            paneHeight = GraphViewBox.getHeight();
+            reposition();
+        });
+        
+        // I SEGUENTI LISTENER SONO PER ORGANIZZARE I NODI QUANDO VIENE RIDIMENSIONATA LA FINESTRA
+        graphPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+            paneWidth = (double) newValue;
+            reposition();
+        });
+        
+        graphPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            paneHeight = (double) newValue;
+            reposition();
+        });
     }
 
     @FXML
-    private void changeIcon(){ // metodo per il pulsante di RUN
+    private void changeIcon() { // metodo per il pulsante di RUN
         System.out.println(runButton.getStyleClass());
         if (runButton.getStyleClass().contains("RunButton")) {
             runButton.getStyleClass().setAll("button", "loadingButton"); 
@@ -78,7 +108,26 @@ public class PrimaryController {
         }
     }
 
-    private Group createNode(double x, double y, double radius, String name){ // creazione Nodo con Testo inseriti in un Group
+    private void reposition() {
+        int nodeListLength = nodeList.size();
+        double angleNode = 360 / nodeListLength;
+
+        double count = 0;
+        for (Group node: nodeList) {
+            for (var child: node.getChildren()) {
+                if (child instanceof Circle circle) {
+                    circle.setCenterX((paneWidth/2) + (paneWidth/4)*cos(toRadians(count)));
+                    circle.setCenterY((paneHeight/2) + (paneHeight/4)*sin(toRadians(count)));
+                } else if (child instanceof Text text) {
+                    text.setX((paneWidth/2) + (paneWidth/4)*cos(toRadians(count)));
+                    text.setY((paneHeight/2) + (paneHeight/4)*sin(toRadians(count)));
+                }
+            }
+            count = count + angleNode;
+        }
+    }
+
+    private Group createNode(double x, double y, double radius, String name) { // creazione Nodo con Testo inseriti in un Group
         Circle circle = new Circle(x, y, radius, Color.WHITE);
 
         circle.setStroke(Color.BLACK);
@@ -97,6 +146,12 @@ public class PrimaryController {
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
+                System.out.println("NUOVO NODO");
+            }
+        });
+
+        node.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
                 setNodeStart(circle, event.getButton());
             }
         });
@@ -105,7 +160,7 @@ public class PrimaryController {
     }
 
     private void setNodeStart(Circle circle, MouseButton command) { // metodo per nodo Start e End
-        if (command == javafx.scene.input.MouseButton.PRIMARY){ // nodo Start disdegnato
+        if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo Start disdegnato
             if (circle.getStyleClass().contains("Start")) {
                 circle.getStyleClass().remove("Start");
                 circle.setFill(Color.WHITE);
@@ -113,24 +168,24 @@ public class PrimaryController {
             else { // controllo se esiste gia' il nodo Start
                 Boolean startAlreadyExist = false;
                 for (Group node: nodeList) {
-                    for (var child: node.getChildren()){
+                    for (var child: node.getChildren()) {
                         if (child instanceof Circle) {
-                            if (child.getStyleClass().contains("Start")){
+                            if (child.getStyleClass().contains("Start")) {
                                 System.out.println("Start gia' presente");
                                 startAlreadyExist = true;
                             }
                         }
                     }
                 }
-                if (!startAlreadyExist){ // nodo Start assegnato
+                if (!startAlreadyExist) { // nodo Start assegnato
                     circle.getStyleClass().remove("End");
                     circle.getStyleClass().add("Start");
                     circle.setFill(Color.YELLOW);
                 }
             }
         }
-        else if (command == javafx.scene.input.MouseButton.SECONDARY){ 
-            if (!circle.getStyleClass().contains("End")){ // nodo End assegnato
+        else if (command == javafx.scene.input.MouseButton.SECONDARY) { 
+            if (!circle.getStyleClass().contains("End")) { // nodo End assegnato
                 circle.getStyleClass().remove("Start");
                 circle.getStyleClass().add("End");
                 circle.setFill(Color.GREEN);
@@ -171,7 +226,7 @@ public class PrimaryController {
         }
     }
 
-    private void updateToolTip(){ // mostra l'history completa passando con il cursore sopra
+    private void updateToolTip() { // mostra l'history completa passando con il cursore sopra
         Tooltip tooltip = new Tooltip(history.getText());
 
         history.setTooltip(tooltip);
