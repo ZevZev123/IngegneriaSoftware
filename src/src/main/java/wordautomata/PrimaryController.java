@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
@@ -58,15 +59,7 @@ public class PrimaryController {
                 paneHeight = GraphViewBox.getHeight();
                 reposition();
 
-                // aggiunto il nuovo nodo nella nodeEdgeList
-                Label label = new Label("0");
-                label.setTextAlignment(TextAlignment.LEFT);
-                label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
-                label.setMaxWidth(Double.MAX_VALUE);
-                label.setPadding(new Insets(0, 0, 0, 10));
-
-                VBox.setVgrow(label, Priority.ALWAYS);
-                nodeEdgeList.getChildren().add(label);
+                createMenuLabel(nodo);
             }
         });
 
@@ -91,16 +84,9 @@ public class PrimaryController {
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
 
         // CREAZIONE LISTA DI NODI E EDGE
-        Label label;
-        for (Group node: nodeList) {
-            label = new Label(getNodeText(node));
-            label.setTextAlignment(TextAlignment.LEFT);
-            label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
-            label.setMaxWidth(Double.MAX_VALUE);
-            label.setPadding(new Insets(0, 0, 0, 10));
-            
-            VBox.setVgrow(label, Priority.ALWAYS);
-            nodeEdgeList.getChildren().add(label);
+        for (Group node : nodeList) {
+            // Crea una Label locale per ogni iterazione
+            createMenuLabel(node);
         }
 
         // Codice eseguito al termine della creazione della finestra
@@ -133,6 +119,42 @@ public class PrimaryController {
         }
     }
 
+    private void createMenuLabel(Group node) {
+        Label currentLabel = new Label(getNodeText(node));
+        currentLabel.setTextAlignment(TextAlignment.LEFT);
+        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+        currentLabel.setMaxWidth(Double.MAX_VALUE);
+        currentLabel.setPadding(new Insets(0, 0, 0, 10));
+    
+        // Evento per sostituire la Label con un TextField
+        currentLabel.setOnMouseClicked(event -> {
+            TextField textField = new TextField(currentLabel.getText());
+            textField.setPrefWidth(currentLabel.getWidth()); // Mantieni la larghezza
+            int labelIndex = nodeEdgeList.getChildren().indexOf(currentLabel); // Posizione della Label
+    
+            nodeEdgeList.getChildren().set(labelIndex, textField); // Sostituisci direttamente
+    
+            // Quando l'utente preme Invio, torna alla Label
+            textField.setOnAction(e -> {
+                currentLabel.setText(textField.getText()); // Aggiorna il testo
+                nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
+            });
+    
+            // Quando il TextField perde il focus, torna alla Label
+            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    currentLabel.setText(textField.getText()); // Aggiorna il testo
+                    nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
+                }
+            });
+    
+            textField.requestFocus(); // Dai il focus iniziale al TextField
+        });
+
+        VBox.setVgrow(currentLabel, Priority.ALWAYS);
+        nodeEdgeList.getChildren().add(currentLabel); // Aggiungi la Label alla VBox
+    }
+
     private void reposition() {
         int nodeListLength = nodeList.size();
         double angleNode = 360 / nodeListLength;
@@ -158,31 +180,32 @@ public class PrimaryController {
 
     private Group createNode(double x, double y, double radius, String name) { // creazione Nodo con Testo inseriti in un Group
         Circle circle = new Circle(x, y, radius, Color.WHITE);
+        Circle circle2 = new Circle(x, y, radius + 5, Color.WHITE);
 
         circle.setStroke(Color.BLACK);
         circle.setStrokeWidth(2);
+        
+        circle2.setStroke(Color.BLUE);
+        circle2.setStrokeWidth(2);
 
         Text text = new Text(x, y, name);
         text.setFill(Color.BLACK);
         text.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-
-        text.setX(x - text.getLayoutBounds().getWidth() / 2);
-        text.setY(y + text.getLayoutBounds().getHeight() / 4);
         
-        Group node = new Group(circle, text);
+        Group node = new Group(circle2, circle, text);
         
         node.setOnMouseEntered(event -> node.setCursor(javafx.scene.Cursor.HAND));
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                setNodeStart(circle, event.getButton());
+                setNodeStartEnd(circle, event.getButton());
             }
         });
         
         return node;
     }
 
-    private void setNodeStart(Circle circle, MouseButton command) { // metodo per nodo Start e End
+    private void setNodeStartEnd(Circle circle, MouseButton command) { // metodo per nodo Start e End
         if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo Start disdegnato
             if (circle.getStyleClass().contains("Start")) {
                 circle.getStyleClass().remove("Start");
