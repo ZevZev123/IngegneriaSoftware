@@ -45,6 +45,7 @@ public class PrimaryController {
 
         graphPane = new Pane(); // creazione del foglio
 
+        // creazione nodi con doppio click del mouse sul foglio
         graphPane.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 // creazione nodo
@@ -137,14 +138,18 @@ public class PrimaryController {
         double angleNode = 360 / nodeListLength;
 
         double count = 0;
+        double x = 0, y = 0;
         for (Group node: nodeList) {
             for (var child: node.getChildren()) {
+                x = (paneWidth/2) + (paneWidth/4)*cos(toRadians(count));
+                y = (paneHeight/2) + (paneHeight/4)*sin(toRadians(count));
+
                 if (child instanceof Circle circle) {
-                    circle.setCenterX((paneWidth/2) + (paneWidth/4)*cos(toRadians(count)));
-                    circle.setCenterY((paneHeight/2) + (paneHeight/4)*sin(toRadians(count)));
+                    circle.setCenterX(x);
+                    circle.setCenterY(y);
                 } else if (child instanceof Text text) {
-                    text.setX((paneWidth/2) + (paneWidth/4)*cos(toRadians(count)));
-                    text.setY((paneHeight/2) + (paneHeight/4)*sin(toRadians(count)));
+                    text.setX(x-4);
+                    text.setY(y+4);
                 }
             }
             count = count + angleNode;
