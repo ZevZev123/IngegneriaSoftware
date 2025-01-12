@@ -3,6 +3,7 @@ package wordautomata;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -20,6 +21,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -59,7 +61,7 @@ public class PrimaryController {
                 paneHeight = GraphViewBox.getHeight();
                 reposition();
 
-                createMenuLabel(nodo);
+                createMenuLabel(nodo); // --------------------------------------- DA METTERE IN CREATE NODE
             }
         });
 
@@ -68,7 +70,7 @@ public class PrimaryController {
         nodeList.add(createNode(0, 0, 15, "B"));
         nodeList.add(createNode(0, 0, 15, "C"));
         nodeList.add(createNode(0, 0, 15, "T"));
-        nodeList.add(createNode(0, 0, 15, "F"));
+        nodeList.add(createNode(0, 0, 15, "D"));
         
         // lineList.add(new Line(50, 50, 150, 150));
 
@@ -86,7 +88,7 @@ public class PrimaryController {
         // CREAZIONE LISTA DI NODI E EDGE
         for (Group node : nodeList) {
             // Crea una Label locale per ogni iterazione
-            createMenuLabel(node);
+            createMenuLabel(node); // --------------------------------------- DA METTERE IN CREATE NODE
         }
 
         // Codice eseguito al termine della creazione della finestra
@@ -128,27 +130,30 @@ public class PrimaryController {
     
         // Evento per sostituire la Label con un TextField
         currentLabel.setOnMouseClicked(event -> {
-            TextField textField = new TextField(currentLabel.getText());
-            textField.setPrefWidth(currentLabel.getWidth()); // Mantieni la larghezza
-            int labelIndex = nodeEdgeList.getChildren().indexOf(currentLabel); // Posizione della Label
-    
-            nodeEdgeList.getChildren().set(labelIndex, textField); // Sostituisci direttamente
-    
-            // Quando l'utente preme Invio, torna alla Label
-            textField.setOnAction(e -> {
-                currentLabel.setText(textField.getText()); // Aggiorna il testo
-                nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
-            });
-    
-            // Quando il TextField perde il focus, torna alla Label
-            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                if (!isNowFocused) {
+            if (event.getClickCount() == 2) {
+                TextField textField = new TextField(currentLabel.getText());
+                textField.setPrefWidth(currentLabel.getWidth()); // Mantieni la larghezza
+                int labelIndex = nodeEdgeList.getChildren().indexOf(currentLabel); // Posizione della Label
+        
+                nodeEdgeList.getChildren().set(labelIndex, textField); // Sostituisci direttamente
+        
+                // Quando l'utente preme Invio, torna alla Label
+                textField.setOnAction(e -> {
                     currentLabel.setText(textField.getText()); // Aggiorna il testo
                     nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
-                }
-            });
-    
-            textField.requestFocus(); // Dai il focus iniziale al TextField
+                });
+        
+                // Quando il TextField perde il focus, torna alla Label
+                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused) {
+                        currentLabel.setText(textField.getText()); // Aggiorna il testo
+                        nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
+                    }
+                });
+        
+                textField.requestFocus(); // Dai il focus iniziale al TextField
+            }
+            
         });
 
         VBox.setVgrow(currentLabel, Priority.ALWAYS);
@@ -174,18 +179,25 @@ public class PrimaryController {
                     text.setY(y+4);
                 }
             }
-            count = count + angleNode;
+            count = count - angleNode;
         }
     }
 
     private Group createNode(double x, double y, double radius, String name) { // creazione Nodo con Testo inseriti in un Group
+        // Controllo se esiste gia' un nodo con il nome 'name'
+        // for (Group node: nodeList) {
+        //     if (getNodeText(node) == name) {
+        //         return null;
+        //     }
+        // }
+        
         Circle circle = new Circle(x, y, radius, Color.WHITE);
         Circle circle2 = new Circle(x, y, radius + 5, Color.WHITE);
 
         circle.setStroke(Color.BLACK);
         circle.setStrokeWidth(2);
         
-        circle2.setStroke(Color.BLUE);
+        circle2.setStroke(Color.WHITE);
         circle2.setStrokeWidth(2);
 
         Text text = new Text(x, y, name);
@@ -198,20 +210,36 @@ public class PrimaryController {
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                setNodeStartEnd(circle, event.getButton());
+                setNodeStartEnd(circle, circle2, event.getButton());
+            }
+        });
+
+        node.setOnMouseEntered(event -> {
+            node.setCursor(javafx.scene.Cursor.HAND);
+        
+            circle.setStroke(Color.RED);
+            if (circle2.getStroke() != Color.WHITE) {
+                circle2.setStroke(Color.RED);
+            }
+        });
+
+        node.setOnMouseExited(event -> {
+            circle.setStroke(Color.BLACK);
+            if (circle2.getStroke() != Color.WHITE) {
+                circle2.setStroke(Color.BLACK);
             }
         });
         
         return node;
     }
 
-    private void setNodeStartEnd(Circle circle, MouseButton command) { // metodo per nodo Start e End
-        if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo Start disdegnato
+    private void setNodeStartEnd(Circle circle, Circle circle2, MouseButton command) { // metodo per nodo iniziale e terminale
+        if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo iniziale
             if (circle.getStyleClass().contains("Start")) {
                 circle.getStyleClass().remove("Start");
                 circle.setFill(Color.WHITE);
             }
-            else { // controllo se esiste gia' il nodo Start
+            else { // controllo se esiste gia' il nodo iniziale
                 Boolean startAlreadyExist = false;
                 for (Group node: nodeList) {
                     for (var child: node.getChildren()) {
@@ -223,21 +251,23 @@ public class PrimaryController {
                         }
                     }
                 }
-                if (!startAlreadyExist) { // nodo Start assegnato
+                if (!startAlreadyExist) { // nodo iniziale assegnato (e terminale tolto)
                     circle.getStyleClass().remove("End");
                     circle.getStyleClass().add("Start");
                     circle.setFill(Color.YELLOW);
+                    circle2.setStroke(Color.WHITE);
                 }
             }
         }
         else if (command == javafx.scene.input.MouseButton.SECONDARY) { 
-            if (!circle.getStyleClass().contains("End")) { // nodo End assegnato
+            if (!circle.getStyleClass().contains("End")) { // nodo terminale
                 circle.getStyleClass().remove("Start");
                 circle.getStyleClass().add("End");
-                circle.setFill(Color.GREEN);
-            } else { // nodo End disdegnato
-                circle.getStyleClass().remove("End");
                 circle.setFill(Color.WHITE);
+                circle2.setStroke(Color.BLACK);
+            } else { // nodo NON terminale
+                circle.getStyleClass().remove("End");
+                circle2.setStroke(Color.WHITE);
             }
         }
     }
