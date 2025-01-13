@@ -3,7 +3,6 @@ package wordautomata;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -21,7 +20,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Duration;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -29,6 +27,7 @@ import static java.lang.Math.toRadians;
 
 public class PrimaryController {
     @FXML private VBox nodeEdgeList;
+    @FXML private VBox edgeList;
     @FXML private VBox GraphViewBox;
     @FXML private Label statusLabel;
 
@@ -60,8 +59,6 @@ public class PrimaryController {
                 paneWidth = GraphViewBox.getWidth();
                 paneHeight = GraphViewBox.getHeight();
                 reposition();
-
-                createMenuLabel(nodo); // --------------------------------------- DA METTERE IN CREATE NODE
             }
         });
 
@@ -84,12 +81,6 @@ public class PrimaryController {
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
-
-        // CREAZIONE LISTA DI NODI E EDGE
-        for (Group node : nodeList) {
-            // Crea una Label locale per ogni iterazione
-            createMenuLabel(node); // --------------------------------------- DA METTERE IN CREATE NODE
-        }
 
         // Codice eseguito al termine della creazione della finestra
         // Serve per poter prendere le grandezze della GraphViewBox e organizzare i nodi
@@ -121,13 +112,42 @@ public class PrimaryController {
         }
     }
 
-    private void createMenuLabel(Group node) {
+    private Label createMenuLabel(Group node) {
         Label currentLabel = new Label(getNodeText(node));
         currentLabel.setTextAlignment(TextAlignment.LEFT);
         currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
         currentLabel.setMaxWidth(Double.MAX_VALUE);
         currentLabel.setPadding(new Insets(0, 0, 0, 10));
-    
+        
+        currentLabel.setOnMouseEntered(event -> {
+            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
+            for (var child: node.getChildren()) {
+                if (child instanceof Circle circle) {
+                    if (circle.getRadius() == 15 && isStart(circle))
+                        circle.setFill(Color.GOLD);
+                    else if (circle.getRadius() == 15 && !isStart(circle))
+                        circle.setFill(Color.LIGHTGRAY);
+                    if (circle.getRadius() == 20 && circle.getStroke() != Color.TRANSPARENT) {
+                        circle.setFill(Color.LIGHTGRAY);
+                    }
+                }
+            }
+
+            
+        });
+        
+        currentLabel.setOnMouseExited(event -> {
+            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            for (var child: node.getChildren()) {
+                if (child instanceof Circle circle) {
+                    if (isStart(circle))
+                        circle.setFill(Color.YELLOW);
+                    else 
+                        circle.setFill(Color.TRANSPARENT);
+                }
+            }
+        });
+
         // Evento per sostituire la Label con un TextField
         currentLabel.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -158,6 +178,8 @@ public class PrimaryController {
 
         VBox.setVgrow(currentLabel, Priority.ALWAYS);
         nodeEdgeList.getChildren().add(currentLabel); // Aggiungi la Label alla VBox
+
+        return currentLabel;
     }
 
     private void reposition() {
@@ -191,22 +213,22 @@ public class PrimaryController {
         //     }
         // }
         
-        Circle circle = new Circle(x, y, radius, Color.WHITE);
-        Circle circle2 = new Circle(x, y, radius + 5, Color.WHITE);
+        Circle circle = new Circle(x, y, radius, Color.TRANSPARENT);
+        Circle circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
 
         circle.setStroke(Color.BLACK);
         circle.setStrokeWidth(2);
         
-        circle2.setStroke(Color.WHITE);
+        circle2.setStroke(Color.TRANSPARENT);
         circle2.setStrokeWidth(2);
+        circle2.setFill(Color.TRANSPARENT);
 
         Text text = new Text(x, y, name);
         text.setFill(Color.BLACK);
         text.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
         
         Group node = new Group(circle2, circle, text);
-        
-        node.setOnMouseEntered(event -> node.setCursor(javafx.scene.Cursor.HAND));
+        Label labelAssociated = createMenuLabel(node);
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -217,27 +239,38 @@ public class PrimaryController {
         node.setOnMouseEntered(event -> {
             node.setCursor(javafx.scene.Cursor.HAND);
         
-            circle.setStroke(Color.RED);
-            if (circle2.getStroke() != Color.WHITE) {
-                circle2.setStroke(Color.RED);
+            if (isStart(circle))
+                circle.setFill(Color.GOLD);
+            else
+                circle.setFill(Color.LIGHTGRAY);
+            if (circle2.getStroke() != Color.TRANSPARENT) {
+                circle2.setFill(Color.LIGHTGRAY);
             }
-        });
 
-        node.setOnMouseExited(event -> {
-            circle.setStroke(Color.BLACK);
-            if (circle2.getStroke() != Color.WHITE) {
-                circle2.setStroke(Color.BLACK);
-            }
+            labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
         });
         
+        node.setOnMouseExited(event -> {
+            if (isStart(circle))
+                circle.setFill(Color.YELLOW);
+            else
+                circle.setFill(Color.TRANSPARENT);
+            circle2.setFill(Color.TRANSPARENT);
+            labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+        });
+
         return node;
+    }
+
+    private Boolean isStart(Circle circle) {
+        return circle.getStyleClass().contains("Start");
     }
 
     private void setNodeStartEnd(Circle circle, Circle circle2, MouseButton command) { // metodo per nodo iniziale e terminale
         if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo iniziale
-            if (circle.getStyleClass().contains("Start")) {
+            if (isStart(circle)) {
                 circle.getStyleClass().remove("Start");
-                circle.setFill(Color.WHITE);
+                circle.setFill(Color.TRANSPARENT);
             }
             else { // controllo se esiste gia' il nodo iniziale
                 Boolean startAlreadyExist = false;
@@ -254,8 +287,8 @@ public class PrimaryController {
                 if (!startAlreadyExist) { // nodo iniziale assegnato (e terminale tolto)
                     circle.getStyleClass().remove("End");
                     circle.getStyleClass().add("Start");
-                    circle.setFill(Color.YELLOW);
-                    circle2.setStroke(Color.WHITE);
+                    circle.setFill(Color.GOLD);
+                    circle2.setStroke(Color.TRANSPARENT);
                 }
             }
         }
@@ -263,11 +296,11 @@ public class PrimaryController {
             if (!circle.getStyleClass().contains("End")) { // nodo terminale
                 circle.getStyleClass().remove("Start");
                 circle.getStyleClass().add("End");
-                circle.setFill(Color.WHITE);
+                circle.setFill(Color.TRANSPARENT);
                 circle2.setStroke(Color.BLACK);
             } else { // nodo NON terminale
                 circle.getStyleClass().remove("End");
-                circle2.setStroke(Color.WHITE);
+                circle2.setStroke(Color.TRANSPARENT);
             }
         }
     }
