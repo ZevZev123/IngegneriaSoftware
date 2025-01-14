@@ -118,7 +118,7 @@ public class PrimaryController {
     private Label createMenuLabel(Group node) {
         Label currentLabel = new Label(getNodeText(node));
         currentLabel.setTextAlignment(TextAlignment.LEFT);
-        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+        currentLabel.getStyleClass().add("label1");
         currentLabel.setMaxWidth(Double.MAX_VALUE);
         currentLabel.setPadding(new Insets(0, 0, 0, 10));
         
@@ -136,14 +136,20 @@ public class PrimaryController {
             button.setVisible(true);
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
-                    if (isStart(circle))
-                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
-                    else
-                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
-                    if (circle.getRadius() == 15 && isStart(circle))
-                    circle.setFill(Color.GOLD);
-                    else if (circle.getRadius() == 15 && !isStart(circle))
-                    circle.setFill(Color.LIGHTGRAY);
+                    if (isStart(circle)) {
+                        currentLabel.getStyleClass().remove("start");
+                        currentLabel.getStyleClass().add("startHover");
+                    } else {
+                        if (!currentLabel.getStyleClass().contains("labelHover")) {
+                            currentLabel.getStyleClass().add("labelHover");
+                        }
+                    }
+                    if (circle.getRadius() == 15 && isStart(circle)) {
+                        circle.setFill(Color.GOLD);
+                    }
+                    else if (circle.getRadius() == 15 && !isStart(circle)) {
+                        circle.setFill(Color.LIGHTGRAY);
+                    }
                     if (circle.getRadius() == 20 && circle.getStroke() != Color.TRANSPARENT) {
                         circle.setFill(Color.LIGHTGRAY);
                     }
@@ -153,14 +159,16 @@ public class PrimaryController {
         
         currentLabel.setOnMouseExited(event -> {
             button.setVisible(false);
-            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            currentLabel.getStyleClass().remove("startHover");
+            currentLabel.getStyleClass().remove("labelHover");
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
                     if (isStart(circle)){
-                    circle.setFill(Color.YELLOW);
-                    currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
-                    } else 
+                        circle.setFill(Color.YELLOW);
+                        currentLabel.getStyleClass().add("start");
+                    } else {
                         circle.setFill(Color.TRANSPARENT);
+                    }
                 }
             }
         });
@@ -201,14 +209,18 @@ public class PrimaryController {
             button.setVisible(true);
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
-                    if (isStart(circle))
-                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
-                    else
-                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
-                    if (circle.getRadius() == 15 && isStart(circle))
-                    circle.setFill(Color.GOLD);
-                    else if (circle.getRadius() == 15 && !isStart(circle))
-                    circle.setFill(Color.LIGHTGRAY);
+                    if (isStart(circle)) {
+                        currentLabel.getStyleClass().remove("start");
+                        currentLabel.getStyleClass().add("startHover");
+                    } else {
+                        currentLabel.getStyleClass().add("labelHover");    
+                    }
+                    if (circle.getRadius() == 15 && isStart(circle)){
+                        circle.setFill(Color.GOLD);
+                    }
+                    else if (circle.getRadius() == 15 && !isStart(circle)) {
+                        circle.setFill(Color.LIGHTGRAY);
+                    }
                     if (circle.getRadius() == 20 && circle.getStroke() != Color.TRANSPARENT) {
                         circle.setFill(Color.LIGHTGRAY);
                     }
@@ -218,12 +230,15 @@ public class PrimaryController {
 
         button.setOnMouseExited(event -> {
             button.setVisible(false);
-            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            currentLabel.getStyleClass().remove("startHover");
+            while (currentLabel.getStyleClass().contains("labelHover")){
+                currentLabel.getStyleClass().remove("labelHover");
+            }
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
                     if (isStart(circle)){
                     circle.setFill(Color.YELLOW);
-                    currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
+                    currentLabel.getStyleClass().add("start");
                     } else 
                         circle.setFill(Color.TRANSPARENT);
                 }
@@ -311,19 +326,24 @@ public class PrimaryController {
                 circle2.setFill(Color.LIGHTGRAY);
             }
 
-            if (isStart(circle))
-                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
-            else
-                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
+            if (isStart(circle)) {
+                labelAssociated.getStyleClass().remove("start");
+                labelAssociated.getStyleClass().add("startHover");
+            } else {
+                if (!labelAssociated.getStyleClass().contains("labelHover")) {
+                    labelAssociated.getStyleClass().add("labelHover");
+                }
+            }
         });
             
         node.setOnMouseExited(event -> {
             if (isStart(circle)){
                 circle.setFill(Color.YELLOW);
-                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
+                labelAssociated.getStyleClass().remove("startHover");
+                labelAssociated.getStyleClass().add("start");
             } else {
                 circle.setFill(Color.TRANSPARENT);
-                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+                labelAssociated.getStyleClass().remove("labelHover");
             }
             circle2.setFill(Color.TRANSPARENT);
         });
@@ -332,22 +352,22 @@ public class PrimaryController {
     }
 
     private Boolean isStart(Circle circle) {
-        return circle.getStyleClass().contains("Start");
+        return circle.getStyleClass().contains("start") || circle.getStyleClass().contains("startHover");
     }
 
     private void setNodeStartEnd(Circle circle, Circle circle2, Label label, MouseButton command) { // metodo per nodo iniziale e terminale
         if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo iniziale
             if (isStart(circle)) {
-                circle.getStyleClass().remove("Start");
-                label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+                circle.getStyleClass().remove("start");
+                label.getStyleClass().remove("start");
                 circle.setFill(Color.TRANSPARENT);
             }
             else { // controllo se esiste gia' il nodo iniziale
                 Boolean startAlreadyExist = false;
                 for (Group node: nodeList) {
                     for (var child: node.getChildren()) {
-                        if (child instanceof Circle) {
-                            if (child.getStyleClass().contains("Start")) {
+                        if (child instanceof Circle circleList) {
+                            if (isStart(circleList)) {
                                 System.out.println("Start gia' presente");
                                 startAlreadyExist = true;
                             }
@@ -356,8 +376,8 @@ public class PrimaryController {
                 }
                 if (!startAlreadyExist) { // nodo iniziale assegnato (e terminale tolto)
                     circle.getStyleClass().remove("End");
-                    circle.getStyleClass().add("Start");
-                    label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
+                    circle.getStyleClass().add("startHover");
+                    label.getStyleClass().add("startHover");
                     circle.setFill(Color.GOLD);
                     circle2.setStroke(Color.TRANSPARENT);
                 }
@@ -365,7 +385,7 @@ public class PrimaryController {
         }
         else if (command == javafx.scene.input.MouseButton.SECONDARY) { 
             if (!circle.getStyleClass().contains("End")) { // nodo terminale
-                circle.getStyleClass().remove("Start");
+                circle.getStyleClass().remove("start");
                 circle.getStyleClass().add("End");
                 circle.setFill(Color.TRANSPARENT);
                 circle2.setStroke(Color.BLACK);
