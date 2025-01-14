@@ -29,6 +29,32 @@
     -fx-max-height: 40px;
 }
 
+.deleteButton {    
+    -fx-background-image: url("images/trashcan.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 30px;
+    -fx-min-width: 30px;
+    -fx-min-height: 30px;
+    -fx-max-width: 30px;
+    -fx-max-height: 30px;
+}
+
+.label1 {
+    -fx-min-height: 30px;
+    -fx-border-color: gray;
+    -fx-border-size: 1px;
+}
+.labelHover {
+    -fx-background-color: lightgray;
+}
+.start {
+    -fx-background-color: yellow;
+}
+.startHover {
+    -fx-background-color: gold;
+}
+
+
 .BlackBorder {
     -fx-border-color: black;
     -fx-border-width: 2px;

@@ -6,14 +6,17 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -119,30 +122,44 @@ public class PrimaryController {
         currentLabel.setMaxWidth(Double.MAX_VALUE);
         currentLabel.setPadding(new Insets(0, 0, 0, 10));
         
+        Button button = new Button();
+        button.getStyleClass().add("deleteButton");
+        button.setVisible(false);
+        // button.setFocusTraversable(false);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(currentLabel, button);
+        StackPane.setAlignment(button, Pos.TOP_RIGHT);
+        // stackPane.setStyle("-fx-padding: 5;");
+
         currentLabel.setOnMouseEntered(event -> {
-            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
+            button.setVisible(true);
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
+                    if (isStart(circle))
+                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
+                    else
+                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
                     if (circle.getRadius() == 15 && isStart(circle))
-                        circle.setFill(Color.GOLD);
+                    circle.setFill(Color.GOLD);
                     else if (circle.getRadius() == 15 && !isStart(circle))
-                        circle.setFill(Color.LIGHTGRAY);
+                    circle.setFill(Color.LIGHTGRAY);
                     if (circle.getRadius() == 20 && circle.getStroke() != Color.TRANSPARENT) {
                         circle.setFill(Color.LIGHTGRAY);
                     }
                 }
             }
-
-            
         });
         
         currentLabel.setOnMouseExited(event -> {
+            button.setVisible(false);
             currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
             for (var child: node.getChildren()) {
                 if (child instanceof Circle circle) {
-                    if (isStart(circle))
-                        circle.setFill(Color.YELLOW);
-                    else 
+                    if (isStart(circle)){
+                    circle.setFill(Color.YELLOW);
+                    currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
+                    } else 
                         circle.setFill(Color.TRANSPARENT);
                 }
             }
@@ -153,33 +170,80 @@ public class PrimaryController {
             if (event.getClickCount() == 2) {
                 TextField textField = new TextField(currentLabel.getText());
                 textField.setPrefWidth(currentLabel.getWidth()); // Mantieni la larghezza
-                int labelIndex = nodeEdgeList.getChildren().indexOf(currentLabel); // Posizione della Label
-        
-                nodeEdgeList.getChildren().set(labelIndex, textField); // Sostituisci direttamente
-        
-                // Quando l'utente preme Invio, torna alla Label
+                textField.setStyle("-fx-min-height: 30px;");
+                int labelIndex = nodeEdgeList.getChildren().indexOf(stackPane); // Posizione dello StackPane
+
+                // Sostituisci lo StackPane con il TextField
+                nodeEdgeList.getChildren().set(labelIndex, textField);
+
+                // Quando l'utente preme Invio, torna alla label
                 textField.setOnAction(e -> {
                     currentLabel.setText(textField.getText()); // Aggiorna il testo
-                    nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
+                    setNodeText(node, textField.getText());
+                    nodeEdgeList.getChildren().set(labelIndex, stackPane); // Torna allo StackPane
                 });
-        
-                // Quando il TextField perde il focus, torna alla Label
+                
+                // Quando il TextField perde il focus, torna alla label
                 textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
                         currentLabel.setText(textField.getText()); // Aggiorna il testo
-                        nodeEdgeList.getChildren().set(labelIndex, currentLabel); // Torna alla Label
+                        setNodeText(node, textField.getText());
+                        nodeEdgeList.getChildren().set(labelIndex, stackPane); // Torna allo StackPane
                     }
                 });
-        
+
                 textField.requestFocus(); // Dai il focus iniziale al TextField
             }
-            
         });
 
-        VBox.setVgrow(currentLabel, Priority.ALWAYS);
-        nodeEdgeList.getChildren().add(currentLabel); // Aggiungi la Label alla VBox
+        // il bottone viene visualizzato se il cursore e' posizionato sopra di esso
+        button.setOnMouseEntered(event -> {
+            button.setVisible(true);
+            for (var child: node.getChildren()) {
+                if (child instanceof Circle circle) {
+                    if (isStart(circle))
+                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
+                    else
+                        currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
+                    if (circle.getRadius() == 15 && isStart(circle))
+                    circle.setFill(Color.GOLD);
+                    else if (circle.getRadius() == 15 && !isStart(circle))
+                    circle.setFill(Color.LIGHTGRAY);
+                    if (circle.getRadius() == 20 && circle.getStroke() != Color.TRANSPARENT) {
+                        circle.setFill(Color.LIGHTGRAY);
+                    }
+                }
+            }
+        });
+
+        button.setOnMouseExited(event -> {
+            button.setVisible(false);
+            currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            for (var child: node.getChildren()) {
+                if (child instanceof Circle circle) {
+                    if (isStart(circle)){
+                    circle.setFill(Color.YELLOW);
+                    currentLabel.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
+                    } else 
+                        circle.setFill(Color.TRANSPARENT);
+                }
+            }
+        });
+
+        button.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            System.out.println("Hai cliccato bottone " + getNodeText(node));
+            delete(node);
+            // event.consume(); // Impedisce la propagazione del click // non ho idea del perché serva
+        });
+
+        VBox.setVgrow(stackPane, Priority.ALWAYS);
+        nodeEdgeList.getChildren().add(stackPane); // Aggiungi la Label alla VBox
 
         return currentLabel;
+    }
+
+    private void delete(Group node) {
+
     }
 
     private void reposition() {
@@ -232,7 +296,7 @@ public class PrimaryController {
 
         node.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                setNodeStartEnd(circle, circle2, event.getButton());
+                setNodeStartEnd(circle, circle2, labelAssociated, event.getButton());
             }
         });
 
@@ -247,16 +311,21 @@ public class PrimaryController {
                 circle2.setFill(Color.LIGHTGRAY);
             }
 
-            labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
-        });
-        
-        node.setOnMouseExited(event -> {
             if (isStart(circle))
-                circle.setFill(Color.YELLOW);
+                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
             else
+                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: lightgray;");
+        });
+            
+        node.setOnMouseExited(event -> {
+            if (isStart(circle)){
+                circle.setFill(Color.YELLOW);
+                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: yellow;");
+            } else {
                 circle.setFill(Color.TRANSPARENT);
+                labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
+            }
             circle2.setFill(Color.TRANSPARENT);
-            labelAssociated.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
         });
 
         return node;
@@ -266,10 +335,11 @@ public class PrimaryController {
         return circle.getStyleClass().contains("Start");
     }
 
-    private void setNodeStartEnd(Circle circle, Circle circle2, MouseButton command) { // metodo per nodo iniziale e terminale
+    private void setNodeStartEnd(Circle circle, Circle circle2, Label label, MouseButton command) { // metodo per nodo iniziale e terminale
         if (command == javafx.scene.input.MouseButton.PRIMARY) { // nodo iniziale
             if (isStart(circle)) {
                 circle.getStyleClass().remove("Start");
+                label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px;");
                 circle.setFill(Color.TRANSPARENT);
             }
             else { // controllo se esiste gia' il nodo iniziale
@@ -287,6 +357,7 @@ public class PrimaryController {
                 if (!startAlreadyExist) { // nodo iniziale assegnato (e terminale tolto)
                     circle.getStyleClass().remove("End");
                     circle.getStyleClass().add("Start");
+                    label.setStyle("-fx-min-height: 30px; -fx-border-color: gray; -fx-border-size: 1px; -fx-background-color: gold;");
                     circle.setFill(Color.GOLD);
                     circle2.setStroke(Color.TRANSPARENT);
                 }
