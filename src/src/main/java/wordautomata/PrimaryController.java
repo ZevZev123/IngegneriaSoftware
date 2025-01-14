@@ -115,6 +115,14 @@ public class PrimaryController {
         }
     }
 
+    @FXML
+    private void deleteAll() {
+        // System.out.println(nodeEdgeList.getChildren());
+        // for (int i = 0; i < nodeEdgeList.getChildren().size(); i++) {
+        //     delete(nodeList.getFirst(), nodeEdgeList.getChildren().getFirst());
+        // }
+    }
+
     private Label createMenuLabel(Group node) {
         Label currentLabel = new Label(getNodeText(node));
         currentLabel.setTextAlignment(TextAlignment.LEFT);
@@ -247,7 +255,7 @@ public class PrimaryController {
 
         button.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             System.out.println("Hai cliccato bottone " + getNodeText(node));
-            delete(node);
+            delete(node, stackPane);
             // event.consume(); // Impedisce la propagazione del click // non ho idea del perché serva
         });
 
@@ -257,13 +265,19 @@ public class PrimaryController {
         return currentLabel;
     }
 
-    private void delete(Group node) {
-
+    private void delete(Group node, StackPane stackPane) {
+        nodeList.remove(node);
+        reposition();
+        nodeEdgeList.getChildren().remove(stackPane);
+        graphPane.getChildren().remove(node);
     }
 
     private void reposition() {
         int nodeListLength = nodeList.size();
-        double angleNode = 360 / nodeListLength;
+        double angleNode = 0;
+        if (nodeListLength != 0){
+            angleNode = 360 / nodeListLength;
+        }
 
         double count = 0;
         double x = 0, y = 0;
