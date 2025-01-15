@@ -18,7 +18,6 @@ public class App extends Application {
 
         NodeFX node = new NodeFX(100, 100, 15, "CIAO");
         Group group = node.getGroup();
-        System.out.println(node.getName());
         graphPane.getChildren().add(group);
 
         root.setCenter(graphPane);
