@@ -1,14 +1,22 @@
 package prova;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class NodeFX {
     private Circle circle;
     private Circle circle2;
     private Text text;
+
+    private Label label = new Label();
 
     private Boolean isInitial = false;
     private Boolean isFinal = false;
@@ -26,8 +34,9 @@ public class NodeFX {
         if (isFinal != null) this.isFinal = isFinal;
 
         setGroup();
+        setLabel();
 
-        normalNode();
+        updateNodeColor();
         setName(text.getText());
         listenerAdd();
     }
@@ -35,33 +44,37 @@ public class NodeFX {
     public NodeFX(double x, double y, double radius, String name) {
         this.circle = new Circle(x, y, radius, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
-        
         this.text = new Text(x-4, y+4, "");
-        
-        setGroup();
 
-        normalNode();
+        setGroup();
+        setLabel();
+
+        updateNodeColor();
         setName(name);
         listenerAdd();
     }
     
     private void listenerAdd() {
-        this.getGroup().setOnMouseClicked(event -> {
-            normalNode();
-            if (event.getClickCount() == 2 && event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
-                isInitial = true;
-                isFinal = false;
-                initialNode();
-            }
-            if (event.getClickCount() == 2 && event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
-                isInitial = false;
-                isFinal = true;
-                finalNode();
+        this.group.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2 ){
+                updateNodeColor();
+                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                    if (isFinal) isFinal = false;
+                    isInitial = !isInitial;
+                    if (isInitial) initialNodeHover();
+                    else normalNodeHover();
+                }
+                else if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+                    if (isInitial) isInitial = false;
+                    isFinal = !isFinal;
+                    if (isFinal) finalNodeHover();
+                    else normalNodeHover();
+                }
             }
         });
 
-        this.text.setOnMouseEntered(event -> {
-            this.getGroup().setCursor(javafx.scene.Cursor.HAND);
+        this.group.setOnMouseEntered(event -> {
+            this.group.setCursor(javafx.scene.Cursor.HAND);
             if (isInitial) {
                 initialNodeHover();
             } else if (isFinal) {
@@ -71,36 +84,38 @@ public class NodeFX {
             }
         });
             
-        this.getGroup().setOnMouseExited(event -> {
+        this.group.setOnMouseExited(event -> {
             if (isInitial) {
                 initialNode();
             } else if (isFinal) {
                 finalNode();
             } else {
-                normalNode();
+                updateNodeColor();
             }
+        });
+
+        this.group.setOnMouseDragged(event -> {
+            changeCoordinates(event.getX(), event.getY());
         });
     }
 
-    private void normalNode() {
+    private void updateNodeColor() {
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
         this.circle.setStroke(Color.BLACK);
         this.circle2.setStroke(Color.TRANSPARENT);
         this.circle.setStrokeWidth(2);
         this.circle2.setStrokeWidth(2);
-
-        if (this.isInitial) initialNode();
-        if (this.isFinal) finalNode();
     }
     
     private void normalNodeHover(){
-        if (isFinal) this.circle2.setStroke(Color.LIGHTGRAY);
-        else this.circle.setStroke(Color.LIGHTGRAY);
+        if (isFinal) this.circle2.setFill(Color.LIGHTGRAY);
+        else this.circle.setFill(Color.LIGHTGRAY);
     }
     
     private void initialNode() {
         this.circle.setFill(Color.YELLOW);
+        this.circle2.setFill(Color.TRANSPARENT);
     }
     
     private void initialNodeHover() {
@@ -109,9 +124,12 @@ public class NodeFX {
     
     private void finalNode() {
         this.circle2.setStroke(Color.BLACK);
+        this.circle.setFill(Color.TRANSPARENT);
+        this.circle2.setFill(Color.TRANSPARENT);
     }
     
     private void finalNodeHover() {
+        this.circle2.setStroke(Color.BLACK);
         this.circle2.setFill(Color.LIGHTGRAY);
     }
 
@@ -163,6 +181,32 @@ public class NodeFX {
     }
 
     public void changeCoordinates(double x, double y) {
-        
+        this.circle.setCenterX(x);
+        this.circle.setCenterY(y);
+        this.circle2.setCenterX(x);
+        this.circle2.setCenterY(y);
+        if (name.length() > 1) this.text.setX(x-6);
+        else this.text.setX(x-4);
+        this.text.setY(y+4);
+    }
+
+    private void setLabel() {
+        this.label.setText(this.name);
+        this.label.setTextAlignment(TextAlignment.LEFT);
+        this.label.getStyleClass().add("label1");
+        this.label.setMaxWidth(Double.MAX_VALUE);
+        this.label.setPadding(new Insets(0, 0, 0, 10));
+
+        Button button = new Button();
+        button.getStyleClass().add("deleteButton");
+        button.setVisible(false);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(this.label, button);
+        StackPane.setAlignment(button, Pos.TOP_RIGHT);
+    }
+
+    public Label getLabel() {
+        return this.label;
     }
 }

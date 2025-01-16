@@ -16,7 +16,7 @@ public class App extends Application {
         Pane graphPane = new Pane();
         graphPane.setStyle("-fx-background-color: #f0f0f0;");
 
-        NodeFX node = new NodeFX(100, 100, 15, "CIAO");
+        NodeFX node = new NodeFX(100, 100, 15, "P");
         Group group = node.getGroup();
         graphPane.getChildren().add(group);
 
