@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -200,11 +201,69 @@ public class NodeFX {
         Button button = new Button();
         button.getStyleClass().add("deleteButton");
         button.setVisible(false);
-
+        
         StackPane stackPane = new StackPane();
         stackPane.getChildren().addAll(this.label, button);
         StackPane.setAlignment(button, Pos.TOP_RIGHT);
+        
+        this.label.setOnMouseEntered(event -> {
+            button.setVisible(true);
+            if (isInitial) initialNodeHover();
+            else if (isFinal) finalNodeHover();
+            else normalNodeHover();
+        });
+
+        this.label.setOnMouseExited(event -> {
+            button.setVisible(false);
+            if (isInitial) initialNode();
+            else if (isFinal) finalNode();
+            else updateNodeColor();
+        });
+
+        this.label.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                TextField textField = new TextField(this.name);
+                textField.setPrefWidth(this.label.getWidth());
+                textField.setStyle("-fx-min-height: 30px");
+            }
+        });
     }
+
+    /*
+    currentLabel.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2) {
+            // Crea il TextField con il testo della Label
+            TextField textField = new TextField(currentLabel.getText());
+            textField.setPrefWidth(currentLabel.getWidth()); // Mantieni la larghezza
+            textField.setStyle("-fx-min-height: 30px;");
+            
+            // Rimuovi tutto dal StackPane e aggiungi il TextField
+            stackPane.getChildren().clear();
+            stackPane.getChildren().add(textField);
+
+            // Quando l'utente preme Invio, torna alla Label
+            textField.setOnAction(e -> {
+                currentLabel.setText(textField.getText()); // Aggiorna il testo della Label
+                setNodeText(node, textField.getText()); // Aggiorna il modello del nodo
+                stackPane.getChildren().clear();
+                stackPane.getChildren().add(currentLabel); // Riaggiungi la Label
+            });
+
+            // Quando il TextField perde il focus, torna alla Label
+            textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                if (!isNowFocused) {
+                    currentLabel.setText(textField.getText()); // Aggiorna il testo della Label
+                    setNodeText(node, textField.getText()); // Aggiorna il modello del nodo
+                    stackPane.getChildren().clear();
+                    stackPane.getChildren().add(currentLabel); // Riaggiungi la Label
+                }
+            });
+
+            textField.requestFocus(); // Dai il focus iniziale al TextField
+        }
+    });
+
+     */
 
     public Label getLabel() {
         return this.label;
