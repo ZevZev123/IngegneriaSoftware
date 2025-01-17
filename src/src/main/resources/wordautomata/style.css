@@ -47,10 +47,10 @@
 .labelHover {
     -fx-background-color: lightgray;
 }
-.start {
+.initial {
     -fx-background-color: yellow;
 }
-.startHover {
+.initialHover {
     -fx-background-color: gold;
 }
 

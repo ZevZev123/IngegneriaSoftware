@@ -1,4 +1,7 @@
-package prova;
+package wordautomata;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,6 +22,7 @@ public class NodeFX {
     private Text text;
 
     private StackPane stackPane = new StackPane();
+    private List<NodeFX> listFX = new ArrayList<>();
 
     private Boolean isInitial = false;
     private Boolean isFinal = false;
@@ -35,13 +39,13 @@ public class NodeFX {
         if (isInitial != null) this.isInitial = isInitial;
         if (isFinal != null) this.isFinal = isFinal;
 
+        setName(text.getText());
         setGroup();
         setLabel();
-
-        updateNodeColor();
-        setName(text.getText());
         listenerAdd();
-
+        
+        updateNodeColor();
+        
         updateToolTip();
     }
     
@@ -50,27 +54,32 @@ public class NodeFX {
         this.circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
 
+        setName(name);
         setGroup();
         setLabel();
-
-        updateNodeColor();
-        setName(name);
         listenerAdd();
-
+        
+        updateNodeColor();
+        
         updateToolTip();
     }
     
     private void listenerAdd() {
         this.group.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 ){
-                updateNodeColor();
-                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                Boolean isThereInitial = false;
+                for (NodeFX node: this.listFX) {
+                    if (node.isNodeInitial()) isThereInitial = true;
+                }
+                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && (!isThereInitial  || this.isInitial)) {
+                    updateNodeColor();
                     if (isFinal) isFinal = false;
                     isInitial = !isInitial;
                     if (isInitial) initialNodeHover();
                     else normalNodeHover();
                 }
                 else if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+                    updateNodeColor();
                     if (isInitial) isInitial = false;
                     isFinal = !isFinal;
                     if (isFinal) finalNodeHover();
@@ -105,7 +114,16 @@ public class NodeFX {
         });
     }
 
+    private void resetLabelStyleClass() {
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            while (label.getStyleClass().contains("initial")) label.getStyleClass().remove("initial");
+            while (label.getStyleClass().contains("initialHover")) label.getStyleClass().remove("initialHover");
+            while (label.getStyleClass().contains("labelHover")) label.getStyleClass().remove("labelHover");
+        }
+    }
+
     private void updateNodeColor() {
+        resetLabelStyleClass();
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
         this.circle.setStroke(Color.BLACK);
@@ -115,26 +133,39 @@ public class NodeFX {
     }
     
     private void normalNodeHover(){
+        resetLabelStyleClass();
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("labelHover");
+        }
         if (isFinal) this.circle2.setFill(Color.LIGHTGRAY);
         else this.circle.setFill(Color.LIGHTGRAY);
     }
     
     private void initialNode() {
+        resetLabelStyleClass();
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("initial");
+        }
         this.circle.setFill(Color.YELLOW);
         this.circle2.setFill(Color.TRANSPARENT);
     }
     
     private void initialNodeHover() {
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("initialHover");
+        }
         this.circle.setFill(Color.GOLD);
     }
     
     private void finalNode() {
+        resetLabelStyleClass();
         this.circle2.setStroke(Color.BLACK);
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
     }
     
     private void finalNodeHover() {
+        resetLabelStyleClass();
         this.circle2.setStroke(Color.BLACK);
         this.circle2.setFill(Color.LIGHTGRAY);
     }
@@ -197,7 +228,8 @@ public class NodeFX {
     }
 
     private void setLabel() {
-        Label label = new Label(this.name);
+        Label label = new Label();
+        label.setText(this.name);
         label.setTextAlignment(TextAlignment.LEFT);
         label.getStyleClass().add("label1");
         label.setMaxWidth(Double.MAX_VALUE);
@@ -224,13 +256,13 @@ public class NodeFX {
             else if (isFinal) finalNode();
             else updateNodeColor();
         });
-
         
         label.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 TextField textField = new TextField(this.name);
                 textField.setPrefWidth(label.getWidth());
                 textField.setStyle("-fx-min-height: 30px;");
+                textField.setPadding(new Insets(0, 0, 0, 10));
                 
                 this.stackPane.getChildren().clear();
                 this.stackPane.getChildren().add(textField);
@@ -256,6 +288,24 @@ public class NodeFX {
                 textField.requestFocus();
             }
         });
+
+        button.setOnMouseEntered(event -> {
+            button.setVisible(true);
+            if (isInitial) initialNodeHover();
+            else if (isFinal) finalNodeHover();
+            else normalNodeHover();
+        });
+
+        button.setOnMouseExited(event -> {
+            button.setVisible(false);
+            if (isInitial) initialNode();
+            else if (isFinal) finalNode();
+            else updateNodeColor();
+        });
+
+        button.setOnAction(event -> {
+            
+        });
     }
 
     public StackPane getStackPane() {
@@ -264,7 +314,22 @@ public class NodeFX {
 
     private void updateToolTip() {
         Tooltip tooltip = new Tooltip(this.name);
-
         Tooltip.install(this.group, tooltip);
+    }
+
+    public Boolean isNodeInitial() {
+        return this.isInitial;
+    }
+
+    public Boolean isNodeFinal() {
+        return this.isFinal;
+    }
+
+    public void setListFX(List<NodeFX> listFX) {
+        this.listFX = listFX;
+    }
+
+    public List<NodeFX> getListFX() {
+        return this.listFX;
     }
 }
