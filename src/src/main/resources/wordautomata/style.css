@@ -53,7 +53,9 @@
 .initialHover {
     -fx-background-color: gold;
 }
-
+.final {
+    -fx-font-weight: bold;
+}
 
 .BlackBorder {
     -fx-border-color: black;

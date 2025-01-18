@@ -5,32 +5,19 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 public class PrimaryController {
-    @FXML private VBox nodeEdgeList;
-    @FXML private VBox edgeList;
+    @FXML private VBox nodeMenuList;
+    @FXML private VBox edgeMenuList;
     @FXML private VBox GraphViewBox;
     @FXML private Label statusLabel;
 
@@ -38,7 +25,7 @@ public class PrimaryController {
     @FXML private Label history;
 
     private List<NodeFX> nodeList = new ArrayList<>();
-    // private List<Line> lineList = new ArrayList<>();
+    private List<EdgeFX> edgeList = new ArrayList<>();
 
     private Pane graphPane;
     private double paneWidth = 0;
@@ -55,13 +42,14 @@ public class PrimaryController {
             if (event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 // creazione nodo
                 NodeFX node = new NodeFX(event.getX(), event.getY(), 15, "0", this);
+                node.setListFX(nodeList);
                 nodeList.add(node);
-
                 // mostra graficamente il nodo nel Pane
                 graphPane.getChildren().add(node.getGroup());
                 paneWidth = GraphViewBox.getWidth();
                 paneHeight = GraphViewBox.getHeight();
-                reposition();
+
+                nodeMenuList.getChildren().add(node.getStackPane());
             }
         });
 
@@ -73,16 +61,16 @@ public class PrimaryController {
         nodeList.add(new NodeFX(0, 0, 15, "E", this));
         nodeList.add(new NodeFX(0, 0, 15, "T", this));
         
-        // lineList.add(new Line(50, 50, 150, 150));
-
-        // for (Line edge: lineList) {
-        //     graphPane.getChildren().add(edge); // aggiunta di tutti gli edge nel foglio
-        // }
-
+        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "ciao"));
+        
         for (NodeFX node: nodeList) {
             graphPane.getChildren().add(node.getGroup()); // aggiunta di tutti i nodi nel foglio
-            nodeEdgeList.getChildren().add(node.getStackPane());
+            nodeMenuList.getChildren().add(node.getStackPane());
             node.setListFX(nodeList);
+        }
+        
+        for (EdgeFX edge: edgeList) {
+            graphPane.getChildren().add(edge.getLine()); // aggiunta di tutti gli edge nel foglio
         }
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
@@ -116,18 +104,28 @@ public class PrimaryController {
         } else {
             runButton.getStyleClass().setAll("button", "RunButton");
         }
-        reposition();
     }
 
     @FXML
     private void deleteAll() {
-        
+        System.out.println("Cancellato tutto il grafo");
+        int val = nodeList.size();
+        for (int i = 0; i < val; i++){
+            nodeList.get(0).deleteNode();
+        }
     }
 
     public void delete() {
         System.out.println("Node cancellato");
     }
 
+    public void coordinatesChanged() {
+        for (EdgeFX edge: edgeList) {
+            edge.updateCoordinates();
+        }
+    }
+
+    @FXML
     private void reposition() {
         int nodeListLength = nodeList.size();
         double angleNode = 0;
@@ -144,7 +142,9 @@ public class PrimaryController {
             node.changeCoordinates(x, y);
             count = count - angleNode;
         }
-                
+        for (EdgeFX edge: edgeList) {
+            edge.updateCoordinates();
+        }
     }
 
     private void updateToolTip() { // mostra l'history completa passando con il cursore sopra

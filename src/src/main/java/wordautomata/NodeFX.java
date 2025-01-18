@@ -37,30 +37,29 @@ public class NodeFX {
         this.circle = circle;
         this.circle2 = circle2;
         this.text = text;
+        this.name = name;
 
         this.controller = controller;
 
         if (isInitial != null) this.isInitial = isInitial;
         if (isFinal != null) this.isFinal = isFinal;
 
-        setName(text.getText());
-        setGroup();
-        setLabel();
-        listenerAdd();
-        
-        updateNodeColor();
-        
-        updateToolTip();
+        setUpAll();
     }
     
     public NodeFX(double x, double y, double radius, String name, PrimaryController controller) {
         this.circle = new Circle(x, y, radius, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
+        this.name = name;
 
         this.controller = controller;
 
-        setName(name);
+        setUpAll();
+    }
+    
+    private void setUpAll() {
+        setName(this.name);
         setGroup();
         setLabel();
         listenerAdd();
@@ -69,7 +68,7 @@ public class NodeFX {
         
         updateToolTip();
     }
-    
+
     private void listenerAdd() {
         this.group.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 ){
@@ -125,6 +124,7 @@ public class NodeFX {
             while (label.getStyleClass().contains("initial")) label.getStyleClass().remove("initial");
             while (label.getStyleClass().contains("initialHover")) label.getStyleClass().remove("initialHover");
             while (label.getStyleClass().contains("labelHover")) label.getStyleClass().remove("labelHover");
+            while (label.getStyleClass().contains("final")) label.getStyleClass().remove("final");
         }
     }
 
@@ -165,6 +165,9 @@ public class NodeFX {
     
     private void finalNode() {
         resetLabelStyleClass();
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("final");
+        }
         this.circle2.setStroke(Color.BLACK);
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
@@ -172,6 +175,10 @@ public class NodeFX {
     
     private void finalNodeHover() {
         resetLabelStyleClass();
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("final");
+            label.getStyleClass().add("labelHover");
+        }
         this.circle2.setStroke(Color.BLACK);
         this.circle2.setFill(Color.LIGHTGRAY);
     }
@@ -231,8 +238,21 @@ public class NodeFX {
         if (name.length() > 1) this.text.setX(x-6);
         else this.text.setX(x-4);
         this.text.setY(y+4);
+        controller.coordinatesChanged();
     }
 
+    public double[] getCoordinates() {
+        return new double[] {this.circle.getCenterX(), this.circle.getCenterY()};
+    }
+
+    public double getX() {
+        return this.circle.getCenterX();
+    }
+
+    public double getY() {
+        return this.circle.getCenterY();
+    }
+    
     private void setLabel() {
         Label label = new Label();
         label.setText(this.name);
@@ -310,13 +330,20 @@ public class NodeFX {
         });
 
         button.setOnAction(event -> {
-            if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
-                parent.getChildren().remove(this.group);
-            if (stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
-                parent.getChildren().remove(stackPane);    
-            if(listFX != null) listFX.remove(this);
-            controller.delete();
+            deleteNode();
         });
+    }
+
+    public Boolean deleteNode() {
+        if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
+            parent.getChildren().remove(this.group);
+        if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
+            parent.getChildren().remove(this.stackPane);    
+        if(listFX != null && listFX.contains(this)) {
+            listFX.remove(this);
+        }
+        controller.delete();
+        return true;
     }
 
     public StackPane getStackPane() {

@@ -27,7 +27,7 @@
             </Menu>
             <Menu text="Edit">
                <MenuItem text="Delete All" onAction="#deleteAll"/>
-               <MenuItem text="Redo" />
+               <MenuItem text="Reposition" onAction="#reposition" />
             </Menu>
             <Menu text="Help">
                <MenuItem text="About" />
@@ -58,12 +58,12 @@
          <!-- Right Section -->
          <SplitPane orientation="VERTICAL" maxWidth="200" prefWidth="100" minWidth="100">
             <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefHeight="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-               <VBox fx:id="nodeEdgeList" alignment="TOP_LEFT">
+               <VBox fx:id="nodeMenuList" alignment="TOP_LEFT">
                   <!-- Elementi aggiunti dinamicamente nel Controller -->
                </VBox>
             </ScrollPane>
             <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefHeight="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-               <VBox fx:id="edgeList" alignment="TOP_LEFT">
+               <VBox fx:id="edgeManuList" alignment="TOP_LEFT">
                   <!-- Elementi aggiunti dinamicamente nel Controller -->
                </VBox>
             </ScrollPane>
