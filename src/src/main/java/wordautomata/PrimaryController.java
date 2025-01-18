@@ -54,7 +54,7 @@ public class PrimaryController {
         graphPane.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 // creazione nodo
-                NodeFX node = new NodeFX(event.getX(), event.getY(), 15, "0");
+                NodeFX node = new NodeFX(event.getX(), event.getY(), 15, "0", this);
                 nodeList.add(node);
 
                 // mostra graficamente il nodo nel Pane
@@ -65,13 +65,13 @@ public class PrimaryController {
             }
         });
 
-        nodeList.add(new NodeFX(0, 0, 15, "F"));
-        nodeList.add(new NodeFX(0, 0, 15, "A"));
-        nodeList.add(new NodeFX(0, 0, 15, "B"));
-        nodeList.add(new NodeFX(0, 0, 15, "C"));
-        nodeList.add(new NodeFX(0, 0, 15, "D"));
-        nodeList.add(new NodeFX(0, 0, 15, "E"));
-        nodeList.add(new NodeFX(0, 0, 15, "T"));
+        nodeList.add(new NodeFX(0, 0, 15, "F", this));
+        nodeList.add(new NodeFX(0, 0, 15, "A", this));
+        nodeList.add(new NodeFX(0, 0, 15, "B", this));
+        nodeList.add(new NodeFX(0, 0, 15, "C", this));
+        nodeList.add(new NodeFX(0, 0, 15, "D", this));
+        nodeList.add(new NodeFX(0, 0, 15, "E", this));
+        nodeList.add(new NodeFX(0, 0, 15, "T", this));
         
         // lineList.add(new Line(50, 50, 150, 150));
 
@@ -124,8 +124,8 @@ public class PrimaryController {
         
     }
 
-    private void delete() {
-
+    public void delete() {
+        System.out.println("Node cancellato");
     }
 
     private void reposition() {

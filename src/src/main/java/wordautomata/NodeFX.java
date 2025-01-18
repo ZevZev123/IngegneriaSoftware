@@ -21,6 +21,8 @@ public class NodeFX {
     private Circle circle2;
     private Text text;
 
+    private PrimaryController controller;
+
     private StackPane stackPane = new StackPane();
     private List<NodeFX> listFX = new ArrayList<>();
 
@@ -31,10 +33,12 @@ public class NodeFX {
 
     private Group group;
 
-    public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal) {
+    public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal, PrimaryController controller) {
         this.circle = circle;
         this.circle2 = circle2;
         this.text = text;
+
+        this.controller = controller;
 
         if (isInitial != null) this.isInitial = isInitial;
         if (isFinal != null) this.isFinal = isFinal;
@@ -49,10 +53,12 @@ public class NodeFX {
         updateToolTip();
     }
     
-    public NodeFX(double x, double y, double radius, String name) {
+    public NodeFX(double x, double y, double radius, String name, PrimaryController controller) {
         this.circle = new Circle(x, y, radius, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
+
+        this.controller = controller;
 
         setName(name);
         setGroup();
@@ -304,7 +310,12 @@ public class NodeFX {
         });
 
         button.setOnAction(event -> {
-            
+            if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
+                parent.getChildren().remove(this.group);
+            if (stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
+                parent.getChildren().remove(stackPane);    
+            if(listFX != null) listFX.remove(this);
+            controller.delete();
         });
     }
 
