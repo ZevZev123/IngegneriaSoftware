@@ -24,7 +24,7 @@ public class NodeFX {
     private PrimaryController controller;
 
     private StackPane stackPane = new StackPane();
-    private List<NodeFX> listFX = new ArrayList<>();
+    private List<NodeFX> nodeList = new ArrayList<>();
 
     private Boolean isInitial = false;
     private Boolean isFinal = false;
@@ -73,7 +73,7 @@ public class NodeFX {
         this.group.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 ){
                 Boolean isThereInitial = false;
-                for (NodeFX node: this.listFX) {
+                for (NodeFX node: this.nodeList) {
                     if (node.isNodeInitial()) isThereInitial = true;
                 }
                 if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && (!isThereInitial  || this.isInitial)) {
@@ -339,8 +339,8 @@ public class NodeFX {
             parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.stackPane);    
-        if(listFX != null && listFX.contains(this)) {
-            listFX.remove(this);
+        if(nodeList != null && nodeList.contains(this)) {
+            nodeList.remove(this);
         }
         controller.delete();
         return true;
@@ -363,11 +363,11 @@ public class NodeFX {
         return this.isFinal;
     }
 
-    public void setListFX(List<NodeFX> listFX) {
-        this.listFX = listFX;
+    public void setListFX(List<NodeFX> nodeList) {
+        this.nodeList = nodeList;
     }
 
     public List<NodeFX> getListFX() {
-        return this.listFX;
+        return this.nodeList;
     }
 }

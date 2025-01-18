@@ -61,7 +61,8 @@ public class PrimaryController {
         nodeList.add(new NodeFX(0, 0, 15, "E", this));
         nodeList.add(new NodeFX(0, 0, 15, "T", this));
         
-        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "ciao"));
+        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "ab"));
+        edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(2), "bc"));
         
         for (NodeFX node: nodeList) {
             graphPane.getChildren().add(node.getGroup()); // aggiunta di tutti i nodi nel foglio
@@ -70,7 +71,9 @@ public class PrimaryController {
         }
         
         for (EdgeFX edge: edgeList) {
-            graphPane.getChildren().add(edge.getLine()); // aggiunta di tutti gli edge nel foglio
+            graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
+            edgeMenuList.getChildren().add(edge.getStackPane());
+            edge.setEdgeList(edgeList);
         }
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
@@ -117,6 +120,7 @@ public class PrimaryController {
 
     public void delete() {
         System.out.println("Node cancellato");
+        coordinatesChanged();
     }
 
     public void coordinatesChanged() {

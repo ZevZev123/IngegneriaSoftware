@@ -63,7 +63,7 @@
                </VBox>
             </ScrollPane>
             <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefHeight="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-               <VBox fx:id="edgeManuList" alignment="TOP_LEFT">
+               <VBox fx:id="edgeMenuList" alignment="TOP_LEFT">
                   <!-- Elementi aggiunti dinamicamente nel Controller -->
                </VBox>
             </ScrollPane>
