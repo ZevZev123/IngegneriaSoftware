@@ -61,14 +61,35 @@ public class EdgeFX {
 
         this.group.setOnMouseEntered(event -> {
             this.group.setCursor(javafx.scene.Cursor.HAND);
+            edgeHover();
         });
+
+        this.group.setOnMouseExited(event -> {
+            edgeNotHover();
+        });
+    }
+
+    private void edgeNotHover() {
+        this.line.setStroke(Color.BLACK);
+        this.text.setFill(Color.BLACK);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().remove("labelHover");
+        }
+    }
+    
+    private void edgeHover() {
+        this.line.setStroke(Color.RED);
+        this.text.setFill(Color.RED);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("labelHover");
+        }
     }
 
     private Boolean deleteEdge() {
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
         parent.getChildren().remove(this.group);
-        // if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
-        //     parent.getChildren().remove(this.stackPane);
+        if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
+            parent.getChildren().remove(this.stackPane);
         if (edgeList != null) edgeList.remove(this);
         return true;
     }
@@ -134,10 +155,12 @@ public class EdgeFX {
         
         label.setOnMouseEntered(event -> {
             button.setVisible(true);
+            edgeHover();
         });
 
         label.setOnMouseExited(event -> {
             button.setVisible(false);
+            edgeNotHover();
         });
         
         label.setOnMouseClicked(event -> {
@@ -153,6 +176,7 @@ public class EdgeFX {
                 textField.setOnAction(e -> {
                     label.setText(textField.getText());
                     setName(textField.getText());
+                    this.text.setText(this.name);
                     this.stackPane.getChildren().clear();
                     this.stackPane.getChildren().addAll(label, button);
                     StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -162,6 +186,7 @@ public class EdgeFX {
                     if (!isNowFocused) {
                         label.setText(textField.getText());
                         setName(textField.getText());
+                        this.text.setText(this.name);
                         this.stackPane.getChildren().clear();
                         this.stackPane.getChildren().addAll(label, button);
                         StackPane.setAlignment(button, Pos.TOP_RIGHT);
