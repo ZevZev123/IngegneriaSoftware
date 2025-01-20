@@ -36,10 +36,10 @@ public class EdgeFX {
         this.line.setStroke(Color.BLACK);
         this.line.setStrokeWidth(2);
 
-        this.text = new Text(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())-5, name);
+        this.text = new Text(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())+3, name);
         this.text.setFill(Color.BLACK);
         
-        this.backgroud = new Rectangle(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())-10, Color.web("#f4f4f4"));
+        this.backgroud = new Rectangle(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())-8, Color.web("#f4f4f4"));
         this.backgroud.setWidth(name.length()*7);
         this.backgroud.setHeight(15);
 
@@ -119,10 +119,11 @@ public class EdgeFX {
         this.line.setStartY(start.getY());
         this.line.setEndX(end.getX());
         this.line.setEndY(end.getY());
-        this.text.setX(meanValue(start.getX(), end.getX())-(2*this.name.length()));
-        this.text.setY(meanValue(start.getY(), end.getY())+(2*this.name.length()));
-        this.backgroud.setX(meanValue(start.getX(), end.getX())-(2*this.name.length()));
-        this.backgroud.setY(meanValue(start.getY(), end.getY())-(2*this.name.length()));
+        this.text.setX(meanValue(start.getX(), end.getX())-(3*this.name.length()));
+        this.text.setY(meanValue(start.getY(), end.getY())+3);
+        this.backgroud.setX(meanValue(start.getX(), end.getX())-(3.5*this.name.length()));
+        this.backgroud.setY(meanValue(start.getY(), end.getY())-8);
+        this.backgroud.setWidth(name.length()*7);
     }
 
     public void setEdgeList(List<EdgeFX> edgeList) {
@@ -177,6 +178,7 @@ public class EdgeFX {
                     label.setText(textField.getText());
                     setName(textField.getText());
                     this.text.setText(this.name);
+                    updateCoordinates();
                     this.stackPane.getChildren().clear();
                     this.stackPane.getChildren().addAll(label, button);
                     StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -187,6 +189,7 @@ public class EdgeFX {
                         label.setText(textField.getText());
                         setName(textField.getText());
                         this.text.setText(this.name);
+                        updateCoordinates();
                         this.stackPane.getChildren().clear();
                         this.stackPane.getChildren().addAll(label, button);
                         StackPane.setAlignment(button, Pos.TOP_RIGHT);

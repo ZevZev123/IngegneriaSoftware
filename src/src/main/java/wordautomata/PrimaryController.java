@@ -61,7 +61,7 @@ public class PrimaryController {
         nodeList.add(new NodeFX(0, 0, 15, "E", this));
         nodeList.add(new NodeFX(0, 0, 15, "T", this));
         
-        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "ab"));
+        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "provolone"));
         edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(2), "bc"));
         
         for (NodeFX node: nodeList) {
