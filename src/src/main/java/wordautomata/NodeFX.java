@@ -48,8 +48,8 @@ public class NodeFX {
     }
     
     public NodeFX(double x, double y, double radius, String name, PrimaryController controller) {
-        this.circle = new Circle(x, y, radius, Color.TRANSPARENT);
-        this.circle2 = new Circle(x, y, radius + 5, Color.TRANSPARENT);
+        this.circle = new Circle(x, y, radius + 5, Color.TRANSPARENT);
+        this.circle2 = new Circle(x, y, radius, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         this.name = name;
 
@@ -213,10 +213,12 @@ public class NodeFX {
 
     public void setName(String name) {
         this.name = name;
-        if (name.length() > 1) {
+        text.setX(circle.getCenterX()-6);
+        if (name.length() > 2) {
             text.setText(name.substring(0,1)+"...");
-            text.setX(circle.getCenterX()-6);
-        } else {
+        } else if (name.length() == 2) {
+            text.setText(name);
+        } else if (name.length() == 1) {
             text.setText(name);
             text.setX(circle.getCenterX()-4);
         }
@@ -335,6 +337,7 @@ public class NodeFX {
     }
 
     public Boolean deleteNode() {
+        controller.delete(this);
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
@@ -342,7 +345,6 @@ public class NodeFX {
         if(nodeList != null && nodeList.contains(this)) {
             nodeList.remove(this);
         }
-        controller.delete();
         return true;
     }
 

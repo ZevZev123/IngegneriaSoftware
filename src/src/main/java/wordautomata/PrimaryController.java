@@ -118,8 +118,16 @@ public class PrimaryController {
         }
     }
 
-    public void delete() {
+    public void delete(NodeFX node) {
         System.out.println("Node cancellato");
+        for (int i = 0; i < edgeList.size(); i++) {
+            for (NodeFX edgesNode: edgeList.get(i).getNodes()) {
+                if (node.equals(edgesNode)) {
+                    edgeList.get(i).deleteEdge();
+                    i--;
+                }
+            }
+        }
         coordinatesChanged();
     }
 

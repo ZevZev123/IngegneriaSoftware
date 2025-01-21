@@ -12,12 +12,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class EdgeFX {
-    private Line line;
+    private QuadCurve curve;
     private Text text;
     private Rectangle backgroud;
 
@@ -85,12 +86,12 @@ public class EdgeFX {
         }
     }
 
-    private Boolean deleteEdge() {
+    public Boolean deleteEdge() {
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
         parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.stackPane);
-        if (edgeList != null) edgeList.remove(this);
+        if (edgeList != null && edgeList.contains(this)) edgeList.remove(this);
         return true;
     }
 
@@ -223,5 +224,9 @@ public class EdgeFX {
         else result = x + (y - x) / 2;
 
         return result;
+    }
+
+    public NodeFX[] getNodes() {
+        return new NodeFX[] {this.start, this.end};
     }
 }
