@@ -14,24 +14,8 @@ public class EdgeFX extends Group {
     private double arrowLength = 10; // Lunghezza della freccia
     private double arrowWidth = 7;   // Larghezza della freccia
 
-    public EdgeFX(NodeFX sourceNode, NodeFX targetNode, double controlOffset) {
+    public EdgeFX(NodeFX start, NodeFX end, double controlOffset) {
         this.controlOffset = controlOffset; // Raggio di curvatura iniziale
-
-        Point2D start = calculateEdgeEndpoint(
-            sourceNode.getX(),
-            sourceNode.getY(),
-            targetNode.getX(),
-            targetNode.getY(),
-            20
-        );
-
-        Point2D end = calculateEdgeEndpoint(
-            targetNode.getCircle().getCenterX(),
-            targetNode.getCircle().getCenterY(),
-            sourceNode.getCircle().getCenterX(),
-            sourceNode.getCircle().getCenterY(),
-            20
-        );
 
         // Creazione della curva
         this.curve = new QuadCurve();
@@ -72,25 +56,6 @@ public class EdgeFX extends Group {
             updateControlPoint(); // Aggiorna il punto di controllo
             updateArrow();        // Aggiorna la posizione della freccia
         });
-    }
-
-    private Point2D calculateEdgeEndpoint(double x1, double y1, double x2, double y2, double radius) {
-        // Calcola la direzione dal nodo di partenza (x1, y1) a quello di arrivo (x2, y2)
-        double dx = x2 - x1;
-        double dy = y2 - y1;
-
-        // Calcola la lunghezza del vettore direzione
-        double distance = Math.sqrt(dx * dx + dy * dy);
-
-        // Normalizza il vettore direzione
-        double unitX = dx / distance;
-        double unitY = dy / distance;
-
-        // Calcola il punto di intersezione con il bordo del cerchio
-        double edgeX = x2 - unitX * radius; // Sottraiamo il raggio per fermarci al bordo
-        double edgeY = y2 - unitY * radius;
-
-        return new Point2D(edgeX, edgeY);
     }
 
     private void updateControlPoint() {

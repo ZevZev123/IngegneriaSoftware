@@ -21,7 +21,6 @@ public class NodeFX {
     private Circle circle2;
     private Text text;
 
-
     private StackPane stackPane = new StackPane();
     private List<NodeFX> nodeList = new ArrayList<>();
 
