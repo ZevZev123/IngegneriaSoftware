@@ -18,7 +18,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class EdgeFX {
-    private QuadCurve curve;
+    private Line line;
     private Text text;
     private Rectangle backgroud;
 
