@@ -1,7 +1,7 @@
 package prova;
 
 import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Polygon;
@@ -14,15 +14,31 @@ public class EdgeFX extends Group {
     private double arrowLength = 10; // Lunghezza della freccia
     private double arrowWidth = 7;   // Larghezza della freccia
 
-    public EdgeFX() {
-        this.controlOffset = 50; // Raggio di curvatura iniziale
+    public EdgeFX(NodeFX sourceNode, NodeFX targetNode, double controlOffset) {
+        this.controlOffset = controlOffset; // Raggio di curvatura iniziale
+
+        Point2D start = calculateEdgeEndpoint(
+            sourceNode.getX(),
+            sourceNode.getY(),
+            targetNode.getX(),
+            targetNode.getY(),
+            20
+        );
+
+        Point2D end = calculateEdgeEndpoint(
+            targetNode.getCircle().getCenterX(),
+            targetNode.getCircle().getCenterY(),
+            sourceNode.getCircle().getCenterX(),
+            sourceNode.getCircle().getCenterY(),
+            20
+        );
 
         // Creazione della curva
         this.curve = new QuadCurve();
-        this.curve.setStartX(100);
-        this.curve.setStartY(100);
-        this.curve.setEndX(300);
-        this.curve.setEndY(200);
+        this.curve.setStartX(start.getX());
+        this.curve.setStartY(start.getY());
+        this.curve.setEndX(end.getX());
+        this.curve.setEndY(end.getY());
         updateControlPoint(); // Calcola il punto di controllo
         this.curve.setStroke(Color.BLACK);
         this.curve.setStrokeWidth(2);
@@ -47,13 +63,34 @@ public class EdgeFX extends Group {
 
             double dx = event.getX() - midX;
             double dy = event.getY() - midY;
-
+            
             // Usa la distanza come nuovo offset di controllo
             this.controlOffset = Math.sqrt(dx * dx + dy * dy);
+            if (dy < 0) this.controlOffset = -this.controlOffset;
+
 
             updateControlPoint(); // Aggiorna il punto di controllo
             updateArrow();        // Aggiorna la posizione della freccia
         });
+    }
+
+    private Point2D calculateEdgeEndpoint(double x1, double y1, double x2, double y2, double radius) {
+        // Calcola la direzione dal nodo di partenza (x1, y1) a quello di arrivo (x2, y2)
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        // Calcola la lunghezza del vettore direzione
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Normalizza il vettore direzione
+        double unitX = dx / distance;
+        double unitY = dy / distance;
+
+        // Calcola il punto di intersezione con il bordo del cerchio
+        double edgeX = x2 - unitX * radius; // Sottraiamo il raggio per fermarci al bordo
+        double edgeY = y2 - unitY * radius;
+
+        return new Point2D(edgeX, edgeY);
     }
 
     private void updateControlPoint() {
