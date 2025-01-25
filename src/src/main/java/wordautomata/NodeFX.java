@@ -30,6 +30,7 @@ public class NodeFX {
     private Boolean isFinal = false;
 
     private String name;
+    private double radius;
 
     private Group group;
 
@@ -37,13 +38,14 @@ public class NodeFX {
         this.circle = circle;
         this.circle2 = circle2;
         this.text = text;
-        this.name = name;
-
+        setName(name);
+        this.radius = circle.getRadius();
+        
         this.controller = controller;
-
+        
         if (isInitial != null) this.isInitial = isInitial;
         if (isFinal != null) this.isFinal = isFinal;
-
+        
         setUpAll();
     }
     
@@ -51,7 +53,8 @@ public class NodeFX {
         this.circle = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
-        this.name = name;
+        setName(name);
+        this.radius = radius;
 
         this.controller = controller;
 
@@ -59,7 +62,6 @@ public class NodeFX {
     }
     
     private void setUpAll() {
-        setName(this.name);
         setGroup();
         setLabel();
         listenerAdd();
@@ -115,7 +117,23 @@ public class NodeFX {
         });
 
         this.group.setOnMouseDragged(event -> {
-            changeCoordinates(event.getX(), event.getY());
+            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                changeCoordinates(event.getX(), event.getY());
+            }
+        });
+        
+        this.group.setOnMouseDragExited(event -> {
+            System.out.println("DragExited");
+            controller.newEdge(this);
+        });
+        
+        this.group.setOnMouseDragReleased(event -> {
+            System.out.println("DragRelease");
+            controller.newEdge(this);
+        });
+        
+        this.group.setOnMouseDragOver(event -> {
+            System.out.println("DragOver");
         });
     }
 
@@ -371,5 +389,15 @@ public class NodeFX {
 
     public List<NodeFX> getListFX() {
         return this.nodeList;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+        this.circle.setRadius(radius);
+        this.circle2.setRadius(radius - 5);
+    }
+
+    public double getRadius() {
+        return this.radius;
     }
 }

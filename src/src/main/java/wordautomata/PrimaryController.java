@@ -63,6 +63,11 @@ public class PrimaryController {
         
         edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "provolone"));
         edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(2), "bc"));
+        edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(3), "av"));
+        edgeList.add(new EdgeFX(nodeList.get(2), nodeList.get(3), "ac"));
+        edgeList.add(new EdgeFX(nodeList.get(3), nodeList.get(0), "ac"));
+        edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac"));
+        edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac"));
         
         for (NodeFX node: nodeList) {
             graphPane.getChildren().add(node.getGroup()); // aggiunta di tutti i nodi nel foglio
@@ -133,8 +138,12 @@ public class PrimaryController {
 
     public void coordinatesChanged() {
         for (EdgeFX edge: edgeList) {
-            edge.coordinatesChanged();
+            edge.updateEdge();
         }
+    }
+
+    public void newEdge(NodeFX node) {
+        System.out.println(node);
     }
 
     @FXML
@@ -155,7 +164,7 @@ public class PrimaryController {
             count = count - angleNode;
         }
         for (EdgeFX edge: edgeList) {
-            edge.coordinatesChanged();
+            edge.updateEdge();
         }
     }
 

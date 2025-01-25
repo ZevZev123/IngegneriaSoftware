@@ -18,11 +18,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class EdgeFX {
-    private final NodeFX start;
-    private final NodeFX end;
-    private final QuadCurve curve;
-    private final Polygon arrow;
-    private final Group group;
+    private NodeFX start;
+    private NodeFX end;
+    private QuadCurve curve;
+    private Polygon arrow;
+    private Group group;
 
     private Text text;
 
@@ -35,9 +35,8 @@ public class EdgeFX {
     public EdgeFX(NodeFX start, NodeFX end, String name) {
         this.start = start;
         this.end = end;
-
-        this.name = name;
         this.text = new Text(this.name);
+        this.name = name;
 
         // Crea la curva
         curve = new QuadCurve();
@@ -45,7 +44,7 @@ public class EdgeFX {
         curve.setFill(null);
         curve.setStrokeWidth(2);
 
-        curve.setControlX(200);
+        curve.setControlX(350);
         curve.setControlY(150);
 
         // Crea la freccia
@@ -59,12 +58,8 @@ public class EdgeFX {
         addDragHandler();
         setLabel();
     }
-
-    public void setEdgeList(List<EdgeFX> edgeList) {
-        this.edgeList = edgeList;
-    }
     
-    private void updateEdge() {
+    public void updateEdge() {
         // Calcola i punti iniziali e finali ai bordi dei nodi
         double[] sourcePoint = calculateEdgePoint(
                 start.getX(), start.getY(),
@@ -139,10 +134,6 @@ public class EdgeFX {
         return group;
     }
 
-    public void coordinatesChanged() {
-        updateEdge();
-    }
-
     private void edgeNotHover() {
         this.curve.setStroke(Color.BLACK);
         this.text.setFill(Color.BLACK);
@@ -199,7 +190,7 @@ public class EdgeFX {
                     label.setText(textField.getText());
                     setName(textField.getText());
                     this.text.setText(this.name);
-                    updateCoordinates();
+                    updateEdge();
                     this.stackPane.getChildren().clear();
                     this.stackPane.getChildren().addAll(label, button);
                     StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -210,7 +201,7 @@ public class EdgeFX {
                         label.setText(textField.getText());
                         setName(textField.getText());
                         this.text.setText(this.name);
-                        updateCoordinates();
+                        updateEdge();
                         this.stackPane.getChildren().clear();
                         this.stackPane.getChildren().addAll(label, button);
                         StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -243,10 +234,6 @@ public class EdgeFX {
         return true;
     }
 
-    public void updateCoordinates() {
-        coordinatesChanged();
-    }
-
     public StackPane getStackPane() {
         return this.stackPane;
     }
@@ -257,5 +244,10 @@ public class EdgeFX {
 
     public NodeFX[] getNodes() {
         return new NodeFX[] {this.start, this.end};
+    }
+
+    
+    public void setEdgeList(List<EdgeFX> edgeList) {
+        this.edgeList = edgeList;
     }
 }
