@@ -133,7 +133,7 @@ public class PrimaryController {
 
     public void coordinatesChanged() {
         for (EdgeFX edge: edgeList) {
-            edge.updateCoordinates();
+            edge.coordinatesChanged();
         }
     }
 
@@ -155,7 +155,7 @@ public class PrimaryController {
             count = count - angleNode;
         }
         for (EdgeFX edge: edgeList) {
-            edge.updateCoordinates();
+            edge.coordinatesChanged();
         }
     }
 

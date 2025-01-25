@@ -31,6 +31,8 @@ public class NodeFX {
 
     private Group group;
 
+    private App control;
+
     public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal) {
         this.circle = circle;
         this.circle2 = circle2;
@@ -44,11 +46,13 @@ public class NodeFX {
         setUpAll();
     }
     
-    public NodeFX(double x, double y, double radius, String name) {
+    public NodeFX(double x, double y, double radius, String name, App control) {
         this.circle = new Circle(x, y, radius, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius - 5, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         this.name = name;
+
+        this.control = control;
 
         setUpAll();
     }
@@ -111,6 +115,7 @@ public class NodeFX {
 
         this.group.setOnMouseDragged(event -> {
             changeCoordinates(event.getX(), event.getY());
+            control.move();
         });
     }
 

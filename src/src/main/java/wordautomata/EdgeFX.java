@@ -9,134 +9,154 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.QuadCurve;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class EdgeFX {
-    private Line line;
-    private Text text;
-    private Rectangle backgroud;
+    private final NodeFX start;
+    private final NodeFX end;
+    private final QuadCurve curve;
+    private final Polygon arrow;
+    private final Group group;
 
-    private NodeFX start;
-    private NodeFX end;
+    private Text text;
 
     private String name;
 
     private StackPane stackPane;
+
     private List<EdgeFX> edgeList = new ArrayList<>();
-    
-    private Group group;
-    
+
     public EdgeFX(NodeFX start, NodeFX end, String name) {
-        this.line = new Line(start.getX(), start.getY(), end.getX(), end.getY());
-        this.line.setStroke(Color.BLACK);
-        this.line.setStrokeWidth(2);
-
-        this.text = new Text(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())+3, name);
-        this.text.setFill(Color.BLACK);
-        
-        this.backgroud = new Rectangle(meanValue(start.getX(), end.getX()), meanValue(start.getY(), end.getY())-8, Color.web("#f4f4f4"));
-        this.backgroud.setWidth(name.length()*7);
-        this.backgroud.setHeight(15);
-
         this.start = start;
         this.end = end;
-        this.name = name;
 
-        setGroup();
+        this.name = name;
+        this.text = new Text(this.name);
+
+        // Crea la curva
+        curve = new QuadCurve();
+        curve.setStroke(Color.BLACK);
+        curve.setFill(null);
+        curve.setStrokeWidth(2);
+
+        curve.setControlX(200);
+        curve.setControlY(150);
+
+        // Crea la freccia
+        arrow = new Polygon();
+        arrow.setFill(Color.BLACK);
+
+        // Gruppo per curva + freccia
+        group = new Group(curve, arrow);
+
+        updateEdge();
+        addDragHandler();
         setLabel();
-        setListener();
-    }
-
-    private void setListener() {
-        this.group.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
-                deleteEdge();
-            }
-        });
-
-        this.group.setOnMouseEntered(event -> {
-            this.group.setCursor(javafx.scene.Cursor.HAND);
-            edgeHover();
-        });
-
-        this.group.setOnMouseExited(event -> {
-            edgeNotHover();
-        });
-    }
-
-    private void edgeNotHover() {
-        this.line.setStroke(Color.BLACK);
-        this.text.setFill(Color.BLACK);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
-            label.getStyleClass().remove("labelHover");
-        }
-    }
-    
-    private void edgeHover() {
-        this.line.setStroke(Color.RED);
-        this.text.setFill(Color.RED);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
-            label.getStyleClass().add("labelHover");
-        }
-    }
-
-    public Boolean deleteEdge() {
-        if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
-        parent.getChildren().remove(this.group);
-        if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
-            parent.getChildren().remove(this.stackPane);
-        if (edgeList != null && edgeList.contains(this)) edgeList.remove(this);
-        return true;
-    }
-
-    public Line getLine() {
-        return this.line;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setStart(NodeFX start) {
-        this.start = start;
-    }
-
-    public void setEnd(NodeFX end) {
-        this.end = end;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void updateCoordinates() {
-        this.line.setStartX(start.getX());
-        this.line.setStartY(start.getY());
-        this.line.setEndX(end.getX());
-        this.line.setEndY(end.getY());
-        this.text.setX(meanValue(start.getX(), end.getX())-(3*this.name.length()));
-        this.text.setY(meanValue(start.getY(), end.getY())+3);
-        this.backgroud.setX(meanValue(start.getX(), end.getX())-(3.5*this.name.length()));
-        this.backgroud.setY(meanValue(start.getY(), end.getY())-8);
-        this.backgroud.setWidth(name.length()*7);
     }
 
     public void setEdgeList(List<EdgeFX> edgeList) {
         this.edgeList = edgeList;
     }
+    
+    private void updateEdge() {
+        // Calcola i punti iniziali e finali ai bordi dei nodi
+        double[] sourcePoint = calculateEdgePoint(
+                start.getX(), start.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        double[] targetPoint = calculateEdgePoint(
+                end.getX(), end.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        // Imposta i punti di partenza, controllo e fine della curva
+        curve.setStartX(sourcePoint[0]);
+        curve.setStartY(sourcePoint[1]);
+        curve.setEndX(targetPoint[0]);
+        curve.setEndY(targetPoint[1]);
+    
+        // Aggiorna la freccia
+        updateArrow(targetPoint, sourcePoint);
+    }    
 
-    private void setGroup() {
-        this.group = new Group(this.line, this.backgroud, this.text);
+    private void updateArrow(double[] target, double[] source) {
+        // Calcola la direzione basata sulla tangente della curva nel punto finale
+        double dx = target[0] - curve.getControlX();
+        double dy = target[1] - curve.getControlY();
+        double angle = Math.atan2(dy, dx);
+    
+        double arrowLength = 10; // Lunghezza della freccia
+        double arrowWidth = 5;  // Larghezza della freccia
+    
+        // Calcola i vertici della freccia
+        double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
+        double y1 = target[1] - arrowLength * Math.sin(angle - Math.PI / 6);
+    
+        double x2 = target[0] - arrowLength * Math.cos(angle + Math.PI / 6);
+        double y2 = target[1] - arrowLength * Math.sin(angle + Math.PI / 6);
+    
+        // Aggiorna i punti del poligono della freccia
+        arrow.getPoints().setAll(
+                target[0], target[1], // Punto della punta della freccia
+                x1, y1,               // Punto alla sinistra della freccia
+                x2, y2                // Punto alla destra della freccia
+        );
+    }
+
+    private void addDragHandler() {
+        curve.setOnMouseDragged((MouseEvent event) -> {
+            // Aggiorna la posizione del punto di controllo
+            curve.setControlX(event.getX());
+            curve.setControlY(event.getY());
+
+            // Aggiorna dinamicamente la curva e i punti di contatto
+            updateEdge();
+        });
+    
+        curve.setOnMouseEntered(event -> {
+            curve.setCursor(javafx.scene.Cursor.HAND);
+        });
+    }
+
+    private double[] calculateEdgePoint(double x1, double y1, double x2, double y2, double radius) {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        return new double[]{
+                x1 + radius * Math.cos(angle),
+                y1 + radius * Math.sin(angle)
+        };
     }
 
     public Group getGroup() {
-        return this.group;
+        return group;
+    }
+
+    public void coordinatesChanged() {
+        updateEdge();
+    }
+
+    private void edgeNotHover() {
+        this.curve.setStroke(Color.BLACK);
+        this.text.setFill(Color.BLACK);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().remove("labelHover");
+        }
+    }
+
+    private void edgeHover() {
+        this.curve.setStroke(Color.RED);
+        this.text.setFill(Color.RED);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("labelHover");
+        }
     }
 
     private void setLabel() {
@@ -214,16 +234,25 @@ public class EdgeFX {
         });
     }
 
+    public Boolean deleteEdge() {
+        if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
+        parent.getChildren().remove(this.group);
+        if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
+            parent.getChildren().remove(this.stackPane);
+        if (edgeList != null && edgeList.contains(this)) edgeList.remove(this);
+        return true;
+    }
+
+    public void updateCoordinates() {
+        coordinatesChanged();
+    }
+
     public StackPane getStackPane() {
         return this.stackPane;
     }
 
-    private double meanValue(double x, double y) {
-        double result = 0;
-        if (x > y) result = y + (x - y) / 2;
-        else result = x + (y - x) / 2;
-
-        return result;
+    private void setName(String name) {
+        this.name = name;
     }
 
     public NodeFX[] getNodes() {
