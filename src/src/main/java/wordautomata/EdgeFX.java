@@ -119,6 +119,12 @@ public class EdgeFX {
     
         curve.setOnMouseEntered(event -> {
             curve.setCursor(javafx.scene.Cursor.HAND);
+            edgeHover();
+        });
+    
+        curve.setOnMouseExited(event -> {
+            curve.setCursor(javafx.scene.Cursor.HAND);
+            edgeNotHover();
         });
     }
 
@@ -136,6 +142,8 @@ public class EdgeFX {
 
     private void edgeNotHover() {
         this.curve.setStroke(Color.BLACK);
+        this.arrow.setStroke(Color.BLACK);
+        this.arrow.setFill(Color.BLACK);
         this.text.setFill(Color.BLACK);
         if (this.stackPane.getChildren().get(0) instanceof Label label) {
             label.getStyleClass().remove("labelHover");
@@ -144,6 +152,8 @@ public class EdgeFX {
 
     private void edgeHover() {
         this.curve.setStroke(Color.RED);
+        this.arrow.setStroke(Color.RED);
+        this.arrow.setFill(Color.RED);
         this.text.setFill(Color.RED);
         if (this.stackPane.getChildren().get(0) instanceof Label label) {
             label.getStyleClass().add("labelHover");
@@ -214,10 +224,12 @@ public class EdgeFX {
 
         button.setOnMouseEntered(event -> {
             button.setVisible(true);
+            edgeHover();
         });
 
         button.setOnMouseExited(event -> {
             button.setVisible(false);
+            edgeNotHover();
         });
 
         button.setOnAction(event -> {
