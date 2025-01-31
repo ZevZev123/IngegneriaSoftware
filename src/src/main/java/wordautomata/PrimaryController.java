@@ -6,7 +6,9 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -31,15 +33,21 @@ public class PrimaryController {
     private double paneWidth = 0;
     private double paneHeight = 0;
 
+    private double contextX = 0, contextY = 0;
+
     @FXML
     private void initialize() {
         updateToolTip();
 
         graphPane = new Pane(); // creazione del foglio
-
+        
+        // creazione menu contestuale
+        ContextMenu contextMenu = new ContextMenu();
+        
         // creazione nodi con doppio click del mouse sul foglio
         graphPane.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2 && event.getTarget() == graphPane) {
+            contextMenu.hide();
+            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 // creazione nodo
                 NodeFX node = new NodeFX(event.getX(), event.getY(), 15, "0", this);
                 node.setListFX(nodeList);
@@ -53,6 +61,38 @@ public class PrimaryController {
             }
         });
 
+        // creazione pulsanti menu contestuale
+        MenuItem newNode = new MenuItem("Nuovo nodo");
+        newNode.setOnAction(event -> {
+            // creazione nodo
+            NodeFX node = new NodeFX(contextX, contextY, 15, "0", this);
+            node.setListFX(nodeList);
+            nodeList.add(node);
+            // mostra graficamente il nodo nel Pane
+            graphPane.getChildren().add(node.getGroup());
+            paneWidth = GraphViewBox.getWidth();
+            paneHeight = GraphViewBox.getHeight();
+
+            nodeMenuList.getChildren().add(node.getStackPane());
+        });
+        MenuItem newEdge = new MenuItem("Nuovo edge");
+        newEdge.setOnAction(event -> {
+            System.out.println("Nuovo edge");
+        });
+
+        contextMenu.getItems().addAll(newNode, newEdge);
+
+        graphPane.setOnContextMenuRequested(event -> {
+            if (event.getTarget() == graphPane) {
+                contextX = event.getX();
+                contextY = event.getY();
+                contextMenu.show(graphPane, event.getScreenX(), event.getScreenY());
+            }
+        });
+
+        ContextMenu contextMenuNodi;
+
+        
         nodeList.add(new NodeFX(0, 0, 15, "F", this));
         nodeList.add(new NodeFX(0, 0, 15, "A", this));
         nodeList.add(new NodeFX(0, 0, 15, "B", this));
@@ -68,11 +108,21 @@ public class PrimaryController {
         edgeList.add(new EdgeFX(nodeList.get(3), nodeList.get(0), "ac"));
         edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac"));
         edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac"));
-        
+        edgeList.add(new EdgeFX(nodeList.get(6), nodeList.get(2), "principessa"));
+
         for (NodeFX node: nodeList) {
             graphPane.getChildren().add(node.getGroup()); // aggiunta di tutti i nodi nel foglio
             nodeMenuList.getChildren().add(node.getStackPane());
             node.setListFX(nodeList);
+
+            contextMenuNodi = new ContextMenu();
+            MenuItem delete = new MenuItem("Cancella Nodo");
+            delete.setOnAction(event -> {node.deleteNode();});    
+            contextMenu.getItems().add(delete);
+
+            node.getGroup().setOnContextMenuRequested(event -> {
+                contextMenuNodi.show(graphPane, event.getScreenX(), event.getScreenY());
+            });
         }
         
         for (EdgeFX edge: edgeList) {
