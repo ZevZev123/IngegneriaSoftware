@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -24,6 +25,8 @@ public class EdgeFX {
     private Polygon arrow;
     private Group group;
 
+    private double controlX, controlY;
+
     private Text text;
 
     private String name;
@@ -32,11 +35,14 @@ public class EdgeFX {
 
     private List<EdgeFX> edgeList = new ArrayList<>();
 
-    public EdgeFX(NodeFX start, NodeFX end, String name) {
+    public EdgeFX(NodeFX start, NodeFX end, String name, double controlX, double controlY) {
         this.start = start;
         this.end = end;
         this.text = new Text(this.name);
         this.name = name;
+
+        this.controlX = controlX;
+        this.controlY = controlY;
 
         // Crea la curva
         curve = new QuadCurve();
@@ -44,8 +50,8 @@ public class EdgeFX {
         curve.setFill(null);
         curve.setStrokeWidth(2);
 
-        curve.setControlX(350);
-        curve.setControlY(150);
+        curve.setControlX(this.controlX);
+        curve.setControlY(this.controlY);
 
         // Crea la freccia
         arrow = new Polygon();
@@ -57,8 +63,14 @@ public class EdgeFX {
         updateEdge();
         addDragHandler();
         setLabel();
+        updateToolTip();
     }
     
+    private void updateToolTip() {
+        Tooltip tooltip = new Tooltip(this.name);
+        Tooltip.install(this.group, tooltip);
+    }
+
     public void updateEdge() {
         // Calcola i punti iniziali e finali ai bordi dei nodi
         double[] sourcePoint = calculateEdgePoint(
@@ -110,8 +122,12 @@ public class EdgeFX {
     private void addDragHandler() {
         curve.setOnMouseDragged((MouseEvent event) -> {
             // Aggiorna la posizione del punto di controllo
-            curve.setControlX(event.getX());
-            curve.setControlY(event.getY());
+            this.controlX = event.getX();
+            this.controlY = event.getY();
+            curve.setControlX(this.controlX);
+            curve.setControlY(this.controlY);
+
+            System.out.println("X: "+this.controlX+"\tY: "+this.controlY);
 
             // Aggiorna dinamicamente la curva e i punti di contatto
             updateEdge();
@@ -261,5 +277,22 @@ public class EdgeFX {
     
     public void setEdgeList(List<EdgeFX> edgeList) {
         this.edgeList = edgeList;
+    }
+
+    public void setControl(double controlX, double controlY) {
+        this.controlX = controlX;
+        this.controlY = controlY;
+        this.curve.setControlX(this.controlX);
+        this.curve.setControlY(this.controlY);
+
+        updateEdge();
+    }
+
+    public double getControlX() {
+        return this.controlX;
+    }
+
+    public double getControlY() {
+        return this.controlY;
     }
 }

@@ -20,7 +20,6 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/wordautomata/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
-
     }
 
     static void setRoot(String fxml) throws IOException {
