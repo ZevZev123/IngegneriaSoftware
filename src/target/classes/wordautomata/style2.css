@@ -1,0 +1,10 @@
+.object {
+    -fx-min-height: 30px;
+    -fx-min-width: 140px;
+    -fx-max-height: 30px;
+    -fx-max-width: 140px;
+}
+
+.error {
+    -fx-text-color: red;
+}

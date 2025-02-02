@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -21,10 +22,11 @@ public class NodeFX {
     private Circle circle2;
     private Text text;
 
-    private PrimaryController controller;
+    private MainPageController controller;
 
     private StackPane stackPane = new StackPane();
     private List<NodeFX> nodeList = new ArrayList<>();
+    private ContextMenu contextMenuNodi;
 
     private Boolean isInitial = false;
     private Boolean isFinal = false;
@@ -34,7 +36,7 @@ public class NodeFX {
 
     private Group group;
 
-    public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal, PrimaryController controller) {
+    public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal, MainPageController controller) {
         this.circle = circle;
         this.circle2 = circle2;
         this.text = text;
@@ -49,10 +51,12 @@ public class NodeFX {
         setUpAll();
     }
     
-    public NodeFX(double x, double y, double radius, String name, PrimaryController controller) {
+    public NodeFX(double x, double y, double radius, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
+        this.isInitial = isInitial;
+        this.isFinal = isFinal;
         setName(name);
         this.radius = radius;
 
@@ -74,19 +78,15 @@ public class NodeFX {
     private void listenerAdd() {
         this.group.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 ){
-                Boolean isThereInitial = false;
-                for (NodeFX node: this.nodeList) {
-                    if (node.isNodeInitial()) isThereInitial = true;
-                }
-                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && (!isThereInitial  || this.isInitial)) {
-                    updateNodeColor();
+                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && (!controller.isThereInitial()  || this.isInitial)) {
+                    resetNodeColor();
                     if (isFinal) isFinal = false;
                     isInitial = !isInitial;
                     if (isInitial) initialNodeHover();
                     else normalNodeHover();
                 }
                 else if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
-                    updateNodeColor();
+                    resetNodeColor();
                     if (isInitial) isInitial = false;
                     isFinal = !isFinal;
                     if (isFinal) finalNodeHover();
@@ -112,7 +112,7 @@ public class NodeFX {
             } else if (isFinal) {
                 finalNode();
             } else {
-                updateNodeColor();
+                resetNodeColor();
             }
         });
 
@@ -164,7 +164,7 @@ public class NodeFX {
             button.setVisible(false);
             if (isInitial) initialNode();
             else if (isFinal) finalNode();
-            else updateNodeColor();
+            else resetNodeColor();
         });
         
         label.setOnMouseClicked(event -> {
@@ -210,7 +210,7 @@ public class NodeFX {
             button.setVisible(false);
             if (isInitial) initialNode();
             else if (isFinal) finalNode();
-            else updateNodeColor();
+            else resetNodeColor();
         });
 
         button.setOnAction(event -> {
@@ -227,7 +227,7 @@ public class NodeFX {
         }
     }
 
-    private void updateNodeColor() {
+    private void resetNodeColor() {
         resetLabelStyleClass();
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
@@ -235,6 +235,12 @@ public class NodeFX {
         this.circle2.setStroke(Color.TRANSPARENT);
         this.circle.setStrokeWidth(3);
         this.circle2.setStrokeWidth(3);
+    }
+
+    private void updateNodeColor() {
+        resetNodeColor();
+        if (isInitial) initialNode();
+        if (isFinal) finalNode();
     }
     
     private void normalNodeHover(){
@@ -291,6 +297,9 @@ public class NodeFX {
 
     public void setName(String name) {
         this.name = name;
+        if (contextMenuNodi != null) {
+            contextMenuNodi.getItems().get(0).setText("Cancella Nodo "+this.name);
+        }
         text.setX(circle.getCenterX()-6);
         if (name.length() > 2) {
             text.setText(name.substring(0,2)+"...");
@@ -301,6 +310,7 @@ public class NodeFX {
             text.setText(name);
             text.setX(circle.getCenterX()-4);
         }
+        updateToolTip();
     }
 
     public void changeCoordinates(double x, double y) {
@@ -332,10 +342,8 @@ public class NodeFX {
         this.circle2.setRadius(radius - 5);
     }
     
-    public void setCircle(Circle cirle) { this.circle = circle; }
-    public void setCircle2(Circle circle2) { this.circle2 = circle2; }
-    public void setText(Text text) { this.text = text; }
     public void setListFX(List<NodeFX> nodeList) { this.nodeList = nodeList; }
+    public void setContextMenuNodiList(ContextMenu contextMenuNodi) { this.contextMenuNodi = contextMenuNodi; }
 
     public Circle getCircle() { return this.circle; }
     public Circle getCircle2() { return this.circle2; }

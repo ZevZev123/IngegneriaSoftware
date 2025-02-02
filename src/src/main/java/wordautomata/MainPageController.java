@@ -5,6 +5,9 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -12,12 +15,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
-public class PrimaryController {
+public class MainPageController {
     @FXML private VBox nodeMenuList;
     @FXML private VBox edgeMenuList;
     @FXML private VBox GraphViewBox;
@@ -36,6 +40,8 @@ public class PrimaryController {
     private ContextMenu contextMenu;
     private List<ContextMenu> contextMenuNodiList = new ArrayList<>();
     private double contextX = 0, contextY = 0;
+
+    private Stage secondStage;
 
     @FXML
     private void initialize() {
@@ -78,13 +84,13 @@ public class PrimaryController {
             }
         });
         
-        createNode(0, 0, "F");
-        createNode(0, 0, "A");
-        createNode(0, 0, "B");
-        createNode(0, 0, "C");
-        createNode(0, 0, "D");
-        createNode(0, 0, "E");
-        createNode(0, 0, "T");
+        createNode(0, 0, "F", true, false);
+        createNode(0, 0, "A", false, false);
+        createNode(0, 0, "B", false, true);
+        createNode(0, 0, "C", false, false);
+        createNode(0, 0, "D", false, false);
+        createNode(0, 0, "E", false, false);
+        createNode(0, 0, "T", false, false);
 
         edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "provolone", 425, 235));
         edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(2), "bc", 329, 150));
@@ -164,46 +170,87 @@ public class PrimaryController {
         }
     }
 
-    private void createNode(double positionX, double positionY, String name) {
-        NodeFX node = new NodeFX(positionX, positionY, 15, name, this);
-        createNode(node);
+    private void updateToolTip() { // mostra l'history completa passando con il cursore sopra
+        Tooltip tooltip = new Tooltip(history.getText());
+        history.setTooltip(tooltip);
     }
 
     private void createNode(double positionX, double positionY) {
-        // Seconda pagina per chiedere il nome
-        // ...
-    
-        NodeFX node = new NodeFX(positionX, positionY, 15, "0", this);
-        createNode(node);
+        if (secondStage == null || !secondStage.isShowing()) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("secondary.fxml"));
+                Parent root = loader.load();
+                
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
+
+                NewNodeController secondaryController = loader.getController();
+                secondaryController.setPrimaryController(this);
+                secondaryController.setNodeList(nodeList);
+                secondaryController.setPositionX(positionX);
+                secondaryController.setPositionY(positionY);
+
+                secondStage = new Stage();
+                secondStage.setTitle("Creazione nuovo nodo");
+                secondStage.setScene(scene);
+
+                secondStage.setMinHeight(140);
+                secondStage.setMinWidth(320);
+                secondStage.setMaxHeight(140);
+                secondStage.setMaxWidth(320);
+
+                secondStage.setOnCloseRequest(event -> {secondStage = null;});
+                secondStage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            secondStage.toFront(); // Porta in primo piano la finestra se è già aperta
+        }
     }
 
     private void createNode(NodeFX node) {
         nodeList.add(node);
         node.setListFX(nodeList);
-
+        
         graphPane.getChildren().add(node.getGroup());
         paneWidth = GraphViewBox.getWidth();
         paneHeight = GraphViewBox.getHeight();
-
+        
         nodeMenuList.getChildren().add(node.getStackPane());
-
+        
         ContextMenu contextMenuNodi = new ContextMenu();
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
         MenuItem newEdge = new MenuItem("Crea nuovo edge ");
         newEdge.setOnAction(event -> {System.out.println("Nuovo edge da "+node.getName());});
         contextMenuNodi.getItems().addAll(delete, newEdge);
-
+        
         node.getGroup().setOnContextMenuRequested(event -> {
             contextMenuNodi.show(graphPane, event.getScreenX(), event.getScreenY());
         });
-
+        
+        node.setContextMenuNodiList(contextMenuNodi);
         contextMenuNodiList.add(contextMenuNodi);
     }
 
-    private void updateToolTip() { // mostra l'history completa passando con il cursore sopra
-        Tooltip tooltip = new Tooltip(history.getText());
-        history.setTooltip(tooltip);
+    public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
+        if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
+            Boolean nameAlreadyExist = false;
+            for (NodeFX node: nodeList) {
+                if (node.getName().equals(name)) {
+                    nameAlreadyExist = true;
+                    break;
+                }
+            }
+
+            if (!nameAlreadyExist) {
+                NodeFX node = new NodeFX(positionX, positionY, 15, name, this, isInitial, isFinal);
+                createNode(node);
+            } else { System.out.println("Nome esistente"); }
+        } else {
+            System.out.println("Errore");
+        }
     }
 
     public void delete(NodeFX node) {
@@ -219,6 +266,14 @@ public class PrimaryController {
             }
         }
         coordinatesChanged();
+    }
+
+    public Boolean isThereInitial() {
+        for (NodeFX node: this.nodeList)
+            if (node.isNodeInitial())
+                return true;
+            
+        return false;
     }
 
     public void coordinatesChanged() {
