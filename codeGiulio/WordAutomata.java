@@ -61,7 +61,7 @@ public class WordAutomata {
                 graphMatrix[i][j] = new ArrayList<>();
                 HashMap<String, String> nodeEdges = temp.getEdges();
                 for (String s : nodeEdges.keySet())
-                    if (nodeEdges.get(s) == nodeList.get(j))
+                    if (nodeEdges.get(s) == nodeList.get(j).getNodeName())
                         graphMatrix[i][j].add(s);
             }
         }

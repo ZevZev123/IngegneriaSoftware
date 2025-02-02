@@ -16,34 +16,25 @@ public class Translator {
         translate();
     }
 
-    public void translate() {
+    public void translate() throws InvalidGraphException {
         System.out.println("Translating...");
         ArrayList<Node> temp = new ArrayList<>();
         for(NodeFX nFX : listNodeFX) {
             Node n = new Node(nFX.getName(), nFX.isNodeInitial(), nFX.isNodeFinal());
+            for(EdgeFX eFX : listEdgeFX)
+                if(eFX.getStart().getName().equals(n.getNodeName()))
+                    n.addEdge(eFX.getValue(), eFX.getEnd().getName());
+
             temp.add(n);
-        }
-        for(Node n : temp) {
-            for(EdgeFX eFX : listEdgeFX) {
-                if(eFX.getStart().getName().equals(n.getNodeName())) {
-                    n.addEdge(eFX.getValue(), new Node(eFX.getEnd().getName()));
-                }
-            }
         }
         if(controller.isValid(temp))
             listNode = temp;
         else
-            System.out.println("Invalid graph");
+            throw new InvalidGraphException("Invalid Graph");
     }
 
-    public void setNodesFX(ArrayList<NodeFX> listNodeFX) {
-        this.listNodeFX = listNodeFX;
-    }
-    public void setEdgesFX(ArrayList<EdgeFX> listEdgeFX) {
-        this.listEdgeFX = listEdgeFX;
-    }
+    public void setNodesFX(ArrayList<NodeFX> listNodeFX) { this.listNodeFX = listNodeFX; }
+    public void setEdgesFX(ArrayList<EdgeFX> listEdgeFX) { this.listEdgeFX = listEdgeFX; }
 
-    public ArrayList<Node> getNodes() {
-        return listNode;
-    }
+    public ArrayList<Node> getNodes() { return listNode; }
 }
