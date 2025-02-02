@@ -11,6 +11,13 @@ public class Controller {
         // pdfTest.pdfTest();
     }
 
+    public void writeToFile(Translator translator) {
+        
+    }
+    public void readFromFile(int index) {
+
+    }
+
     public boolean isValid(ArrayList<NodeFX> nodeList) {
         boolean result = true;
 
@@ -49,5 +56,13 @@ public class Controller {
         }
 
         return result;
+    }
+
+    public ArrayList<String> getExistingFiles() {
+        final File folder = new File("graphs");
+        ArrayList<String> files = new ArrayList<>();
+        for (final File fileEntry : folder.listFiles())
+            files.add(fileEntry.getName());
+        return files;
     }
 }
