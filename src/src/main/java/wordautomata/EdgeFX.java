@@ -48,7 +48,7 @@ public class EdgeFX {
         curve = new QuadCurve();
         curve.setStroke(Color.BLACK);
         curve.setFill(null);
-        curve.setStrokeWidth(2);
+        curve.setStrokeWidth(3);
 
         curve.setControlX(this.controlX);
         curve.setControlY(this.controlY);
@@ -66,116 +66,6 @@ public class EdgeFX {
         updateToolTip();
     }
     
-    private void updateToolTip() {
-        Tooltip tooltip = new Tooltip(this.name);
-        Tooltip.install(this.group, tooltip);
-    }
-
-    public void updateEdge() {
-        // Calcola i punti iniziali e finali ai bordi dei nodi
-        double[] sourcePoint = calculateEdgePoint(
-                start.getX(), start.getY(),
-                curve.getControlX(), curve.getControlY(),
-                20
-        );
-    
-        double[] targetPoint = calculateEdgePoint(
-                end.getX(), end.getY(),
-                curve.getControlX(), curve.getControlY(),
-                20
-        );
-    
-        // Imposta i punti di partenza, controllo e fine della curva
-        curve.setStartX(sourcePoint[0]);
-        curve.setStartY(sourcePoint[1]);
-        curve.setEndX(targetPoint[0]);
-        curve.setEndY(targetPoint[1]);
-    
-        // Aggiorna la freccia
-        updateArrow(targetPoint, sourcePoint);
-    }    
-
-    private void updateArrow(double[] target, double[] source) {
-        // Calcola la direzione basata sulla tangente della curva nel punto finale
-        double dx = target[0] - curve.getControlX();
-        double dy = target[1] - curve.getControlY();
-        double angle = Math.atan2(dy, dx);
-    
-        double arrowLength = 10; // Lunghezza della freccia
-        double arrowWidth = 5;  // Larghezza della freccia
-    
-        // Calcola i vertici della freccia
-        double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
-        double y1 = target[1] - arrowLength * Math.sin(angle - Math.PI / 6);
-    
-        double x2 = target[0] - arrowLength * Math.cos(angle + Math.PI / 6);
-        double y2 = target[1] - arrowLength * Math.sin(angle + Math.PI / 6);
-    
-        // Aggiorna i punti del poligono della freccia
-        arrow.getPoints().setAll(
-                target[0], target[1], // Punto della punta della freccia
-                x1, y1,               // Punto alla sinistra della freccia
-                x2, y2                // Punto alla destra della freccia
-        );
-    }
-
-    private void addDragHandler() {
-        curve.setOnMouseDragged((MouseEvent event) -> {
-            // Aggiorna la posizione del punto di controllo
-            this.controlX = event.getX();
-            this.controlY = event.getY();
-            curve.setControlX(this.controlX);
-            curve.setControlY(this.controlY);
-
-            System.out.println("X: "+this.controlX+"\tY: "+this.controlY);
-
-            // Aggiorna dinamicamente la curva e i punti di contatto
-            updateEdge();
-        });
-    
-        curve.setOnMouseEntered(event -> {
-            curve.setCursor(javafx.scene.Cursor.HAND);
-            edgeHover();
-        });
-    
-        curve.setOnMouseExited(event -> {
-            curve.setCursor(javafx.scene.Cursor.HAND);
-            edgeNotHover();
-        });
-    }
-
-    private double[] calculateEdgePoint(double x1, double y1, double x2, double y2, double radius) {
-        double angle = Math.atan2(y2 - y1, x2 - x1);
-        return new double[]{
-                x1 + radius * Math.cos(angle),
-                y1 + radius * Math.sin(angle)
-        };
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    private void edgeNotHover() {
-        this.curve.setStroke(Color.BLACK);
-        this.arrow.setStroke(Color.BLACK);
-        this.arrow.setFill(Color.BLACK);
-        this.text.setFill(Color.BLACK);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
-            label.getStyleClass().remove("labelHover");
-        }
-    }
-
-    private void edgeHover() {
-        this.curve.setStroke(Color.RED);
-        this.arrow.setStroke(Color.RED);
-        this.arrow.setFill(Color.RED);
-        this.text.setFill(Color.RED);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
-            label.getStyleClass().add("labelHover");
-        }
-    }
-
     private void setLabel() {
         Label label = new Label();
         label.setText(this.name);
@@ -253,6 +143,112 @@ public class EdgeFX {
         });
     }
 
+    private void updateArrow(double[] target, double[] source) {
+        // Calcola la direzione basata sulla tangente della curva nel punto finale
+        double dx = target[0] - curve.getControlX();
+        double dy = target[1] - curve.getControlY();
+        double angle = Math.atan2(dy, dx);
+    
+        double arrowLength = 10; // Lunghezza della freccia
+        double arrowWidth = 5;  // Larghezza della freccia
+    
+        // Calcola i vertici della freccia
+        double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
+        double y1 = target[1] - arrowLength * Math.sin(angle - Math.PI / 6);
+    
+        double x2 = target[0] - arrowLength * Math.cos(angle + Math.PI / 6);
+        double y2 = target[1] - arrowLength * Math.sin(angle + Math.PI / 6);
+    
+        // Aggiorna i punti del poligono della freccia
+        arrow.getPoints().setAll(
+                target[0], target[1], // Punto della punta della freccia
+                x1, y1,               // Punto alla sinistra della freccia
+                x2, y2                // Punto alla destra della freccia
+        );
+    }
+
+    private void addDragHandler() {
+        curve.setOnMouseDragged((MouseEvent event) -> {
+            // Aggiorna la posizione del punto di controllo
+            this.controlX = event.getX();
+            this.controlY = event.getY();
+            curve.setControlX(this.controlX);
+            curve.setControlY(this.controlY);
+
+            // Aggiorna dinamicamente la curva e i punti di contatto
+            updateEdge();
+        });
+    
+        curve.setOnMouseEntered(event -> {
+            curve.setCursor(javafx.scene.Cursor.HAND);
+            edgeHover();
+        });
+    
+        curve.setOnMouseExited(event -> {
+            curve.setCursor(javafx.scene.Cursor.HAND);
+            edgeNotHover();
+        });
+    }
+    
+    private void edgeNotHover() {
+        this.curve.setStroke(Color.BLACK);
+        this.arrow.setStroke(Color.BLACK);
+        this.arrow.setFill(Color.BLACK);
+        this.text.setFill(Color.BLACK);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().remove("labelHover");
+        }
+    }
+
+    private void edgeHover() {
+        this.curve.setStroke(Color.RED);
+        this.arrow.setStroke(Color.RED);
+        this.arrow.setFill(Color.RED);
+        this.text.setFill(Color.RED);
+        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+            label.getStyleClass().add("labelHover");
+        }
+    }
+
+    private double[] calculateEdgePoint(double x1, double y1, double x2, double y2, double radius) {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        return new double[]{
+                x1 + radius * Math.cos(angle),
+                y1 + radius * Math.sin(angle)
+        };
+    }
+
+    private void updateToolTip() {
+        Tooltip tooltip = new Tooltip(this.name);
+        Tooltip.install(this.group, tooltip);
+    }
+
+    private void setName(String name) { this.name = name; }
+
+    public void updateEdge() {
+        // Calcola i punti iniziali e finali ai bordi dei nodi
+        double[] sourcePoint = calculateEdgePoint(
+                start.getX(), start.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        double[] targetPoint = calculateEdgePoint(
+                end.getX(), end.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        // Imposta i punti di partenza, controllo e fine della curva
+        curve.setStartX(sourcePoint[0]);
+        curve.setStartY(sourcePoint[1]);
+        curve.setEndX(targetPoint[0]);
+        curve.setEndY(targetPoint[1]);
+    
+        // Aggiorna la freccia
+        updateArrow(targetPoint, sourcePoint);
+    }
+
     public Boolean deleteEdge() {
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
         parent.getChildren().remove(this.group);
@@ -260,23 +256,6 @@ public class EdgeFX {
             parent.getChildren().remove(this.stackPane);
         if (edgeList != null && edgeList.contains(this)) edgeList.remove(this);
         return true;
-    }
-
-    public StackPane getStackPane() {
-        return this.stackPane;
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    public NodeFX[] getNodes() {
-        return new NodeFX[] {this.start, this.end};
-    }
-
-    
-    public void setEdgeList(List<EdgeFX> edgeList) {
-        this.edgeList = edgeList;
     }
 
     public void setControl(double controlX, double controlY) {
@@ -287,12 +266,12 @@ public class EdgeFX {
 
         updateEdge();
     }
-
-    public double getControlX() {
-        return this.controlX;
-    }
-
-    public double getControlY() {
-        return this.controlY;
-    }
+    public void setEdgeList(List<EdgeFX> edgeList) { this.edgeList = edgeList; }
+    
+    public StackPane getStackPane() { return this.stackPane; }
+    public NodeFX[] getNodes() { return new NodeFX[] {this.start, this.end}; }
+    public Group getGroup() { return group; }
+    public double getControlX() { return this.controlX; }
+    public double getControlY() { return this.controlY; }
+    public String getValue() { return this.name; }
 }

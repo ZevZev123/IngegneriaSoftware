@@ -53,14 +53,14 @@ public class PrimaryController {
                 contextMenuNodiList.get(i).hide();
             }
             if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && event.getClickCount() == 2 && event.getTarget() == graphPane) {
-                createNode(event.getX(), event.getY(), "0");
+                createNode(event.getX(), event.getY());
             }
         });
 
         // creazione pulsanti menu contestuale
         MenuItem newNode = new MenuItem("Nuovo nodo");
         newNode.setOnAction(event -> {
-            createNode(contextX, contextY, "0");
+            createNode(contextX, contextY);
         });
 
         MenuItem newEdge = new MenuItem("Nuovo edge");
@@ -190,13 +190,15 @@ public class PrimaryController {
         ContextMenu contextMenuNodi = new ContextMenu();
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
-        contextMenuNodi.getItems().add(delete);
+        MenuItem newEdge = new MenuItem("Crea nuovo edge ");
+        newEdge.setOnAction(event -> {System.out.println("Nuovo edge da "+node.getName());});
+        contextMenuNodi.getItems().addAll(delete, newEdge);
 
         node.getGroup().setOnContextMenuRequested(event -> {
             contextMenuNodi.show(graphPane, event.getScreenX(), event.getScreenY());
         });
 
-        contextMenuNodiList.add(new ContextMenu());
+        contextMenuNodiList.add(contextMenuNodi);
     }
 
     private void updateToolTip() { // mostra l'history completa passando con il cursore sopra
