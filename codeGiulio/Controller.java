@@ -1,21 +1,40 @@
 package codeGiulio;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Controller {
-    public Controller() {}
+    Translator translator;
+
+    public Controller(Translator translator) {
+        this.translator = translator;
+    }
 
     public static void main(String[] args) {
         // Test pdfTest = new Test();
         // pdfTest.pdfTest();
     }
 
-    public void writeToFile(Translator translator) {
-        
+    public void writeToFile(String fileName) throws IOException{
+        FileWriter file = new FileWriter("graphs/"+fileName+".graph");
+        file.write(translator.toFileString());
+        file.close();
     }
-    public void readFromFile(int index) {
+    public void readFromFile(String fileName) throws IOException {
+        FileReader file = new FileReader("graphs/"+fileName+".graph");;
+        translator.translate(file);
+        file.close();
+    }
 
+    public ArrayList<String> getExistingFiles() {
+        final File folder = new File("graphs");
+        ArrayList<String> files = new ArrayList<>();
+        for (final File fileEntry : folder.listFiles())
+            files.add(fileEntry.getName());
+        return files;
     }
 
     public boolean isValid(ArrayList<NodeFX> nodeList) {
@@ -56,13 +75,5 @@ public class Controller {
         }
 
         return result;
-    }
-
-    public ArrayList<String> getExistingFiles() {
-        final File folder = new File("graphs");
-        ArrayList<String> files = new ArrayList<>();
-        for (final File fileEntry : folder.listFiles())
-            files.add(fileEntry.getName());
-        return files;
     }
 }
