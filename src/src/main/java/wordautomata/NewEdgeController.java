@@ -78,4 +78,8 @@ public class NewEdgeController {
             initialize();
         }
     }
+
+    public void setStartNode(NodeFX node) { 
+        nodeStart.setValue(node.getName()); 
+    }
 }

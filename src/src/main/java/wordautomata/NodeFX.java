@@ -11,7 +11,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -33,24 +32,34 @@ public class NodeFX {
     private Boolean isFinal = false;
 
     private String name;
-    private double radius;
 
     private Group group;
     
-    public NodeFX(double x, double y, double radius, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
-        this.circle = new Circle(x, y, radius + 5, Color.TRANSPARENT);
-        this.circle2 = new Circle(x, y, radius, Color.TRANSPARENT);
+    public NodeFX(double x, double y, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
+        this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
+        this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         
         this.isInitial = isInitial;
         this.isFinal = isFinal;
-        this.radius = radius;
         this.controller = controller;
         this.name = name;
         
         setUpAll();
     }
-    
+
+    public NodeFX(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
+        this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
+        this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
+        this.text = new Text(x-4, y+4, "");
+        
+        this.isInitial = isInitial;
+        this.isFinal = isFinal;
+        this.name = name;
+        
+        setUpAll();
+    }
+
     private void setUpAll() {
         setName(this.name);
         setGroup();
@@ -100,20 +109,6 @@ public class NodeFX {
             if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
                 changeCoordinates(event.getX(), event.getY());
             }
-        });
-        
-        this.group.setOnMouseDragExited(event -> {
-            System.out.println("DragExited");
-            controller.newEdge(this);
-        });
-        
-        this.group.setOnMouseDragReleased(event -> {
-            System.out.println("DragRelease");
-            controller.newEdge(this);
-        });
-        
-        this.group.setOnMouseDragOver(event -> {
-            System.out.println("DragOver");
         });
     }
 
@@ -298,7 +293,15 @@ public class NodeFX {
     }
 
     public void setInitial() {
-        if (!controller.isThereInitial()  || this.isInitial) {
+        if (this.controller != null) {
+            if (!this.controller.isThereInitial()  || this.isInitial) {
+                resetNodeColor();
+                if (this.isFinal) this.isFinal = false;
+                this.isInitial = !this.isInitial;
+                if (this.isInitial) initialNodeHover();
+                else normalNodeHover();
+            }
+        } else {
             resetNodeColor();
             if (this.isFinal) this.isFinal = false;
             this.isInitial = !this.isInitial;
@@ -323,11 +326,11 @@ public class NodeFX {
         if (name.length() > 1) this.text.setX(x-6);
         else this.text.setX(x-4);
         this.text.setY(y+4);
-        controller.coordinatesChanged();
+        if (this.controller != null) { this.controller.coordinatesChanged(); }
     }
 
     public Boolean deleteNode() {
-        controller.delete(this);
+        if (this.controller != null) { this.controller.delete(this); }
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
@@ -336,12 +339,6 @@ public class NodeFX {
             nodeList.remove(this);
         }
         return true;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-        this.circle.setRadius(radius);
-        this.circle2.setRadius(radius - 5);
     }
     
     public void setListFX(List<NodeFX> nodeList) { this.nodeList = nodeList; }
@@ -356,7 +353,6 @@ public class NodeFX {
     public double getX() { return this.circle.getCenterX(); }
     public double getY() { return this.circle.getCenterY(); }
     public List<NodeFX> getListFX() { return this.nodeList; }
-    public double getRadius() { return this.radius; }
     public StackPane getStackPane() { return this.stackPane; }
 
     public Boolean isNodeInitial() { return this.isInitial; }

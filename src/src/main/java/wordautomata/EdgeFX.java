@@ -65,6 +65,10 @@ public class EdgeFX {
         setLabel();
         updateToolTip();
     }
+
+    public EdgeFX(NodeFX start, NodeFX end, String name) {
+        this(start, end, name, 0, 0);
+    }
     
     private void setLabel() {
         Label label = new Label();
