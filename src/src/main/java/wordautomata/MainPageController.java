@@ -257,7 +257,7 @@ public class MainPageController {
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
         MenuItem rename = new MenuItem("Rinomina Nodo");
-        rename.setOnAction(event -> { /*renameNode(node);*/ });
+        rename.setOnAction(event -> { node.textFieldRename(); });
         MenuItem newEdge = new MenuItem("Crea nuovo edge");
         newEdge.setOnAction(event -> {
             this.selectedNode = node;
@@ -272,38 +272,6 @@ public class MainPageController {
         node.setContextMenuNodiList(contextMenuNodi);
         contextMenuNodiList.add(contextMenuNodi);
     }
-
-    // private void renameNode(NodeFX node) {
-    //     if (secondStage == null || !secondStage.isShowing()) {
-    //         try {
-    //             FXMLLoader loader = new FXMLLoader(getClass().getResource("quaternary.fxml"));
-    //             Parent root = loader.load();
-                
-    //             Scene scene = new Scene(root);
-    //             scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
-
-    //             this.secondaryController = loader.getController();
-    //             secondaryController.setPrimaryController(this);
-    //             secondaryController.setNodeList(nodeList);
-
-    //             secondStage = new Stage();
-    //             secondStage.setTitle("Rinomina nodo");
-    //             secondStage.setScene(scene);
-
-    //             secondStage.setMinHeight(140);
-    //             secondStage.setMinWidth(320);
-    //             secondStage.setMaxHeight(140);
-    //             secondStage.setMaxWidth(320);
-
-    //             secondStage.setOnCloseRequest(event -> {this.secondStage = null; this.secondaryController = null;});
-    //             secondStage.show();
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         }
-    //     } else {
-    //         secondStage.toFront();
-    //     }
-    // }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
         if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
