@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wordautomata.NewEdgeController">
+    <center>
+        <GridPane alignment="CENTER">
+            <Label text="Nodo iniziale:" styleClass="object" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="nodeStart" styleClass="object" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Nodo finale:" styleClass="object" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="nodeEnd" styleClass="object" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Peso:" styleClass="object" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="textField" styleClass="object" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label fx:id="errorLabel" text="" styleClass="error" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Button text="Crea edge" defaultButton="true" onAction="#newEdge" styleClass="object" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <Button text="Annulla" onAction="#closePage" styleClass="object" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+        </GridPane>
+    </center>
+</BorderPane>

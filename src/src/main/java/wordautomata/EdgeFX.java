@@ -103,9 +103,12 @@ public class EdgeFX {
                 this.stackPane.getChildren().add(textField);
     
                 textField.setOnAction(e -> {
-                    label.setText(textField.getText());
-                    setName(textField.getText());
-                    this.text.setText(this.name);
+                    if (!textField.getText().isEmpty()) {
+                        label.setText(textField.getText());
+                        setName(textField.getText());
+                        this.text.setText(this.name);
+                        updateToolTip();
+                    }
                     updateEdge();
                     this.stackPane.getChildren().clear();
                     this.stackPane.getChildren().addAll(label, button);
@@ -114,9 +117,12 @@ public class EdgeFX {
     
                 textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
-                        label.setText(textField.getText());
-                        setName(textField.getText());
-                        this.text.setText(this.name);
+                        if (!textField.getText().isEmpty()) {
+                            label.setText(textField.getText());
+                            setName(textField.getText());
+                            this.text.setText(this.name);
+                            updateToolTip();
+                        }
                         updateEdge();
                         this.stackPane.getChildren().clear();
                         this.stackPane.getChildren().addAll(label, button);

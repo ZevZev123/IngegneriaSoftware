@@ -42,6 +42,8 @@ public class MainPageController {
     private double contextX = 0, contextY = 0;
 
     private Stage secondStage;
+    private Stage thirdStage;
+    private NewNodeController secondaryController; // serve per modificare le coordinate nel caso secondStage sia già aperta
 
     @FXML
     private void initialize() {
@@ -71,7 +73,7 @@ public class MainPageController {
 
         MenuItem newEdge = new MenuItem("Nuovo edge");
         newEdge.setOnAction(event -> {
-            System.out.println("Nuovo edge");
+            createEdge();
         });
 
         this.contextMenu.getItems().addAll(newNode, newEdge);
@@ -92,20 +94,14 @@ public class MainPageController {
         createNode(0, 0, "E", false, false);
         createNode(0, 0, "T", false, false);
 
-        edgeList.add(new EdgeFX(nodeList.get(0), nodeList.get(1), "provolone", 425, 235));
-        edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(2), "bc", 329, 150));
-        edgeList.add(new EdgeFX(nodeList.get(1), nodeList.get(3), "av", 291, 233));
-        edgeList.add(new EdgeFX(nodeList.get(2), nodeList.get(3), "ac", 217, 166));
-        edgeList.add(new EdgeFX(nodeList.get(3), nodeList.get(0), "ac", 274, 328));
-        edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac", 240, 325));
-        edgeList.add(new EdgeFX(nodeList.get(5), nodeList.get(4), "ac", 183, 394));
-        edgeList.add(new EdgeFX(nodeList.get(6), nodeList.get(2), "principessa", 324, 262));
-        
-        for (EdgeFX edge: edgeList) {
-            graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
-            edgeMenuList.getChildren().add(edge.getStackPane());
-            edge.setEdgeList(edgeList);
-        }
+        createEdge(nodeList.get(0), nodeList.get(1), "provolone", 425, 235);
+        createEdge(nodeList.get(1), nodeList.get(2), "bc", 329, 150);
+        createEdge(nodeList.get(1), nodeList.get(3), "av", 291, 233);
+        createEdge(nodeList.get(2), nodeList.get(3), "ac", 217, 166);
+        createEdge(nodeList.get(3), nodeList.get(0), "ad", 274, 328);
+        createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
+        createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
+        createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
@@ -175,6 +171,38 @@ public class MainPageController {
         history.setTooltip(tooltip);
     }
 
+    private void createEdge() {
+        if (thirdStage == null || !thirdStage.isShowing()) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("tertiary.fxml"));
+                Parent root = loader.load();
+                
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
+
+                NewEdgeController tertiaryController = loader.getController();
+                tertiaryController.setPrimaryController(this);
+                tertiaryController.setNodeList(nodeList);
+
+                thirdStage = new Stage();
+                thirdStage.setTitle("Creazione nuovo edge");
+                thirdStage.setScene(scene);
+
+                thirdStage.setMinHeight(200);
+                thirdStage.setMinWidth(320);
+                thirdStage.setMaxHeight(200);
+                thirdStage.setMaxWidth(320);
+
+                thirdStage.setOnCloseRequest(event -> {thirdStage = null;});
+                thirdStage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            thirdStage.toFront();
+        }
+    }
+
     private void createNode(double positionX, double positionY) {
         if (secondStage == null || !secondStage.isShowing()) {
             try {
@@ -184,7 +212,7 @@ public class MainPageController {
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
 
-                NewNodeController secondaryController = loader.getController();
+                this.secondaryController = loader.getController();
                 secondaryController.setPrimaryController(this);
                 secondaryController.setNodeList(nodeList);
                 secondaryController.setPositionX(positionX);
@@ -199,13 +227,15 @@ public class MainPageController {
                 secondStage.setMaxHeight(140);
                 secondStage.setMaxWidth(320);
 
-                secondStage.setOnCloseRequest(event -> {secondStage = null;});
+                secondStage.setOnCloseRequest(event -> {this.secondStage = null; this.secondaryController = null;});
                 secondStage.show();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            secondStage.toFront(); // Porta in primo piano la finestra se è già aperta
+            secondStage.toFront();
+            secondaryController.setPositionX(positionX);
+            secondaryController.setPositionY(positionY);
         }
     }
 
@@ -252,6 +282,23 @@ public class MainPageController {
             System.out.println("Errore");
         }
     }
+    
+    private void createEdge(NodeFX start, NodeFX end, String name, double positionX, double positionY) {
+        EdgeFX edge = new EdgeFX(start, end, name, positionX, positionY);
+        edgeList.add(edge);
+
+        graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
+        edgeMenuList.getChildren().add(edge.getStackPane());
+        edge.setEdgeList(edgeList);
+
+        // graphPane.getChildren().add(edgeList.get(edgeList.size()-1).getGroup());
+        // edgeMenuList.getChildren().add(edgeList.get(edgeList.size()-1).getStackPane());
+        // edgeList.get(edgeList.size()-1).setEdgeList(edgeList);
+    }
+
+    public void createEdge(NodeFX start, NodeFX end, String name) {
+        createEdge(start, end, name, 425, 235);
+    }
 
     public void delete(NodeFX node) {
         System.out.println("Node cancellato");
@@ -276,15 +323,10 @@ public class MainPageController {
         return false;
     }
 
-    public void coordinatesChanged() {
-        for (EdgeFX edge: edgeList) {
-            edge.updateEdge();
-        }
-    }
+    public void coordinatesChanged() { for (EdgeFX edge: edgeList) edge.updateEdge(); }
+    public void newEdge(NodeFX node) { System.out.println(node); }
 
-    public void newEdge(NodeFX node) {
-        System.out.println(node);
-    }
+    public List<NodeFX> getNodeList() { return this.nodeList; }
 
     /*
     // in caso di aggiunta seconda pagina:

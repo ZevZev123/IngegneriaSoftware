@@ -11,6 +11,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -35,37 +36,23 @@ public class NodeFX {
     private double radius;
 
     private Group group;
-
-    public NodeFX(Circle circle, Circle circle2, Text text, Boolean isInitial, Boolean isFinal, MainPageController controller) {
-        this.circle = circle;
-        this.circle2 = circle2;
-        this.text = text;
-        setName(name);
-        this.radius = circle.getRadius();
-        
-        this.controller = controller;
-        
-        if (isInitial != null) this.isInitial = isInitial;
-        if (isFinal != null) this.isFinal = isFinal;
-        
-        setUpAll();
-    }
     
     public NodeFX(double x, double y, double radius, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, radius + 5, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, radius, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
+        
         this.isInitial = isInitial;
         this.isFinal = isFinal;
-        setName(name);
         this.radius = radius;
-
         this.controller = controller;
-
+        this.name = name;
+        
         setUpAll();
     }
     
     private void setUpAll() {
+        setName(this.name);
         setGroup();
         setLabel();
         listenerAdd();
@@ -78,19 +65,12 @@ public class NodeFX {
     private void listenerAdd() {
         this.group.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 ){
-                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && (!controller.isThereInitial()  || this.isInitial)) {
-                    resetNodeColor();
-                    if (isFinal) isFinal = false;
-                    isInitial = !isInitial;
-                    if (isInitial) initialNodeHover();
-                    else normalNodeHover();
+                if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                    if (event.isShiftDown()) { setFinal(); }
+                    else { setInitial(); }
                 }
                 else if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
-                    resetNodeColor();
-                    if (isInitial) isInitial = false;
-                    isFinal = !isFinal;
-                    if (isFinal) finalNodeHover();
-                    else normalNodeHover();
+                    setFinal();
                 }
             }
         });
@@ -178,8 +158,10 @@ public class NodeFX {
                 this.stackPane.getChildren().add(textField);
     
                 textField.setOnAction(e -> {
-                    label.setText(textField.getText());
-                    setName(textField.getText());
+                    if (!textField.getText().isEmpty()) {
+                        label.setText(textField.getText());
+                        setName(textField.getText());
+                    }
                     this.stackPane.getChildren().clear();
                     this.stackPane.getChildren().addAll(label, button);
                     StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -187,8 +169,10 @@ public class NodeFX {
     
                 textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
-                        label.setText(textField.getText());
-                        setName(textField.getText());
+                        if (!textField.getText().isEmpty()) {
+                            label.setText(textField.getText());
+                            setName(textField.getText());
+                        }
                         this.stackPane.getChildren().clear();
                         this.stackPane.getChildren().addAll(label, button);
                         StackPane.setAlignment(button, Pos.TOP_RIGHT);
@@ -311,6 +295,24 @@ public class NodeFX {
             text.setX(circle.getCenterX()-4);
         }
         updateToolTip();
+    }
+
+    public void setInitial() {
+        if (!controller.isThereInitial()  || this.isInitial) {
+            resetNodeColor();
+            if (this.isFinal) this.isFinal = false;
+            this.isInitial = !this.isInitial;
+            if (this.isInitial) initialNodeHover();
+            else normalNodeHover();
+        }
+    }
+
+    public void setFinal() {
+        resetNodeColor();
+        if (isInitial) isInitial = false;
+        isFinal = !isFinal;
+        if (isFinal) finalNodeHover();
+        else normalNodeHover();
     }
 
     public void changeCoordinates(double x, double y) {
