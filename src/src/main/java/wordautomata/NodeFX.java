@@ -348,10 +348,8 @@ public class NodeFX {
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
-            parent.getChildren().remove(this.stackPane);    
-        if(nodeList != null && nodeList.contains(this)) {
-            nodeList.remove(this);
-        }
+            parent.getChildren().remove(this.stackPane);
+        if(nodeList != null && nodeList.contains(this)) { nodeList.remove(this); }
         return true;
     }
     

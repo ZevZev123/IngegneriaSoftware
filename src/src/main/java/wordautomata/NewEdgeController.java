@@ -47,7 +47,8 @@ public class NewEdgeController {
         for (NodeFX node : nodeList) {
             if (node.getName().equals(nodeStart.getValue())) {
                 start = node;
-            } else if (node.getName().equals(nodeEnd.getValue())) {
+            }
+            if (node.getName().equals(nodeEnd.getValue())) {
                 end = node;
             }
         }

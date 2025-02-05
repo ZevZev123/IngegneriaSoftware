@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -135,6 +136,26 @@ public class MainPageController {
         } else {
             runButton.getStyleClass().setAll("button", "RunButton");
         }
+
+        deleteAll();
+        createNode(0, 0, "F", true, false);
+        createNode(0, 0, "A", false, false);
+        createNode(0, 0, "B", false, true);
+        createNode(0, 0, "C", false, false);
+        createNode(0, 0, "D", false, false);
+        createNode(0, 0, "E", false, false);
+        createNode(0, 0, "T", false, false);
+
+        createEdge(nodeList.get(0), nodeList.get(1), "provolone", 425, 235);
+        createEdge(nodeList.get(1), nodeList.get(2), "bc", 329, 150);
+        createEdge(nodeList.get(1), nodeList.get(3), "av", 291, 233);
+        createEdge(nodeList.get(2), nodeList.get(3), "ac", 217, 166);
+        createEdge(nodeList.get(3), nodeList.get(0), "ad", 274, 328);
+        createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
+        createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
+        createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
+        
+        reposition();
     }
 
     @FXML
@@ -256,14 +277,19 @@ public class MainPageController {
         ContextMenu contextMenuNodi = new ContextMenu();
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
-        MenuItem rename = new MenuItem("Rinomina Nodo");
-        rename.setOnAction(event -> { node.textFieldRename(); });
         MenuItem newEdge = new MenuItem("Crea nuovo edge");
         newEdge.setOnAction(event -> {
             this.selectedNode = node;
             createEdge();
         });
-        contextMenuNodi.getItems().addAll(delete, rename, newEdge);
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+        MenuItem rename = new MenuItem("Rinomina Nodo");
+        rename.setOnAction(event -> { node.textFieldRename(); });
+        MenuItem setInitial = new MenuItem("Nodo iniziale");
+        setInitial.setOnAction(event -> { node.setInitial(); });
+        MenuItem setFinal = new MenuItem("Nodo terminale");
+        setFinal.setOnAction(event -> { node.setFinal(); });
+        contextMenuNodi.getItems().addAll(delete, newEdge, separatorMenuItem, rename, setInitial, setFinal);
         
         node.getGroup().setOnContextMenuRequested(event -> {
             contextMenuNodi.show(graphPane, event.getScreenX(), event.getScreenY());
@@ -302,26 +328,41 @@ public class MainPageController {
     }
 
     public void createEdge(NodeFX start, NodeFX end, String name) {
-        double meanWidth = end.getX() + ((start.getX() - end.getX()) / 2);
-        double meanHeight = end.getY() + ((start.getY() - end.getY()) / 2);
-        if (meanWidth < 0) meanWidth = -meanWidth;
-        if (meanHeight < 0) meanHeight = -meanHeight;
-        createEdge(start, end, name, meanWidth, meanHeight);
+        if (start.equals(end)) {
+            createEdge(start, end, name, 430, 430);
+        } else {
+            double meanWidth = end.getX() + ((start.getX() - end.getX()) / 2);
+            double meanHeight = end.getY() + ((start.getY() - end.getY()) / 2);
+            if (meanWidth < 0) meanWidth = -meanWidth;
+            if (meanHeight < 0) meanHeight = -meanHeight;
+            createEdge(start, end, name, meanWidth, meanHeight);
+        }
     }
 
     public void delete(NodeFX node) {
         System.out.println("Node cancellato");
-        for (int i = 0; i < edgeList.size(); i++) {
-            for (NodeFX edgesNode: edgeList.get(i).getNodes()) {
-                if (node.equals(edgesNode)) {
-                    edgeList.get(i).deleteEdge();
-                    contextMenuNodiList.get(i).hide();
-                    contextMenuNodiList.remove(i);
-                    i--;
-                }
+        // cancello il contextMenu del nodo
+        for (int i = 0; i < nodeList.size(); i++) {
+            if (nodeList.get(i) == node) {
+                // contextMenuNodiList.get(i).hide();
+                contextMenuNodiList.remove(i);
+                break;
             }
         }
-        coordinatesChanged();
+
+        // concello tutti gli edge che partono o arrivano al nodo
+        int i = 0;
+        while (i < edgeList.size()) {
+            if (i < edgeList.size()) {
+                for (NodeFX edgesNode: edgeList.get(i).getNodes()) {
+                    if (node == edgesNode) {
+                        edgeList.get(i).deleteEdge();
+                        i--;
+                    }
+                }
+            }
+            i++;
+        }
     }
 
     public Boolean isThereInitial() {
