@@ -1,15 +1,17 @@
-import java.util.ArrayList;
+package codeGiulio;
 
-import codeGiulio.Node;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.io.FileReader;
+import wordautomata.*;
 
 public class Translator {
     private ArrayList<NodeFX> listNodeFX;
     private ArrayList<EdgeFX> listEdgeFX;
     private ArrayList<Node> listNode;
     private Controller controller;
-
     
-    public Translator(ArrayList<NodeFX> listNodeFX, ArrayList<EdgeFX> listEdgeFX) {
+    public Translator(ArrayList<NodeFX> listNodeFX, ArrayList<EdgeFX> listEdgeFX) throws InvalidGraphException {
         this.listNodeFX = listNodeFX;
         this.listEdgeFX = listEdgeFX;
         controller = new Controller();
@@ -22,8 +24,8 @@ public class Translator {
         for(NodeFX nFX : listNodeFX) {
             Node n = new Node(nFX.getName(), nFX.isNodeInitial(), nFX.isNodeFinal());
             for(EdgeFX eFX : listEdgeFX)
-                if(eFX.getStart().getName().equals(n.getNodeName()))
-                    n.addEdge(eFX.getValue(), eFX.getEnd().getName());
+                if(eFX.getNodes()[0].getName().equals(n.getNodeName()))
+                    n.addEdge(eFX.getValue(), eFX.getNodes()[1].getName());
 
             temp.add(n);
         }
@@ -41,9 +43,8 @@ public class Translator {
         listNodeFX = new ArrayList<>();
         while(!line.isEmpty()) {
             String[] t = line.split(",");
-            NodeFX n = new NodeFX(t[0], Double.parseDouble(t[3]), Double.parseDouble(t[4]));
-            n.setNodeInitial(t[1].equals("1"));
-            n.setNodeFinal(t[2].equals("1"));
+            NodeFX n = new NodeFX(Double.parseDouble(t[0]), Double.parseDouble(t[1]), t[2],
+                t[3].equals("true"), t[4].equals("true"));
             listNodeFX.add(n);
             line = scanner.nextLine();
         }
@@ -53,10 +54,12 @@ public class Translator {
         listEdgeFX = new ArrayList<>();
         while(!line.isEmpty()) {
             String[] t = line.split(",");
-            EdgeFX e = new EdgeFX(this.getNodeFX(t[0]), this.getNodeFX(t[1]), tokens[2], Double.parseDouble(t[3]), Double.parseDouble(t[4]));
+            EdgeFX e = new EdgeFX(getNodeFX(t[0]), getNodeFX(t[1]), t[2], Double.parseDouble(t[3]), Double.parseDouble(t[4]));
             listEdgeFX.add(e);
             line = scanner.nextLine();
         }
+
+        scanner.close();
     }
 
     public String toFileString() {
@@ -65,18 +68,18 @@ public class Translator {
         result += "NODI:\n";
         for(NodeFX n : listNodeFX) {
             result += "\t";
+            result += Double.toString(n.getCoordinates()[0]) + ",";
+            result += Double.toString(n.getCoordinates()[1]) + "\n";
             result += n.getName() + ",";
             result += ((n.isNodeInitial()) ? 1 : 0) + ",";
             result += ((n.isNodeFinal()) ? 1 : 0) + ",";
-            result += Double.toString(n.getCoordinates()[0]) + ",";
-            result += Double.toString(n.getCoordinates()[1]) + "\n";
         }
         
         result += "\nARCHI:\n";
         for(EdgeFX e : listEdgeFX) {
             result += "\t";
-            result += e.getStart().getName() + ",";
-            result += e.getEnd().getName() + ",";
+            result += e.getNodes()[0].getName() + ",";
+            result += e.getNodes()[1].getName() + ",";
             result += e.getValue() + ",";
             result += Double.toString(e.getControlX()) + ",";
             result += Double.toString(e.getControlY()) + "\n";
@@ -85,7 +88,7 @@ public class Translator {
         return result;
     }
 
-    private NodeFX getNodeFx(String name) {
+    private NodeFX getNodeFX(String name) {
         for(NodeFX n : listNodeFX)
             if(n.getName().equals(name))
                 return n;

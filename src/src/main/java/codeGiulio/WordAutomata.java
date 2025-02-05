@@ -1,6 +1,5 @@
 package codeGiulio;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +50,7 @@ public class WordAutomata {
         return nodeList.get(currentNodeIndex).isFinal();
     }
 
+    @SuppressWarnings("unchecked")
     private List<String>[][] matrixInitialiser(int n, ArrayList<Node> nodeList) {
         List<String>[][] graphMatrix = new List[n][n];
 
