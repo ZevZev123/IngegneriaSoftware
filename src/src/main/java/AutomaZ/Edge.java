@@ -280,6 +280,8 @@ public class Edge {
     
     public StackPane getStackPane() { return this.stackPane; }
     public Node[] getNodes() { return new Node[] {this.start, this.end}; }
+    public Node getStartNode() { return this.start; }
+    public Node getEndNode() { return this.end; }
     public Group getGroup() { return group; }
     public double getControlX() { return this.controlX; }
     public double getControlY() { return this.controlY; }

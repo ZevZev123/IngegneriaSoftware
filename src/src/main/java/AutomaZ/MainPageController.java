@@ -26,7 +26,6 @@ public class MainPageController {
     @FXML private VBox nodeMenuList;
     @FXML private VBox edgeMenuList;
     @FXML private VBox GraphViewBox;
-    @FXML private Label statusLabel;
 
     @FXML private Button runButton;
     @FXML private Label history;
@@ -137,25 +136,7 @@ public class MainPageController {
             runButton.getStyleClass().setAll("button", "RunButton");
         }
 
-        deleteAll();
-        createNode(0, 0, "F", true, false);
-        createNode(0, 0, "A", false, false);
-        createNode(0, 0, "B", false, true);
-        createNode(0, 0, "C", false, false);
-        createNode(0, 0, "D", false, false);
-        createNode(0, 0, "E", false, false);
-        createNode(0, 0, "T", false, false);
-
-        createEdge(nodeList.get(0), nodeList.get(1), "provolone", 425, 235);
-        createEdge(nodeList.get(1), nodeList.get(2), "bc", 329, 150);
-        createEdge(nodeList.get(1), nodeList.get(3), "av", 291, 233);
-        createEdge(nodeList.get(2), nodeList.get(3), "ac", 217, 166);
-        createEdge(nodeList.get(3), nodeList.get(0), "ad", 274, 328);
-        createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
-        createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
-        createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
-        
-        reposition();
+        System.out.println("Il grafico è valido? -> "+isGraphValid());
     }
 
     @FXML
@@ -186,6 +167,41 @@ public class MainPageController {
                 edge.updateEdge();
             }
         }
+    }
+
+    private Boolean isGraphValid() {
+        // controllo se esiste almeno un nodo iniziale e non piu' di uno
+        // controllo se esiste almeno un nodo finale
+        int initialCount = 0, finalCount = 0;
+        for (Node node: nodeList) {
+            if (node.isNodeInitial()) {
+                initialCount++;
+            }
+            if (node.isNodeFinal()) {
+                finalCount++;
+            }
+        }
+        if (initialCount != 1 || finalCount < 1) { return false; }
+    
+        // controllo se ci sono nodi con lo stesso nome
+        for (int i = 0; i < nodeList.size(); i++) {
+            for (int j = i+1; j < nodeList.size(); j++) {
+                if (nodeList.get(i).getName().equals(nodeList.get(j).getName())) {
+                    return false;
+                }
+            }
+        }
+
+        // controllo se ci sono edge con lo stesso valore che partono dallo stesso nodo
+        for (int i = 0; i < edgeList.size(); i++) {
+            for (int j = i+1; j < edgeList.size(); j++) {
+                if (edgeList.get(i).getStartNode() == edgeList.get(j).getStartNode() && edgeList.get(i).getValue().equals(edgeList.get(j).getValue())) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private void updateToolTip() { // mostra l'history completa passando con il cursore sopra

@@ -307,21 +307,24 @@ public class Node {
     }
 
     public void setInitial() {
-        if (this.controller != null) {
-            if (!this.controller.isThereInitial()  || this.isInitial) {
-                resetNodeColor();
-                if (this.isFinal) this.isFinal = false;
-                this.isInitial = !this.isInitial;
-                if (this.isInitial) initialNodeHover();
-                else normalNodeHover();
+        if (nodeList != null) {
+            for (Node node: nodeList) {
+                if (node.isNodeInitial() && node != this) {
+                    node.setNotInitial();
+                }
             }
-        } else {
-            resetNodeColor();
-            if (this.isFinal) this.isFinal = false;
-            this.isInitial = !this.isInitial;
-            if (this.isInitial) initialNodeHover();
-            else normalNodeHover();
         }
+        resetNodeColor();
+        if (this.isFinal) this.isFinal = false;
+        this.isInitial = !this.isInitial;
+        if (this.isInitial) initialNodeHover();
+        else normalNodeHover();
+    }
+
+    public void setNotInitial() {
+        resetNodeColor();
+        this.isInitial = false;
+        if (this.isFinal) finalNode();
     }
 
     public void setFinal() {

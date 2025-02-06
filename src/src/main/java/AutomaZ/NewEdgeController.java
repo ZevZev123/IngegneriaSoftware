@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -21,6 +23,17 @@ public class NewEdgeController {
 
     @FXML
     private void initialize() {
+        // Chiude la finestra con la pressione del tasto ESC
+        textField.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        closePage();
+                    }
+                });
+            }
+        });
+        
         if (nodeList != null) {
             for (Node node : nodeList) {
                 nodeStart.getItems().add(node.getName());
@@ -41,17 +54,8 @@ public class NewEdgeController {
             return;
         }
         
-        Node start = null;
-        Node end = null;
-
-        for (Node node : nodeList) {
-            if (node.getName().equals(nodeStart.getValue())) {
-                start = node;
-            }
-            if (node.getName().equals(nodeEnd.getValue())) {
-                end = node;
-            }
-        }
+        Node start = nodeList.get(nodeStart.getSelectionModel().getSelectedIndex());
+        Node end = nodeList.get(nodeEnd.getSelectionModel().getSelectedIndex());
 
         if (controller != null) {
             controller.createEdge(start, end, textField.getText());
