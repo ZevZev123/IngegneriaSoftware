@@ -200,7 +200,7 @@ public class MainPageController {
                 Parent root = loader.load();
                 
                 Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/AutomaZ/style2.css").toExternalForm());
 
                 NewEdgeController tertiaryController = loader.getController();
                 tertiaryController.setPrimaryController(this);
@@ -235,7 +235,7 @@ public class MainPageController {
                 Parent root = loader.load();
                 
                 Scene scene = new Scene(root);
-                scene.getStylesheets().add(getClass().getResource("/wordautomata/style2.css").toExternalForm());
+                scene.getStylesheets().add(getClass().getResource("/AutomaZ/style2.css").toExternalForm());
 
                 this.secondaryController = loader.getController();
                 secondaryController.setPrimaryController(this);
