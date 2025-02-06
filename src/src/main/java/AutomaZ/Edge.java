@@ -1,7 +1,6 @@
 package AutomaZ;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -160,7 +159,6 @@ public class Edge {
         double angle = Math.atan2(dy, dx);
     
         double arrowLength = 10; // Lunghezza della freccia
-        double arrowWidth = 5;  // Larghezza della freccia
     
         // Calcola i vertici della freccia
         double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
