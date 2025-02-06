@@ -24,16 +24,18 @@ class FileManager {
 
     public void writeToFile(String fileName) throws IOException{
         FileWriter file = new FileWriter("graphs/"+fileName+".graph");
-        file.write(toFileString());
+        file.write(toFile());
         file.close();
     }
     public void readFromFile(String fileName) throws IOException {
-        FileReader file = new FileReader("graphs/"+fileName+".graph");;
+        FileReader file = new FileReader("graphs/"+fileName+".graph");
+        if(!getExistingFiles().contains(file.toString()))
+            throw new IOException("File not found");
         translate(file);
         file.close();
     }
 
-    public String toFileString() {
+    public String toFile() {
         String result = "";
         
         result += "NODI:\n";
@@ -86,7 +88,6 @@ class FileManager {
 
         scanner.close();
     }
-
     private NodeFX getNodeFX(String name) {
         for(NodeFX n : listNodeFX)
             if(n.getName().equals(name))
@@ -101,4 +102,9 @@ class FileManager {
             files.add(fileEntry.getName());
         return files;
     }
+
+    public void setLists(ArrayList<NodeFX> n, ArrayList<EdgeFX> e) { listNodeFX = n; listEdgeFX = e; }
+
+    public ArrayList<NodeFX> getListNodeFX() { return listNodeFX; }
+    public ArrayList<EdgeFX> getListEdgeFX() { return listEdgeFX; }
 }

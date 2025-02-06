@@ -8,8 +8,8 @@ import wordautomata.EdgeFX;
 import wordautomata.NodeFX;
 
 public class WordAutomata {
-    private ArrayList<NodeFX> listNodeFX;
-    private ArrayList<EdgeFX> listEdgeFX;
+    private final ArrayList<NodeFX> listNodeFX;
+    private final ArrayList<EdgeFX> listEdgeFX;
 
     private ArrayList<State> stateList;
     private State startingState;
@@ -24,14 +24,15 @@ public class WordAutomata {
         stateList = translate();
         
         for (State s : stateList)
-            if (s.isInitial())
+            if (s.isInitial()) {
                 startingState = s;
+                break;
+            }
     }
 
     public ArrayList<State> translate() {
-        System.out.println("Translating...");
-
         ArrayList<State> temp = new ArrayList<>();
+
         for(NodeFX nFX : listNodeFX) {
             State s = new State(nFX.getName(), nFX.isNodeInitial(), nFX.isNodeFinal());
             for(EdgeFX eFX : listEdgeFX)
@@ -70,6 +71,7 @@ public class WordAutomata {
             }
             if (!found) return false;
         }
+
         return stateList.get(currStateInd).isFinal();
     }
 
