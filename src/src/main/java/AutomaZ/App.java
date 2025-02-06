@@ -1,4 +1,4 @@
-package wordautomata;
+package AutomaZ;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

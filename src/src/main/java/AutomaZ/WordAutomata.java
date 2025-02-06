@@ -1,11 +1,8 @@
-package codeGiulio;
+package AutomaZ;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import wordautomata.EdgeFX;
-import wordautomata.NodeFX;
 
 public class WordAutomata {
     private final ArrayList<NodeFX> listNodeFX;

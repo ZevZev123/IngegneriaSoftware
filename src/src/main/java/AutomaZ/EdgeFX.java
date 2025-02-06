@@ -1,4 +1,4 @@
-package wordautomata;
+package AutomaZ;
 
 import java.util.ArrayList;
 import java.util.List;

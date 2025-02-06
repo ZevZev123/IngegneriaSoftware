@@ -1,4 +1,4 @@
-package codeGiulio;
+package AutomaZ;
 
 import java.io.File;
 import java.io.FileReader;
@@ -6,9 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import wordautomata.EdgeFX;
-import wordautomata.NodeFX;
 
 class FileManager {
     private ArrayList<NodeFX> listNodeFX;

@@ -1,9 +1,9 @@
-module wordautomata {
+module AutomaZ {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
     requires javafx.base;
 
-    opens wordautomata to javafx.fxml;
-    exports wordautomata;
+    opens AutomaZ to javafx.fxml;
+    exports AutomaZ;
 }
