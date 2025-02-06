@@ -17,12 +17,12 @@ public class NewEdgeController {
     @FXML private Label errorLabel;
 
     private MainPageController controller = null;
-    private List<NodeFX> nodeList;
+    private List<Node> nodeList;
 
     @FXML
     private void initialize() {
         if (nodeList != null) {
-            for (NodeFX node : nodeList) {
+            for (Node node : nodeList) {
                 nodeStart.getItems().add(node.getName());
                 nodeEnd.getItems().add(node.getName());
             }
@@ -41,10 +41,10 @@ public class NewEdgeController {
             return;
         }
         
-        NodeFX start = null;
-        NodeFX end = null;
+        Node start = null;
+        Node end = null;
 
-        for (NodeFX node : nodeList) {
+        for (Node node : nodeList) {
             if (node.getName().equals(nodeStart.getValue())) {
                 start = node;
             }
@@ -73,14 +73,14 @@ public class NewEdgeController {
         this.controller = controller; 
     }
 
-    public void setNodeList(List<NodeFX> nodeList) { 
+    public void setNodeList(List<Node> nodeList) { 
         this.nodeList = nodeList; 
         if (nodeStart != null && nodeEnd != null) {
             initialize();
         }
     }
 
-    public void setStartNode(NodeFX node) { 
+    public void setStartNode(Node node) { 
         nodeStart.setValue(node.getName()); 
     }
 }

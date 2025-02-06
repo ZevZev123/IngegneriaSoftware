@@ -17,7 +17,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class NodeFX {
+public class Node {
     private Circle circle;
     private Circle circle2;
     private Text text;
@@ -25,7 +25,7 @@ public class NodeFX {
     private MainPageController controller;
 
     private StackPane stackPane = new StackPane();
-    private List<NodeFX> nodeList = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
     private ContextMenu contextMenuNodi;
 
     private Boolean isInitial = false;
@@ -35,7 +35,7 @@ public class NodeFX {
 
     private Group group;
     
-    public NodeFX(double x, double y, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
+    public Node(double x, double y, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
@@ -48,7 +48,7 @@ public class NodeFX {
         setUpAll();
     }
 
-    public NodeFX(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
+    public Node(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
@@ -353,7 +353,7 @@ public class NodeFX {
         return true;
     }
     
-    public void setListFX(List<NodeFX> nodeList) { this.nodeList = nodeList; }
+    public void setListFX(List<Node> nodeList) { this.nodeList = nodeList; }
     public void setContextMenuNodiList(ContextMenu contextMenuNodi) { this.contextMenuNodi = contextMenuNodi; }
 
     public Circle getCircle() { return this.circle; }
@@ -364,7 +364,7 @@ public class NodeFX {
     public double[] getCoordinates() { return new double[] {this.circle.getCenterX(), this.circle.getCenterY()}; }
     public double getX() { return this.circle.getCenterX(); }
     public double getY() { return this.circle.getCenterY(); }
-    public List<NodeFX> getListFX() { return this.nodeList; }
+    public List<Node> getListFX() { return this.nodeList; }
     public StackPane getStackPane() { return this.stackPane; }
 
     public Boolean isNodeInitial() { return this.isInitial; }

@@ -31,8 +31,8 @@ public class MainPageController {
     @FXML private Button runButton;
     @FXML private Label history;
 
-    private List<NodeFX> nodeList = new ArrayList<>();
-    private List<EdgeFX> edgeList = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
+    private List<Edge> edgeList = new ArrayList<>();
 
     private Pane graphPane;
     private double paneWidth = 0;
@@ -42,7 +42,7 @@ public class MainPageController {
     private List<ContextMenu> contextMenuNodiList = new ArrayList<>();
     private double contextX = 0, contextY = 0;
 
-    private NodeFX selectedNode = null;
+    private Node selectedNode = null;
     private Stage secondStage;
     private Stage thirdStage;
     private NewNodeController secondaryController;
@@ -175,14 +175,14 @@ public class MainPageController {
             angleNode = 360 / nodeListLength;
             double count = 0;
             double x = 0, y = 0;
-            for (NodeFX node: nodeList) {
+            for (Node node: nodeList) {
                 x = (paneWidth/2) + (paneWidth/4)*cos(toRadians(count));
                 y = (paneHeight/2) + (paneHeight/4)*sin(toRadians(count));
     
                 node.changeCoordinates(x, y);
                 count = count - angleNode;
             }
-            for (EdgeFX edge: edgeList) {
+            for (Edge edge: edgeList) {
                 edge.updateEdge();
             }
         }
@@ -264,7 +264,7 @@ public class MainPageController {
         }
     }
 
-    private void createNode(NodeFX node) {
+    private void createNode(Node node) {
         nodeList.add(node);
         node.setListFX(nodeList);
         
@@ -302,7 +302,7 @@ public class MainPageController {
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
         if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
             Boolean nameAlreadyExist = false;
-            for (NodeFX node: nodeList) {
+            for (Node node: nodeList) {
                 if (node.getName().equals(name)) {
                     nameAlreadyExist = true;
                     break;
@@ -310,7 +310,7 @@ public class MainPageController {
             }
 
             if (!nameAlreadyExist) {
-                NodeFX node = new NodeFX(positionX, positionY, name, this, isInitial, isFinal);
+                Node node = new Node(positionX, positionY, name, this, isInitial, isFinal);
                 createNode(node);
             } else { System.out.println("Nome esistente"); }
         } else {
@@ -318,8 +318,8 @@ public class MainPageController {
         }
     }
     
-    private void createEdge(NodeFX start, NodeFX end, String name, double positionX, double positionY) {
-        EdgeFX edge = new EdgeFX(start, end, name, positionX, positionY);
+    private void createEdge(Node start, Node end, String name, double positionX, double positionY) {
+        Edge edge = new Edge(start, end, name, positionX, positionY);
         edgeList.add(edge);
 
         graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
@@ -327,7 +327,7 @@ public class MainPageController {
         edge.setEdgeList(edgeList);
     }
 
-    public void createEdge(NodeFX start, NodeFX end, String name) {
+    public void createEdge(Node start, Node end, String name) {
         if (start.equals(end)) {
             createEdge(start, end, name, 430, 430);
         } else {
@@ -339,7 +339,7 @@ public class MainPageController {
         }
     }
 
-    public void delete(NodeFX node) {
+    public void delete(Node node) {
         System.out.println("Node cancellato");
         // cancello il contextMenu del nodo
         for (int i = 0; i < nodeList.size(); i++) {
@@ -354,7 +354,7 @@ public class MainPageController {
         int i = 0;
         while (i < edgeList.size()) {
             if (i < edgeList.size()) {
-                for (NodeFX edgesNode: edgeList.get(i).getNodes()) {
+                for (Node edgesNode: edgeList.get(i).getNodes()) {
                     if (node == edgesNode) {
                         edgeList.get(i).deleteEdge();
                         i--;
@@ -366,15 +366,15 @@ public class MainPageController {
     }
 
     public Boolean isThereInitial() {
-        for (NodeFX node: this.nodeList)
+        for (Node node: this.nodeList)
             if (node.isNodeInitial())
                 return true;
             
         return false;
     }
 
-    public void coordinatesChanged() { for (EdgeFX edge: edgeList) edge.updateEdge(); }
-    public void newEdge(NodeFX node) { System.out.println(node); }
+    public void coordinatesChanged() { for (Edge edge: edgeList) edge.updateEdge(); }
+    public void newEdge(Node node) { System.out.println(node); }
 
-    public List<NodeFX> getNodeList() { return this.nodeList; }
+    public List<Node> getNodeList() { return this.nodeList; }
 }

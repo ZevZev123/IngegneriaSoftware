@@ -15,7 +15,7 @@ public class NewNodeController {
 
     private MainPageController controller;
 
-    private List<NodeFX> nodeList = new ArrayList<>();
+    private List<Node> nodeList = new ArrayList<>();
     private double positionX, positionY;
 
     @FXML
@@ -25,7 +25,7 @@ public class NewNodeController {
         if (controller != null) {
             if (!nomeNodo.isEmpty()) {
                 Boolean nameAlreadyExist = false;
-                for (NodeFX node: nodeList) {
+                for (Node node: nodeList) {
                     if (node.getName().equals(nomeNodo)) {
                         nameAlreadyExist = true;
                         break;
@@ -55,5 +55,5 @@ public class NewNodeController {
     public void setPrimaryController(MainPageController controller) { this.controller = controller; }
     public void setPositionX(double positionX) { this.positionX = positionX; }
     public void setPositionY(double positionY) { this.positionY = positionY; }
-    public void setNodeList(List<NodeFX> nodeList) { this.nodeList = nodeList; }
+    public void setNodeList(List<Node> nodeList) { this.nodeList = nodeList; }
 }

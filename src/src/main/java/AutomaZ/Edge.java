@@ -18,9 +18,9 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
-public class EdgeFX {
-    private NodeFX start;
-    private NodeFX end;
+public class Edge {
+    private Node start;
+    private Node end;
     private QuadCurve curve;
     private Polygon arrow;
     private Group group;
@@ -33,9 +33,9 @@ public class EdgeFX {
 
     private StackPane stackPane;
 
-    private List<EdgeFX> edgeList = new ArrayList<>();
+    private List<Edge> edgeList = new ArrayList<>();
 
-    public EdgeFX(NodeFX start, NodeFX end, String name, double controlX, double controlY) {
+    public Edge(Node start, Node end, String name, double controlX, double controlY) {
         this.start = start;
         this.end = end;
         this.text = new Text(this.name);
@@ -66,7 +66,7 @@ public class EdgeFX {
         updateToolTip();
     }
 
-    public EdgeFX(NodeFX start, NodeFX end, String name) {
+    public Edge(Node start, Node end, String name) {
         this(start, end, name, 0, 0);
     }
     
@@ -276,10 +276,10 @@ public class EdgeFX {
 
         updateEdge();
     }
-    public void setEdgeList(List<EdgeFX> edgeList) { this.edgeList = edgeList; }
+    public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
     
     public StackPane getStackPane() { return this.stackPane; }
-    public NodeFX[] getNodes() { return new NodeFX[] {this.start, this.end}; }
+    public Node[] getNodes() { return new Node[] {this.start, this.end}; }
     public Group getGroup() { return group; }
     public double getControlX() { return this.controlX; }
     public double getControlY() { return this.controlY; }

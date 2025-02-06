@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 class FileManager {
-    private ArrayList<NodeFX> listNodeFX;
-    private ArrayList<EdgeFX> listEdgeFX;
+    private ArrayList<Node> listNode;
+    private ArrayList<Edge> listEdge;
 
     public ArrayList<String> savedFiles;
 
-    public FileManager(ArrayList<NodeFX> n, ArrayList<EdgeFX> e) {
-        listNodeFX = n;
-        listEdgeFX = e;
+    public FileManager(ArrayList<Node> n, ArrayList<Edge> e) {
+        listNode = n;
+        listEdge = e;
         savedFiles = getExistingFiles();
     }
     public FileManager() {
@@ -23,7 +23,7 @@ class FileManager {
     }
 
     public void writeToFile(String fileName) throws IOException{
-        if(listNodeFX.isEmpty() || listEdgeFX.isEmpty())
+        if(listNode.isEmpty() || listEdge.isEmpty())
             throw new IOException("One or more lists are empty");
         FileWriter file = new FileWriter("graphs/"+fileName+".graph");
         file.write(toFile());
@@ -48,7 +48,7 @@ class FileManager {
         String result = "";
         
         result += "NODI:\n";
-        for(NodeFX n : listNodeFX) {
+        for(Node n : listNode) {
             result += "\t";
             result += Double.toString(n.getCoordinates()[0]) + "," +
                 Double.toString(n.getCoordinates()[1]) + "\n";
@@ -58,7 +58,7 @@ class FileManager {
         }
         
         result += "\nARCHI:\n";
-        for(EdgeFX e : listEdgeFX) {
+        for(Edge e : listEdge) {
             result += "\t";
             result += e.getNodes()[0].getName() + "," +
                 e.getNodes()[1].getName() + ",";
@@ -75,30 +75,30 @@ class FileManager {
         String line = scanner.nextLine();
         line = scanner.nextLine();
         
-        listNodeFX = new ArrayList<>();
+        listNode = new ArrayList<>();
         while(!line.isEmpty()) {
             String[] t = line.split(",");
-            NodeFX n = new NodeFX(Double.parseDouble(t[0]), Double.parseDouble(t[1]),
+            Node n = new Node(Double.parseDouble(t[0]), Double.parseDouble(t[1]),
                 t[2], t[3].equals("true"), t[4].equals("true"));
-            listNodeFX.add(n);
+            listNode.add(n);
             line = scanner.nextLine();
         }
 
         line = scanner.nextLine();
         line = scanner.nextLine();
-        listEdgeFX = new ArrayList<>();
+        listEdge = new ArrayList<>();
         while(!line.isEmpty()) {
             String[] t = line.split(",");
-            EdgeFX e = new EdgeFX(getNodeFX(t[0]), getNodeFX(t[1]), t[2],
+            Edge e = new Edge(getNode(t[0]), getNode(t[1]), t[2],
                 Double.parseDouble(t[3]), Double.parseDouble(t[4]));
-            listEdgeFX.add(e);
+            listEdge.add(e);
             line = scanner.nextLine();
         }
 
         scanner.close();
     }
-    private NodeFX getNodeFX(String name) {
-        for(NodeFX n : listNodeFX)
+    private Node getNode(String name) {
+        for(Node n : listNode)
             if(n.getName().equals(name))
                 return n;
         return null;
@@ -112,8 +112,8 @@ class FileManager {
         return files;
     }
 
-    public void setLists(ArrayList<NodeFX> n, ArrayList<EdgeFX> e) { listNodeFX = n; listEdgeFX = e; }
+    public void setLists(ArrayList<Node> n, ArrayList<Edge> e) { listNode = n; listEdge = e; }
 
-    public ArrayList<NodeFX> getListNodeFX() { return listNodeFX; }
-    public ArrayList<EdgeFX> getListEdgeFX() { return listEdgeFX; }
+    public ArrayList<Node> getListNode() { return listNode; }
+    public ArrayList<Edge> getListEdge() { return listEdge; }
 }

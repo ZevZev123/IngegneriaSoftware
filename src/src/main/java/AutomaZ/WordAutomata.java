@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class WordAutomata {
-    private final ArrayList<NodeFX> listNodeFX;
-    private final ArrayList<EdgeFX> listEdgeFX;
+    private final ArrayList<Node> listNode;
+    private final ArrayList<Edge> listEdge;
 
     private ArrayList<State> stateList;
     private State startingState;
@@ -14,9 +14,9 @@ public class WordAutomata {
     private ArrayList<String> stateHistory;
     private ArrayList<String> stringHistory;
 
-    public WordAutomata(ArrayList<NodeFX> nFXList, ArrayList<EdgeFX> eFXList) {
-        listNodeFX = nFXList;
-        listEdgeFX = eFXList;
+    public WordAutomata(ArrayList<Node> nFXList, ArrayList<Edge> eFXList) {
+        listNode = nFXList;
+        listEdge = eFXList;
 
         stateList = translate();
         
@@ -30,9 +30,9 @@ public class WordAutomata {
     private ArrayList<State> translate() {
         ArrayList<State> temp = new ArrayList<>();
 
-        for(NodeFX nFX : listNodeFX) {
+        for(Node nFX : listNode) {
             State s = new State(nFX.getName(), nFX.isNodeInitial(), nFX.isNodeFinal());
-            for(EdgeFX eFX : listEdgeFX)
+            for(Edge eFX : listEdge)
                 if(eFX.getNodes()[0].getName().equals(s.getName()))
                     s.addEdge(eFX.getValue(), eFX.getNodes()[1].getName());
             temp.add(s);
