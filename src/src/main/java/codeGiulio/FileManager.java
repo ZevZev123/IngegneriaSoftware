@@ -14,28 +14,40 @@ class FileManager {
     private ArrayList<NodeFX> listNodeFX;
     private ArrayList<EdgeFX> listEdgeFX;
 
+    public ArrayList<String> savedFiles;
+
     public FileManager(ArrayList<NodeFX> n, ArrayList<EdgeFX> e) {
         listNodeFX = n;
         listEdgeFX = e;
+        savedFiles = getExistingFiles();
     }
     public FileManager() {
         this(new ArrayList<>(), new ArrayList<>());
     }
 
     public void writeToFile(String fileName) throws IOException{
+        if(listNodeFX.isEmpty() || listEdgeFX.isEmpty())
+            throw new IOException("One or more lists are empty");
         FileWriter file = new FileWriter("graphs/"+fileName+".graph");
         file.write(toFile());
         file.close();
+        savedFiles = getExistingFiles();
     }
     public void readFromFile(String fileName) throws IOException {
         FileReader file = new FileReader("graphs/"+fileName+".graph");
-        if(!getExistingFiles().contains(file.toString()))
+        if(!savedFiles.contains(file.toString()))
             throw new IOException("File not found");
         translate(file);
         file.close();
     }
+    public void deleteFile(String fileName) {
+        File file = new File("graphs/"+fileName+".graph");
+        if(file.delete())
+            savedFiles = getExistingFiles();
+        savedFiles = getExistingFiles();
+    }
 
-    public String toFile() {
+    private String toFile() {
         String result = "";
         
         result += "NODI:\n";
@@ -61,7 +73,7 @@ class FileManager {
         return result;
     }
 
-    public void translate(FileReader file) {
+    private void translate(FileReader file) {
         Scanner scanner = new Scanner(file);
         String line = scanner.nextLine();
         line = scanner.nextLine();
@@ -95,7 +107,7 @@ class FileManager {
         return null;
     }
 
-    public ArrayList<String> getExistingFiles() {
+    private ArrayList<String> getExistingFiles() {
         final File folder = new File("graphs");
         ArrayList<String> files = new ArrayList<>();
         for (final File fileEntry : folder.listFiles())

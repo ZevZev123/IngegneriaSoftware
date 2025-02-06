@@ -18,12 +18,12 @@ public class State {
         this(nodeName, false, false);
     }
     
-    public void addEdge(String value, String nodePointed) { edges.put(value, nodePointed); }
+    protected void addEdge(String value, String nodePointed) { edges.put(value, nodePointed); }
 
-    public String getName() { return nodeName; }
-    public boolean isInitial() { return isInitial; }
-    public boolean isFinal() { return isFinal; }
-    public HashMap<String, String> getEdges() { return edges; }
+    protected String getName() { return nodeName; }
+    protected boolean isInitial() { return isInitial; }
+    protected boolean isFinal() { return isFinal; }
+    protected HashMap<String, String> getEdges() { return edges; }
 
     /*
     @Override

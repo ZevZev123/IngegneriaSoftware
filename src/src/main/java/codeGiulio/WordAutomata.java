@@ -30,7 +30,7 @@ public class WordAutomata {
             }
     }
 
-    public ArrayList<State> translate() {
+    private ArrayList<State> translate() {
         ArrayList<State> temp = new ArrayList<>();
 
         for(NodeFX nFX : listNodeFX) {
