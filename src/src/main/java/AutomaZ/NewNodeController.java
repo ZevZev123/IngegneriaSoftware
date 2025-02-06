@@ -17,7 +17,7 @@ public class NewNodeController {
 
     private MainPageController controller;
 
-    private List<Node> nodeList = new ArrayList<>();
+    private ArrayList<Node> nodeList = new ArrayList<>();
     private double positionX, positionY;
 
     @FXML
@@ -71,5 +71,5 @@ public class NewNodeController {
     public void setPrimaryController(MainPageController controller) { this.controller = controller; }
     public void setPositionX(double positionX) { this.positionX = positionX; }
     public void setPositionY(double positionY) { this.positionY = positionY; }
-    public void setNodeList(List<Node> nodeList) { this.nodeList = nodeList; }
+    public void setNodeList(ArrayList<Node> nodeList) { this.nodeList = nodeList; }
 }

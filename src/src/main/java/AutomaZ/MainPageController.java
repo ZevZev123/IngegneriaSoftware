@@ -30,15 +30,15 @@ public class MainPageController {
     @FXML private Button runButton;
     @FXML private Label history;
 
-    private List<Node> nodeList = new ArrayList<>();
-    private List<Edge> edgeList = new ArrayList<>();
+    private ArrayList<Node> nodeList = new ArrayList<>();
+    private ArrayList<Edge> edgeList = new ArrayList<>();
 
     private Pane graphPane;
     private double paneWidth = 0;
     private double paneHeight = 0;
 
     private ContextMenu contextMenu;
-    private List<ContextMenu> contextMenuNodiList = new ArrayList<>();
+    private ArrayList<ContextMenu> contextMenuNodiList = new ArrayList<>();
     private double contextX = 0, contextY = 0;
 
     private Node selectedNode = null;
@@ -136,7 +136,13 @@ public class MainPageController {
             runButton.getStyleClass().setAll("button", "RunButton");
         }
 
-        System.out.println("Il grafico è valido? -> "+isGraphValid());
+        // System.out.println("Il grafico è valido? -> "+isGraphValid());
+
+        if (isGraphValid()) {
+            WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
+            System.out.println(wordAutomata.getStateHistory());
+            System.out.println(wordAutomata.run("provolone"));
+        }
     }
 
     @FXML
@@ -392,5 +398,5 @@ public class MainPageController {
     public void coordinatesChanged() { for (Edge edge: edgeList) edge.updateEdge(); }
     public void newEdge(Node node) { System.out.println(node); }
 
-    public List<Node> getNodeList() { return this.nodeList; }
+    public ArrayList<Node> getNodeList() { return this.nodeList; }
 }

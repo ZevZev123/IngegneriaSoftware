@@ -1,5 +1,6 @@
 package AutomaZ;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.fxml.FXML;
@@ -19,7 +20,7 @@ public class NewEdgeController {
     @FXML private Label errorLabel;
 
     private MainPageController controller = null;
-    private List<Node> nodeList;
+    private ArrayList<Node> nodeList;
 
     @FXML
     private void initialize() {
@@ -33,7 +34,7 @@ public class NewEdgeController {
                 });
             }
         });
-        
+
         if (nodeList != null) {
             for (Node node : nodeList) {
                 nodeStart.getItems().add(node.getName());
@@ -77,7 +78,7 @@ public class NewEdgeController {
         this.controller = controller; 
     }
 
-    public void setNodeList(List<Node> nodeList) { 
+    public void setNodeList(ArrayList<Node> nodeList) { 
         this.nodeList = nodeList; 
         if (nodeStart != null && nodeEnd != null) {
             initialize();

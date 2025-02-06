@@ -33,7 +33,7 @@ public class Edge {
 
     private StackPane stackPane;
 
-    private List<Edge> edgeList = new ArrayList<>();
+    private ArrayList<Edge> edgeList = new ArrayList<>();
 
     public Edge(Node start, Node end, String name, double controlX, double controlY) {
         this.start = start;
@@ -276,7 +276,7 @@ public class Edge {
 
         updateEdge();
     }
-    public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
+    public void setEdgeList(ArrayList<Edge> edgeList) { this.edgeList = edgeList; }
     
     public StackPane getStackPane() { return this.stackPane; }
     public Node[] getNodes() { return new Node[] {this.start, this.end}; }
