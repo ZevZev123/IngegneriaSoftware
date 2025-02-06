@@ -140,8 +140,8 @@ public class MainPageController {
 
         if (isGraphValid()) {
             WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
-            System.out.println(wordAutomata.getStateHistory());
             System.out.println(wordAutomata.run("provolone"));
+            System.out.println(wordAutomata.getStateHistory());
         }
     }
 

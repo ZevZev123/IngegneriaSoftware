@@ -68,7 +68,8 @@ public class WordAutomata {
             }
             if (!found) return false;
         }
-
+        stateHistory.add(stateList.get(currStateInd).getName());
+        
         return stateList.get(currStateInd).isFinal();
     }
 
