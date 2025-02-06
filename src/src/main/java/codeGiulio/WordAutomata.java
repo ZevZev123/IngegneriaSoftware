@@ -96,4 +96,29 @@ public class WordAutomata {
 
     public ArrayList<String> getStateHistory() { return stateHistory; }
     public ArrayList<String> getStringHistory() { return stringHistory; }
+
+
+    private class State {
+        private final String nodeName;
+        private final boolean isInitial;
+        private final boolean isFinal;
+        private HashMap<String, String> edges;
+    
+        private State(String nodeName, boolean isInitial, boolean isFinal) {
+            this.nodeName = nodeName;
+            this.isInitial = isInitial;
+            this.isFinal = isFinal;
+            edges = new HashMap<String, String>();
+        }
+        private State(String nodeName) {
+            this(nodeName, false, false);
+        }
+        
+        private void addEdge(String value, String nodePointed) { edges.put(value, nodePointed); }
+    
+        private String getName() { return nodeName; }
+        private boolean isInitial() { return isInitial; }
+        private boolean isFinal() { return isFinal; }
+        private HashMap<String, String> getEdges() { return edges; }
+    }
 }
