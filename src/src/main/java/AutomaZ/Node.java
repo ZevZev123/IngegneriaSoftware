@@ -18,6 +18,7 @@ import javafx.scene.text.TextAlignment;
 
 public class Node {
     private Circle circle;
+    public static final int RADIUS = 20;
     private Circle circle2;
     private Text text;
 
@@ -35,7 +36,7 @@ public class Node {
     private Group group;
     
     public Node(double x, double y, String name, MainPageController controller, Boolean isInitial, Boolean isFinal) {
-        this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
+        this.circle = new Circle(x, y, RADIUS, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         
@@ -48,7 +49,7 @@ public class Node {
     }
 
     public Node(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
-        this.circle = new Circle(x, y, 20, Color.TRANSPARENT);
+        this.circle = new Circle(x, y, RADIUS, Color.TRANSPARENT);
         this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         
