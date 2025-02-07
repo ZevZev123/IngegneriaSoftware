@@ -232,8 +232,6 @@ public class Edge {
         Tooltip.install(this.group, tooltip);
     }
 
-    private void setName(String name) { this.name = name; }
-
     public void updateEdge() {
         // Calcola i punti iniziali e finali ai bordi dei nodi
         double[] sourcePoint = calculateEdgePoint(
@@ -275,6 +273,7 @@ public class Edge {
 
         updateEdge();
     }
+    private void setName(String name) { this.name = name; }
     public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
     
     public StackPane getStackPane() { return this.stackPane; }

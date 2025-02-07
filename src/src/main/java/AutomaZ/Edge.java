@@ -15,17 +15,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.QuadCurve;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class Edge {
     private Node start;
     private Node end;
-    private Shape curve;
-    private static final int ARC_LENGTH = 256;
+    private QuadCurve curve;
     private Polygon arrow;
     private Group group;
 
@@ -49,24 +45,13 @@ public class Edge {
         this.controlY = controlY;
 
         // Crea la curva
-        if(start != end) {
-            curve = new QuadCurve();
-
-            ((QuadCurve) curve).setControlX(this.controlX);
-            ((QuadCurve) curve).setControlY(this.controlY);
-        }
-        else {
-            curve = new Arc();
-
-            ((Arc) curve).setRadiusX(Node.RADIUS * 0.85);
-            ((Arc) curve).setRadiusY(Node.RADIUS * 0.85);
-            ((Arc) curve).setLength(ARC_LENGTH);
-            ((Arc) curve).setType(ArcType.OPEN);
-            setArc();
-        }
+        curve = new QuadCurve();
         curve.setStroke(Color.BLACK);
         curve.setFill(null);
         curve.setStrokeWidth(3);
+
+        curve.setControlX(this.controlX);
+        curve.setControlY(this.controlY);
 
         // Crea la freccia
         arrow = new Polygon();
@@ -168,35 +153,24 @@ public class Edge {
         });
     }
 
-    private void updateArrow() {
-        double[] target;
-        double dx, dy;
-        if(curve instanceof QuadCurve) {
-            target = new double[] {((QuadCurve)curve).getStartX(),
-                ((QuadCurve)curve).getStartY()};
-            dx = target[0] - controlX;
-            dy = target[1] - controlY;
-        }
-        else {
-            // TO DO
-            target = new double[] {0, 0};
-            dx = 0;
-            dy = 0;
-        }
+    private void updateArrow(double[] target, double[] source) {
         // Calcola la direzione basata sulla tangente della curva nel punto finale
+        double dx = target[0] - curve.getControlX();
+        double dy = target[1] - curve.getControlY();
         double angle = Math.atan2(dy, dx);
-        
+    
         double arrowLength = 10; // Lunghezza della freccia
-        
+    
         // Calcola i vertici della freccia
         double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
         double y1 = target[1] - arrowLength * Math.sin(angle - Math.PI / 6);
+    
         double x2 = target[0] - arrowLength * Math.cos(angle + Math.PI / 6);
         double y2 = target[1] - arrowLength * Math.sin(angle + Math.PI / 6);
-        
+    
         // Aggiorna i punti del poligono della freccia
         arrow.getPoints().setAll(
-                target[0], target[1], // Punta della freccia
+                target[0], target[1], // Punto della punta della freccia
                 x1, y1,               // Punto alla sinistra della freccia
                 x2, y2                // Punto alla destra della freccia
         );
@@ -207,8 +181,8 @@ public class Edge {
             // Aggiorna la posizione del punto di controllo
             this.controlX = event.getX();
             this.controlY = event.getY();
-            if(curve instanceof QuadCurve)
-                setQuadControl();
+            curve.setControlX(this.controlX);
+            curve.setControlY(this.controlY);
 
             // Aggiorna dinamicamente la curva e i punti di contatto
             updateEdge();
@@ -245,17 +219,12 @@ public class Edge {
         }
     }
 
-    private void calculateEdgePoints() {
-        double x1 = end.getX();
-        double y1 = end.getY();
-        double x2 = start.getX();
-        double y2 = start.getY();
-        double angle1 = Math.atan2(controlY - y1, controlX - x1);
-        double angle2 = Math.atan2(controlY - y2, controlX - x2);
-        ((QuadCurve)curve).setStartX(x1 + Node.RADIUS * Math.cos(angle1));
-        ((QuadCurve)curve).setStartY(y1 + Node.RADIUS * Math.sin(angle1));
-        ((QuadCurve)curve).setEndX(x2 + Node.RADIUS * Math.cos(angle2));
-        ((QuadCurve)curve).setEndY(y2 + Node.RADIUS * Math.sin(angle2));
+    private double[] calculateEdgePoint(double x1, double y1, double x2, double y2, double radius) {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        return new double[]{
+                x1 + radius * Math.cos(angle),
+                y1 + radius * Math.sin(angle)
+        };
     }
 
     private void updateToolTip() {
@@ -265,13 +234,26 @@ public class Edge {
 
     public void updateEdge() {
         // Calcola i punti iniziali e finali ai bordi dei nodi
-        if (curve instanceof QuadCurve)
-            calculateEdgePoints();
-        else
-            setArc();
+        double[] sourcePoint = calculateEdgePoint(
+                start.getX(), start.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        double[] targetPoint = calculateEdgePoint(
+                end.getX(), end.getY(),
+                curve.getControlX(), curve.getControlY(),
+                20
+        );
+    
+        // Imposta i punti di partenza, controllo e fine della curva
+        curve.setStartX(sourcePoint[0]);
+        curve.setStartY(sourcePoint[1]);
+        curve.setEndX(targetPoint[0]);
+        curve.setEndY(targetPoint[1]);
     
         // Aggiorna la freccia
-        updateArrow();
+        updateArrow(targetPoint, sourcePoint);
     }
 
     public Boolean deleteEdge() {
@@ -283,36 +265,13 @@ public class Edge {
         return true;
     }
 
-    private void setArc() {
-        // Center
-        double cX = start.getX(), cY = start.getY();
-        double dx = controlX - cX, dy = controlY - cY;
-
-        double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        double x = cX + Node.RADIUS * ( dx * 1.4 / magnitude );
-        double y = cY + Node.RADIUS * ( dy * 1.4 / magnitude );
-
-        ((Arc) curve).setCenterX(x);
-        ((Arc) curve).setCenterY(y);
-
-        // Start Angle
-        double startAngle = Math.toDegrees(Math.atan2(controlX - cX, controlY - cY));
-        if( startAngle < 0 ) startAngle += 360;
-        ((Arc) curve).setStartAngle(startAngle + 142);
-    }
-
     public void setControl(double controlX, double controlY) {
         this.controlX = controlX;
         this.controlY = controlY;
-        if(curve instanceof QuadCurve)
-            setQuadControl();
+        this.curve.setControlX(this.controlX);
+        this.curve.setControlY(this.controlY);
 
         updateEdge();
-    }
-
-    public void setQuadControl() {
-        ((QuadCurve)curve).setControlX(this.controlX);
-        ((QuadCurve)curve).setControlY(this.controlY);
     }
     private void setName(String name) { this.name = name; }
     public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
