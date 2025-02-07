@@ -12,6 +12,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -25,9 +26,10 @@ public class MainPageController {
     @FXML private VBox nodeMenuList;
     @FXML private VBox edgeMenuList;
     @FXML private VBox GraphViewBox;
+    @FXML private VBox history;
 
     @FXML private Button runButton;
-    @FXML private Label history;
+    @FXML private TextField textField;
 
     private ArrayList<Node> nodeList = new ArrayList<>();
     private ArrayList<Edge> edgeList = new ArrayList<>();
@@ -47,7 +49,7 @@ public class MainPageController {
 
     @FXML
     private void initialize() {
-        updateToolTip();
+        // updateToolTip();
 
         graphPane = new Pane(); // creazione del foglio
         
@@ -116,15 +118,8 @@ public class MainPageController {
         });
         
         // I SEGUENTI LISTENER SONO PER ORGANIZZARE I NODI QUANDO VIENE RIDIMENSIONATA LA FINESTRA
-        // graphPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-        //     paneWidth = (double) newValue;
-        //     reposition();
-        // });
-        
-        // graphPane.heightProperty().addListener((observable, oldValue, newValue) -> {
-        //     paneHeight = (double) newValue;
-        //     reposition();
-        // });
+        // graphPane.widthProperty().addListener((observable, oldValue, newValue) -> { reposition(); });
+        // graphPane.heightProperty().addListener((observable, oldValue, newValue) -> { reposition(); });
     }
 
     @FXML
@@ -140,7 +135,7 @@ public class MainPageController {
 
         if (isGraphValid()) {
             WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
-            System.out.println(wordAutomata.run("provolone"));
+            System.out.println(wordAutomata.run(textField.getText()));
             System.out.println(wordAutomata.getStateHistory());
         }
     }
@@ -162,6 +157,9 @@ public class MainPageController {
             angleNode = 360 / nodeListLength;
             double count = 0;
             double x = 0, y = 0;
+            this.paneWidth = GraphViewBox.getWidth();
+            this.paneHeight = GraphViewBox.getHeight();
+
             for (Node node: nodeList) {
                 x = (paneWidth/2) + (paneWidth/4)*cos(toRadians(count));
                 y = (paneHeight/2) + (paneHeight/4)*sin(toRadians(count));
@@ -210,10 +208,10 @@ public class MainPageController {
         return true;
     }
 
-    private void updateToolTip() { // mostra l'history completa passando con il cursore sopra
-        Tooltip tooltip = new Tooltip(history.getText());
-        history.setTooltip(tooltip);
-    }
+    // private void updateToolTip() {
+    //     Tooltip tooltip = new Tooltip(textField.getText());
+    //     textField.setTooltip(tooltip);
+    // }
 
     private void createEdge() {
         if (thirdStage == null || !thirdStage.isShowing()) {

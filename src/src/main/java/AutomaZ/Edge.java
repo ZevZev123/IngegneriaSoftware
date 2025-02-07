@@ -246,10 +246,10 @@ public class Edge {
     }
 
     private void calculateEdgePoints() {
-        double x1 = start.getX();
-        double y1 = start.getY();
-        double x2 = end.getX();
-        double y2 = end.getY();
+        double x1 = end.getX();
+        double y1 = end.getY();
+        double x2 = start.getX();
+        double y2 = start.getY();
         double angle1 = Math.atan2(controlY - y1, controlX - x1);
         double angle2 = Math.atan2(controlY - y2, controlX - x2);
         ((QuadCurve)curve).setStartX(x1 + Node.RADIUS * Math.cos(angle1));

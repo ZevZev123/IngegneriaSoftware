@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
@@ -46,11 +47,17 @@
 
    <center>
       <SplitPane orientation="HORIZONTAL" dividerPositions="0.7">
+         <ScrollPane styleClass="BlackBorder" maxWidth="200" prefWidth="100" minWidth="100" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <VBox fx:id="history" alignment="TOP_LEFT">
+               <!-- Elementi aggiunti dinamicamente nel Controller -->
+            </VBox>
+         </ScrollPane>
+
          <!-- Left Section -->
          <GridPane>
             <!-- Prima riga: Label e Button sulla stessa riga -->
             <Button fx:id="runButton" styleClass="RunButton" onAction="#changeIcon" GridPane.rowIndex="0" GridPane.columnIndex="0" />
-            <Label fx:id="history" styleClass="NodeHistory" text="History" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
+            <TextField fx:id="textField" styleClass="NodeHistory" promptText="Parola da testare..." GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
             <!-- Seconda riga: Main Content -->
             <VBox fx:id="GraphViewBox" styleClass="BlackBorder" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
          </GridPane>
