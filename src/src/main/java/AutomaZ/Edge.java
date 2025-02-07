@@ -25,7 +25,7 @@ public class Edge {
     private Node start;
     private Node end;
     private Shape curve;
-    private static final int ARC_LENGTH = 120;
+    private static final int ARC_LENGTH = 256;
     private Polygon arrow;
     private Group group;
 
@@ -58,8 +58,8 @@ public class Edge {
         else {
             curve = new Arc();
 
-            ((Arc) curve).setRadiusX(Node.RADIUS);
-            ((Arc) curve).setRadiusY(Node.RADIUS);
+            ((Arc) curve).setRadiusX(Node.RADIUS * 0.85);
+            ((Arc) curve).setRadiusY(Node.RADIUS * 0.85);
             ((Arc) curve).setLength(ARC_LENGTH);
             ((Arc) curve).setType(ArcType.OPEN);
             setArc();
@@ -285,21 +285,20 @@ public class Edge {
 
     private void setArc() {
         // Center
-        double dx = controlX - start.getX();
-        double dy = controlY - start.getY();
+        double cX = start.getX(), cY = start.getY();
+        double dx = controlX - cX, dy = controlY - cY;
 
         double magnitude = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-
-        double x = start.getX() + Node.RADIUS * ( dx / magnitude );
-        double y = start.getY() + Node.RADIUS * ( dy / magnitude );
+        double x = cX + Node.RADIUS * ( dx * 1.4 / magnitude );
+        double y = cY + Node.RADIUS * ( dy * 1.4 / magnitude );
 
         ((Arc) curve).setCenterX(x);
         ((Arc) curve).setCenterY(y);
 
         // Start Angle
-        double startAngle = Math.toDegrees(Math.atan2(controlY - y, controlX - x));
+        double startAngle = Math.toDegrees(Math.atan2(controlX - cX, controlY - cY));
         if( startAngle < 0 ) startAngle += 360;
-        ((Arc) curve).setStartAngle(startAngle);
+        ((Arc) curve).setStartAngle(startAngle + 142);
     }
 
     public void setControl(double controlX, double controlY) {

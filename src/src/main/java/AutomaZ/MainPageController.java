@@ -102,6 +102,7 @@ public class MainPageController {
         createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
         createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
         createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
+        createEdge(nodeList.get(1), nodeList.get(1), "lalala", 430, 430);
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
