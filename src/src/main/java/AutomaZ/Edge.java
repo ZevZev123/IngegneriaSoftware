@@ -207,7 +207,8 @@ public class Edge {
             // Aggiorna la posizione del punto di controllo
             this.controlX = event.getX();
             this.controlY = event.getY();
-            setQuadControl();
+            if(curve instanceof QuadCurve)
+                setQuadControl();
 
             // Aggiorna dinamicamente la curva e i punti di contatto
             updateEdge();
@@ -304,7 +305,8 @@ public class Edge {
     public void setControl(double controlX, double controlY) {
         this.controlX = controlX;
         this.controlY = controlY;
-        setQuadControl();
+        if(curve instanceof QuadCurve)
+            setQuadControl();
 
         updateEdge();
     }
