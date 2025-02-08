@@ -14,18 +14,22 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.QuadCurve;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class Edge {
     private Node start;
     private Node end;
-    private QuadCurve curve;
+    private Shape curve;
+    private static final double ARC_LENGTH = 240;
     private Polygon arrow;
     private Group group;
 
-    private double controlX, controlY;
+    private double[] control;
 
     private Text text;
 
@@ -41,23 +45,34 @@ public class Edge {
         this.text = new Text(this.name);
         this.name = name;
 
-        this.controlX = controlX;
-        this.controlY = controlY;
-
-        // Crea la curva
-        curve = new QuadCurve();
-        curve.setStroke(Color.BLACK);
-        curve.setFill(null);
-        curve.setStrokeWidth(3);
-
-        curve.setControlX(this.controlX);
-        curve.setControlY(this.controlY);
+        control = new double[]{controlX, controlY};
 
         // Crea la freccia
         arrow = new Polygon();
         arrow.setFill(Color.BLACK);
 
-        // Gruppo per curva + freccia
+        // Crea la curva
+        if(start != end) {
+            curve = new QuadCurve();
+            curve.setStroke(Color.BLACK);
+            curve.setFill(null);
+            curve.setStrokeWidth(3);
+
+            ((QuadCurve)curve).setControlX(control[0]);
+            ((QuadCurve)curve).setControlY(control[1]);
+        }
+        else {
+            curve = new Arc();
+            ((Arc)curve).setRadiusX(Node.RADIUS * 0.8);
+            ((Arc)curve).setRadiusY(Node.RADIUS * 0.8);
+            ((Arc)curve).setStroke(Color.BLACK);
+            ((Arc)curve).setFill(null);
+            ((Arc)curve).setStrokeWidth(3);
+            ((Arc)curve).setLength(ARC_LENGTH);
+            ((Arc)curve).setType(ArcType.OPEN);
+            setArc();
+        }
+
         group = new Group(curve, arrow);
 
         updateEdge();
@@ -153,22 +168,24 @@ public class Edge {
         });
     }
 
-    private void updateArrow(double[] target, double[] source) {
-        // Calcola la direzione basata sulla tangente della curva nel punto finale
-        double dx = target[0] - curve.getControlX();
-        double dy = target[1] - curve.getControlY();
+    private void updateArrow(double[] target) {
+        double dx, dy;
+        if(start == end) {
+            dx = start.getX() - target[0];
+            dy = start.getY() - target[1];
+        }
+        else {
+            dx = target[0] - control[0];
+            dy = target[1] - control[1];
+        }
         double angle = Math.atan2(dy, dx);
     
-        double arrowLength = 10; // Lunghezza della freccia
+        double x1 = target[0] - 10 * Math.cos(angle - Math.PI / 6);
+        double y1 = target[1] - 10 * Math.sin(angle - Math.PI / 6);
     
-        // Calcola i vertici della freccia
-        double x1 = target[0] - arrowLength * Math.cos(angle - Math.PI / 6);
-        double y1 = target[1] - arrowLength * Math.sin(angle - Math.PI / 6);
+        double x2 = target[0] - 10 * Math.cos(angle + Math.PI / 6);
+        double y2 = target[1] - 10 * Math.sin(angle + Math.PI / 6);
     
-        double x2 = target[0] - arrowLength * Math.cos(angle + Math.PI / 6);
-        double y2 = target[1] - arrowLength * Math.sin(angle + Math.PI / 6);
-    
-        // Aggiorna i punti del poligono della freccia
         arrow.getPoints().setAll(
                 target[0], target[1], // Punto della punta della freccia
                 x1, y1,               // Punto alla sinistra della freccia
@@ -178,13 +195,7 @@ public class Edge {
 
     private void addDragHandler() {
         curve.setOnMouseDragged((MouseEvent event) -> {
-            // Aggiorna la posizione del punto di controllo
-            this.controlX = event.getX();
-            this.controlY = event.getY();
-            curve.setControlX(this.controlX);
-            curve.setControlY(this.controlY);
-
-            // Aggiorna dinamicamente la curva e i punti di contatto
+            setControl(event.getX(), event.getY());
             updateEdge();
         });
     
@@ -219,11 +230,11 @@ public class Edge {
         }
     }
 
-    private double[] calculateEdgePoint(double x1, double y1, double x2, double y2, double radius) {
-        double angle = Math.atan2(y2 - y1, x2 - x1);
-        return new double[]{
-                x1 + radius * Math.cos(angle),
-                y1 + radius * Math.sin(angle)
+    private double[] calculateEdgePoint(double x, double y) {
+        double angle = Math.atan2(control[1] - y, control[0] - x);
+        return new double[] {
+                x + Node.RADIUS * Math.cos(angle),
+                y + Node.RADIUS * Math.sin(angle)
         };
     }
 
@@ -233,27 +244,23 @@ public class Edge {
     }
 
     public void updateEdge() {
-        // Calcola i punti iniziali e finali ai bordi dei nodi
-        double[] sourcePoint = calculateEdgePoint(
-                start.getX(), start.getY(),
-                curve.getControlX(), curve.getControlY(),
-                20
-        );
+        if(start == end) {
+            setArc();
+            updateArrow(arcEdgePoint());
+            return;
+        }
+
+        double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
+        double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
     
-        double[] targetPoint = calculateEdgePoint(
-                end.getX(), end.getY(),
-                curve.getControlX(), curve.getControlY(),
-                20
-        );
+        ((QuadCurve)curve).setStartX(sourcePoint[0]);
+        ((QuadCurve)curve).setStartY(sourcePoint[1]);
+        ((QuadCurve)curve).setControlX(control[0]);
+        ((QuadCurve)curve).setControlY(control[1]);
+        ((QuadCurve)curve).setEndX(targetPoint[0]);
+        ((QuadCurve)curve).setEndY(targetPoint[1]);
     
-        // Imposta i punti di partenza, controllo e fine della curva
-        curve.setStartX(sourcePoint[0]);
-        curve.setStartY(sourcePoint[1]);
-        curve.setEndX(targetPoint[0]);
-        curve.setEndY(targetPoint[1]);
-    
-        // Aggiorna la freccia
-        updateArrow(targetPoint, sourcePoint);
+        updateArrow(targetPoint);
     }
 
     public Boolean deleteEdge() {
@@ -265,13 +272,34 @@ public class Edge {
         return true;
     }
 
-    public void setControl(double controlX, double controlY) {
-        this.controlX = controlX;
-        this.controlY = controlY;
-        this.curve.setControlX(this.controlX);
-        this.curve.setControlY(this.controlY);
+    private void setArc() {
+        double stX = start.getX(), stY = start.getY();
+        double dx = control[0] - stX, dy = control[1] - stY;
+        double m = Math.sqrt(dx * dx + dy * dy);
+        ((Arc)curve).setCenterX(stX + Node.RADIUS * 1.2 * (dx / m));
+        ((Arc)curve).setCenterY(stY + Node.RADIUS * 1.2 * (dy / m));
+        double startAngle = 150 + Math.atan2(dx, dy) * 180.0 / Math.PI;
+        ((Arc)curve).setStartAngle(startAngle);
+    }
 
-        updateEdge();
+    private double[] arcEdgePoint() {
+        double centerX = ((Arc)curve).getCenterX();
+        double centerY = ((Arc)curve).getCenterY();
+        double radiusX = ((Arc)curve).getRadiusX();
+        double radiusY = ((Arc)curve).getRadiusY();
+        double startAngleRad = Math.toRadians(((Arc)curve).getStartAngle());
+
+        double startX = centerX + radiusX * Math.cos(startAngleRad);
+        double startY = centerY + radiusY * Math.sin(startAngleRad);
+
+        System.out.println("startX: " + startX + " startY: " + startY);
+
+        return new double[]{startX, startY};
+    }
+
+    public void setControl(double controlX, double controlY) {
+        control[0] = controlX;
+        control[1] = controlY;
     }
     private void setName(String name) { this.name = name; }
     public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
@@ -281,7 +309,7 @@ public class Edge {
     public Node getStartNode() { return this.start; }
     public Node getEndNode() { return this.end; }
     public Group getGroup() { return group; }
-    public double getControlX() { return this.controlX; }
-    public double getControlY() { return this.controlY; }
+    public double getControlX() { return control[0]; }
+    public double getControlY() { return control[1]; }
     public String getValue() { return this.name; }
 }
