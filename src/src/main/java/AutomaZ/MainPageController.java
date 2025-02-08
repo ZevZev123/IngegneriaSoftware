@@ -5,15 +5,18 @@ import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import static java.lang.Math.cos;
@@ -94,7 +97,7 @@ public class MainPageController {
         createNode(0, 0, "E", false, false);
         createNode(0, 0, "T", false, false);
 
-        createEdge(nodeList.get(0), nodeList.get(1), "provolone", 425, 235);
+        createEdge(nodeList.get(0), nodeList.get(1), "ab", 425, 235);
         createEdge(nodeList.get(1), nodeList.get(2), "bc", 329, 150);
         createEdge(nodeList.get(1), nodeList.get(3), "av", 291, 233);
         createEdge(nodeList.get(2), nodeList.get(3), "ac", 217, 166);
@@ -102,7 +105,7 @@ public class MainPageController {
         createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
         createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
         createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
-        createEdge(nodeList.get(1), nodeList.get(1), "lalala", 430, 430);
+        createEdge(nodeList.get(1), nodeList.get(1), "lalala", 400, 150);
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
@@ -110,8 +113,6 @@ public class MainPageController {
         // Codice eseguito al termine della creazione della finestra
         // Serve per poter prendere le grandezze della GraphViewBox e organizzare i nodi
         Platform.runLater(() -> {
-            paneWidth = GraphViewBox.getWidth();
-            paneHeight = GraphViewBox.getHeight();
             reposition();
         });
         
@@ -122,7 +123,6 @@ public class MainPageController {
 
     @FXML
     private void changeIcon() { // metodo per il pulsante di RUN
-        System.out.println(runButton.getStyleClass());
         if (runButton.getStyleClass().contains("RunButton")) {
             runButton.getStyleClass().setAll("button", "loadingButton"); 
         } else {
@@ -132,9 +132,7 @@ public class MainPageController {
         // System.out.println("Il grafico è valido? -> "+isGraphValid());
 
         if (isGraphValid()) {
-            WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
-            System.out.println(wordAutomata.run(textField.getText()));
-            System.out.println(wordAutomata.getStateHistory());
+            createHistory();
         }
     }
 
@@ -169,6 +167,34 @@ public class MainPageController {
                 edge.updateEdge();
             }
         }
+    }
+
+    private void createHistory() {
+        WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
+        
+        if (wordAutomata.run(textField.getText())) {
+            ArrayList<String> stateHistory = wordAutomata.getStateHistory();
+            history.getChildren().clear();
+            for (int i = 0; i < stateHistory.size(); i++) {
+                for (Node node: nodeList) {
+                    if (node.getName().equals(stateHistory.get(i))) {
+                        history.getChildren().add(createLableNode(stateHistory.get(i)));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private Label createLableNode(String name) {
+        Label label = new Label();
+        label.setText(name);
+        label.setTextAlignment(TextAlignment.LEFT);
+        label.getStyleClass().add("label1");
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setPadding(new Insets(0, 0, 0, 10));
+
+        return label;
     }
 
     private Boolean isGraphValid() {

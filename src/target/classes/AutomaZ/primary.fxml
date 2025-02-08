@@ -47,7 +47,7 @@
 
    <center>
       <SplitPane orientation="HORIZONTAL" dividerPositions="0.7">
-         <ScrollPane styleClass="BlackBorder" maxWidth="200" prefWidth="100" minWidth="100" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+         <ScrollPane styleClass="BlackBorder" fitToWidth="true" maxWidth="200" prefWidth="100" minWidth="100" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <VBox fx:id="history" alignment="TOP_LEFT">
                <!-- Elementi aggiunti dinamicamente nel Controller -->
             </VBox>
