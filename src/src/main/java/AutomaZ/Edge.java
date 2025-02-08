@@ -25,7 +25,7 @@ public class Edge {
     private Node start;
     private Node end;
     private Shape curve;
-    private static final double ARC_LENGTH = 240;
+    private static final double ARC_LENGTH = 230;
     private Polygon arrow;
     private Group group;
 
@@ -276,23 +276,19 @@ public class Edge {
         double stX = start.getX(), stY = start.getY();
         double dx = control[0] - stX, dy = control[1] - stY;
         double m = Math.sqrt(dx * dx + dy * dy);
-        ((Arc)curve).setCenterX(stX + Node.RADIUS * 1.2 * (dx / m));
-        ((Arc)curve).setCenterY(stY + Node.RADIUS * 1.2 * (dy / m));
-        double startAngle = 150 + Math.atan2(dx, dy) * 180.0 / Math.PI;
+        ((Arc)curve).setCenterX(stX + Node.RADIUS * 1.4 * (dx / m));
+        ((Arc)curve).setCenterY(stY + Node.RADIUS * 1.4 * (dy / m));
+        double startAngle = 145 + Math.atan2(dx, dy) * 180.0 / Math.PI;
         ((Arc)curve).setStartAngle(startAngle);
     }
 
     private double[] arcEdgePoint() {
         double centerX = ((Arc)curve).getCenterX();
         double centerY = ((Arc)curve).getCenterY();
-        double radiusX = ((Arc)curve).getRadiusX();
-        double radiusY = ((Arc)curve).getRadiusY();
-        double startAngleRad = Math.toRadians(((Arc)curve).getStartAngle());
+        double startAngleRad = Math.toRadians(((Arc)curve).getStartAngle() - 10);
 
-        double startX = centerX + radiusX * Math.cos(startAngleRad);
-        double startY = centerY + radiusY * Math.sin(startAngleRad);
-
-        System.out.println("startX: " + startX + " startY: " + startY);
+        double startX = centerX + Node.RADIUS * 0.8 * Math.sin(startAngleRad);
+        double startY = centerY + Node.RADIUS * 0.8 * Math.cos(startAngleRad);
 
         return new double[]{startX, startY};
     }
