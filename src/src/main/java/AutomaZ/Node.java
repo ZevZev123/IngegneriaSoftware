@@ -50,7 +50,7 @@ public class Node {
 
     public Node(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, RADIUS, Color.TRANSPARENT);
-        this.circle2 = new Circle(x, y, 15, Color.TRANSPARENT);
+        this.circle2 = new Circle(x, y, RADIUS * (3 / 4), Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         
         this.isInitial = isInitial;
@@ -96,19 +96,17 @@ public class Node {
         });
             
         this.group.setOnMouseExited(event -> {
-            if (isInitial) {
+            if (isInitial)
                 initialNode();
-            } else if (isFinal) {
+            else if (isFinal)
                 finalNode();
-            } else {
+            else
                 resetNodeColor();
-            }
         });
 
         this.group.setOnMouseDragged(event -> {
-            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY)
                 changeCoordinates(event.getX(), event.getY());
-            }
         });
     }
 
@@ -194,34 +192,30 @@ public class Node {
     
     private void normalNodeHover(){
         resetLabelStyleClass();
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("labelHover");
-        }
         if (isFinal) this.circle2.setFill(Color.LIGHTGRAY);
         else this.circle.setFill(Color.LIGHTGRAY);
     }
     
     private void initialNode() {
         resetLabelStyleClass();
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("initial");
-        }
         this.circle.setFill(Color.YELLOW);
         this.circle2.setFill(Color.TRANSPARENT);
     }
     
     private void initialNodeHover() {
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("initialHover");
-        }
         this.circle.setFill(Color.GOLD);
     }
     
     private void finalNode() {
         resetLabelStyleClass();
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("final");
-        }
         this.circle2.setStroke(Color.BLACK);
         this.circle.setFill(Color.TRANSPARENT);
         this.circle2.setFill(Color.TRANSPARENT);
@@ -252,7 +246,7 @@ public class Node {
         } else { return; }
         if (this.stackPane.getChildren().get(1) instanceof Button buttonPane) {
             button = buttonPane;
-        } else { return;}
+        } else { return; }
 
         TextField textField = new TextField(this.name);
         textField.setPrefWidth(label.getWidth());
@@ -290,9 +284,8 @@ public class Node {
 
     public void setName(String name) {
         this.name = name;
-        if (contextMenuNodi != null) {
+        if (contextMenuNodi != null)
             contextMenuNodi.getItems().get(0).setText("Cancella Nodo "+this.name);
-        }
         text.setX(circle.getCenterX()-6);
         if (name.length() > 2) {
             text.setText(name.substring(0,2)+"...");
@@ -307,13 +300,10 @@ public class Node {
     }
 
     public void setInitial() {
-        if (nodeList != null) {
-            for (Node node: nodeList) {
-                if (node.isNodeInitial() && node != this) {
+        if (nodeList != null)
+            for (Node node: nodeList)
+                if (node.isNodeInitial() && node != this)
                     node.setNotInitial();
-                }
-            }
-        }
         resetNodeColor();
         if (this.isFinal) this.isFinal = false;
         this.isInitial = !this.isInitial;

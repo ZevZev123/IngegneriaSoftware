@@ -28,11 +28,8 @@ public class Edge {
     private static final double ARC_LENGTH = 230;
     private Polygon arrow;
     private Group group;
-
     private double[] control;
-
     private Text text;
-
     private String name;
 
     private StackPane stackPane;
@@ -47,17 +44,11 @@ public class Edge {
 
         control = new double[]{controlX, controlY};
 
-        // Crea la freccia
         arrow = new Polygon();
         arrow.setFill(Color.BLACK);
 
-        // Crea la curva
         if(start != end) {
             curve = new QuadCurve();
-            curve.setStroke(Color.BLACK);
-            curve.setFill(null);
-            curve.setStrokeWidth(3);
-
             ((QuadCurve)curve).setControlX(control[0]);
             ((QuadCurve)curve).setControlY(control[1]);
         }
@@ -65,13 +56,13 @@ public class Edge {
             curve = new Arc();
             ((Arc)curve).setRadiusX(Node.RADIUS * 0.8);
             ((Arc)curve).setRadiusY(Node.RADIUS * 0.8);
-            ((Arc)curve).setStroke(Color.BLACK);
-            ((Arc)curve).setFill(null);
-            ((Arc)curve).setStrokeWidth(3);
             ((Arc)curve).setLength(ARC_LENGTH);
             ((Arc)curve).setType(ArcType.OPEN);
             setArc();
         }
+        curve.setStroke(Color.BLACK);
+        curve.setFill(null);
+        curve.setStrokeWidth(3);
 
         group = new Group(curve, arrow);
 
@@ -215,9 +206,8 @@ public class Edge {
         this.arrow.setStroke(Color.BLACK);
         this.arrow.setFill(Color.BLACK);
         this.text.setFill(Color.BLACK);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().remove("labelHover");
-        }
     }
 
     private void edgeHover() {
@@ -225,9 +215,8 @@ public class Edge {
         this.arrow.setStroke(Color.RED);
         this.arrow.setFill(Color.RED);
         this.text.setFill(Color.RED);
-        if (this.stackPane.getChildren().get(0) instanceof Label label) {
+        if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("labelHover");
-        }
     }
 
     private double[] calculateEdgePoint(double x, double y) {
@@ -276,10 +265,10 @@ public class Edge {
         double stX = start.getX(), stY = start.getY();
         double dx = control[0] - stX, dy = control[1] - stY;
         double m = Math.sqrt(dx * dx + dy * dy);
+        
         ((Arc)curve).setCenterX(stX + Node.RADIUS * 1.4 * (dx / m));
         ((Arc)curve).setCenterY(stY + Node.RADIUS * 1.4 * (dy / m));
-        double startAngle = 145 + Math.atan2(dx, dy) * 180.0 / Math.PI;
-        ((Arc)curve).setStartAngle(startAngle);
+        ((Arc)curve).setStartAngle(145 + Math.atan2(dx, dy) * 180.0 / Math.PI);
     }
 
     private double[] arcEdgePoint() {
@@ -287,10 +276,10 @@ public class Edge {
         double centerY = ((Arc)curve).getCenterY();
         double startAngleRad = Math.toRadians(((Arc)curve).getStartAngle() - 10);
 
-        double startX = centerX + Node.RADIUS * 0.8 * Math.sin(startAngleRad);
-        double startY = centerY + Node.RADIUS * 0.8 * Math.cos(startAngleRad);
-
-        return new double[]{startX, startY};
+        return new double[] {
+            centerX + Node.RADIUS * 0.8 * Math.sin(startAngleRad),
+            centerY + Node.RADIUS * 0.8 * Math.cos(startAngleRad)
+        };
     }
 
     public void setControl(double controlX, double controlY) {
