@@ -14,14 +14,14 @@ public class WordAutomata {
     private ArrayList<String> stateHistory;
     private ArrayList<String> stringHistory;
 
-    public WordAutomata(ArrayList<Node> nFXList, ArrayList<Edge> eFXList) {
-        listNode = nFXList;
-        listEdge = eFXList;
+    public WordAutomata(ArrayList<Node> nList, ArrayList<Edge> eList) {
+        listNode = nList;
+        listEdge = eList;
 
         stateList = translate();
         
         for (State s : stateList)
-            if (s.isInitial()) {
+            if (s.isInitial) {
                 startingState = s;
                 break;
             }
@@ -30,11 +30,11 @@ public class WordAutomata {
     private ArrayList<State> translate() {
         ArrayList<State> temp = new ArrayList<>();
 
-        for(Node nFX : listNode) {
-            State s = new State(nFX.getName(), nFX.isNodeInitial(), nFX.isNodeFinal());
-            for(Edge eFX : listEdge)
-                if(eFX.getNodes()[0].getName().equals(s.getName()))
-                    s.addEdge(eFX.getValue(), eFX.getNodes()[1].getName());
+        for(Node n : listNode) {
+            State s = new State(n.getName(), n.isNodeInitial(), n.isNodeFinal());
+            for(Edge e : listEdge)
+                if(e.getNodes()[0].getName().equals(s.name))
+                    s.edges.put(e.getValue(), e.getNodes()[1].getName());
             temp.add(s);
         }
         
@@ -46,7 +46,6 @@ public class WordAutomata {
         stringHistory = new ArrayList<>();
 
         int stateNum = stateList.size();
-
         List<String>[][] graphMatrix = matrixInitialiser(stateNum, stateList);
 
         int tempInd, currStateInd = stateList.indexOf(startingState);
@@ -59,7 +58,7 @@ public class WordAutomata {
                 for (tempInd = 0; tempInd < stateNum && !found; tempInd++)
                     found = graphMatrix[currStateInd][tempInd].contains(subWord);
                 if (found) {
-                    stateHistory.add(stateList.get(currStateInd).getName());
+                    stateHistory.add(stateList.get(currStateInd).name);
                     stringHistory.add(subWord);
                     remainingWord = remainingWord.replaceFirst(subWord, "");
                     currStateInd = tempInd - 1;
@@ -68,9 +67,9 @@ public class WordAutomata {
             }
             if (!found) return false;
         }
-        stateHistory.add(stateList.get(currStateInd).getName());
+        stateHistory.add(stateList.get(currStateInd).name);
         
-        return stateList.get(currStateInd).isFinal();
+        return stateList.get(currStateInd).isFinal;
     }
 
     @SuppressWarnings("unchecked")
@@ -82,9 +81,9 @@ public class WordAutomata {
             temp = list.get(i);
             for (int j = 0; j < n; j++) {
                 graphMatrix[i][j] = new ArrayList<>();
-                HashMap<String, String> nodeEdges = temp.getEdges();
+                HashMap<String, String> nodeEdges = temp.edges;
                 for (String s : nodeEdges.keySet())
-                    if (nodeEdges.get(s) == list.get(j).getName())
+                    if (nodeEdges.get(s) == list.get(j).name)
                         graphMatrix[i][j].add(s);
             }
         }
@@ -96,27 +95,18 @@ public class WordAutomata {
     public ArrayList<String> getStringHistory() { return stringHistory; }
 
 
+
     private class State {
-        private final String nodeName;
+        private final String name;
         private final boolean isInitial;
         private final boolean isFinal;
         private HashMap<String, String> edges;
     
-        private State(String nodeName, boolean isInitial, boolean isFinal) {
-            this.nodeName = nodeName;
+        private State(String name, boolean isInitial, boolean isFinal) {
+            this.name = name;
             this.isInitial = isInitial;
             this.isFinal = isFinal;
             edges = new HashMap<String, String>();
         }
-        private State(String nodeName) {
-            this(nodeName, false, false);
-        }
-        
-        private void addEdge(String value, String nodePointed) { edges.put(value, nodePointed); }
-    
-        private String getName() { return nodeName; }
-        private boolean isInitial() { return isInitial; }
-        private boolean isFinal() { return isFinal; }
-        private HashMap<String, String> getEdges() { return edges; }
     }
 }

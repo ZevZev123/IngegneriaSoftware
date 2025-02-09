@@ -25,21 +25,18 @@ public class NewEdgeController {
     private void initialize() {
         // Chiude la finestra con la pressione del tasto ESC
         textField.sceneProperty().addListener((observable, oldScene, newScene) -> {
-            if (newScene != null) {
+            if (newScene != null)
                 newScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.ESCAPE) {
+                    if (event.getCode() == KeyCode.ESCAPE)
                         closePage();
-                    }
                 });
-            }
         });
 
-        if (nodeList != null) {
+        if (nodeList != null)
             for (Node node : nodeList) {
                 nodeStart.getItems().add(node.getName());
                 nodeEnd.getItems().add(node.getName());
             }
-        }
     }
 
     @FXML
@@ -79,9 +76,8 @@ public class NewEdgeController {
 
     public void setNodeList(ArrayList<Node> nodeList) { 
         this.nodeList = nodeList; 
-        if (nodeStart != null && nodeEnd != null) {
+        if (nodeStart != null && nodeEnd != null)
             initialize();
-        }
     }
 
     public void setStartNode(Node node) { 

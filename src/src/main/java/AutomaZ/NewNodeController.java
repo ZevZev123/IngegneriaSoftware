@@ -23,13 +23,11 @@ public class NewNodeController {
     private void initialize() {
         // Chiude la finestra con la pressione del tasto ESC
         textField.sceneProperty().addListener((observable, oldScene, newScene) -> {
-            if (newScene != null) {
+            if (newScene != null)
                 newScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.ESCAPE) {
+                    if (event.getCode() == KeyCode.ESCAPE)
                         closePage();
-                    }
                 });
-            }
         });
     }
 
@@ -40,12 +38,11 @@ public class NewNodeController {
         if (controller != null) {
             if (!nomeNodo.isEmpty()) {
                 Boolean nameAlreadyExist = false;
-                for (Node node: nodeList) {
+                for (Node node: nodeList)
                     if (node.getName().equals(nomeNodo)) {
                         nameAlreadyExist = true;
                         break;
                     }
-                }
 
                 if (!nameAlreadyExist) {
                     controller.createNode(positionX, positionY, nomeNodo, false, false);

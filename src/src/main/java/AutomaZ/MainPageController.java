@@ -60,9 +60,8 @@ public class MainPageController {
         // creazione nodi con doppio click del mouse sul foglio
         graphPane.setOnMouseClicked(event -> {
             this.contextMenu.hide();
-            for (int i = 0; i < contextMenuNodiList.size(); i++){
+            for (int i = 0; i < contextMenuNodiList.size(); i++)
                 contextMenuNodiList.get(i).hide();
-            }
             if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 if (event.isShiftDown()) createEdge();
                 else createNode(event.getX(), event.getY());
@@ -123,26 +122,23 @@ public class MainPageController {
 
     @FXML
     private void changeIcon() { // metodo per il pulsante di RUN
-        if (runButton.getStyleClass().contains("RunButton")) {
+        if (runButton.getStyleClass().contains("RunButton"))
             runButton.getStyleClass().setAll("button", "loadingButton"); 
-        } else {
+        else
             runButton.getStyleClass().setAll("button", "RunButton");
-        }
 
         // System.out.println("Il grafico è valido? -> "+isGraphValid());
 
-        if (isGraphValid()) {
+        if (isGraphValid())
             createHistory();
-        }
     }
 
     @FXML
     private void deleteAll() {
         System.out.println("Cancellato tutto il grafo");
         int val = nodeList.size();
-        for (int i = 0; i < val; i++){
+        for (int i = 0; i < val; i++)
             nodeList.get(0).deleteNode();
-        }
     }
 
     @FXML
@@ -163,9 +159,8 @@ public class MainPageController {
                 node.changeCoordinates(x, y);
                 count = count - angleNode;
             }
-            for (Edge edge: edgeList) {
+            for (Edge edge: edgeList)
                 edge.updateEdge();
-            }
         }
     }
 
@@ -175,14 +170,12 @@ public class MainPageController {
         if (wordAutomata.run(textField.getText())) {
             ArrayList<String> stateHistory = wordAutomata.getStateHistory();
             history.getChildren().clear();
-            for (int i = 0; i < stateHistory.size(); i++) {
-                for (Node node: nodeList) {
-                    if (node.getName().equals(stateHistory.get(i))) {
-                        history.getChildren().add(createLableNode(stateHistory.get(i)));
+            for (String s : stateHistory)
+                for (Node node: nodeList)
+                    if (node.getName().equals(s)) {
+                        history.getChildren().add(createLableNode(s));
                         break;
                     }
-                }
-            }
         }
     }
 
@@ -202,32 +195,25 @@ public class MainPageController {
         // controllo se esiste almeno un nodo finale
         int initialCount = 0, finalCount = 0;
         for (Node node: nodeList) {
-            if (node.isNodeInitial()) {
+            if (node.isNodeInitial())
                 initialCount++;
-            }
-            if (node.isNodeFinal()) {
+            if (node.isNodeFinal())
                 finalCount++;
-            }
         }
         if (initialCount != 1 || finalCount < 1) { return false; }
     
         // controllo se ci sono nodi con lo stesso nome
-        for (int i = 0; i < nodeList.size(); i++) {
-            for (int j = i+1; j < nodeList.size(); j++) {
-                if (nodeList.get(i).getName().equals(nodeList.get(j).getName())) {
+        for (int i = 0; i < nodeList.size(); i++)
+            for (int j = i+1; j < nodeList.size(); j++)
+                if (nodeList.get(i).getName().equals(nodeList.get(j).getName()))
                     return false;
-                }
-            }
-        }
 
         // controllo se ci sono edge con lo stesso valore che partono dallo stesso nodo
-        for (int i = 0; i < edgeList.size(); i++) {
-            for (int j = i+1; j < edgeList.size(); j++) {
-                if (edgeList.get(i).getStartNode() == edgeList.get(j).getStartNode() && edgeList.get(i).getValue().equals(edgeList.get(j).getValue())) {
+        for (int i = 0; i < edgeList.size(); i++)
+            for (int j = i+1; j < edgeList.size(); j++)
+                if (edgeList.get(i).getStartNode() == edgeList.get(j).getStartNode() &&
+                    edgeList.get(i).getValue().equals(edgeList.get(j).getValue()))
                     return false;
-                }
-            }
-        }
 
         return true;
     }
@@ -249,9 +235,8 @@ public class MainPageController {
                 NewEdgeController tertiaryController = loader.getController();
                 tertiaryController.setPrimaryController(this);
                 tertiaryController.setNodeList(nodeList);
-                if (this.selectedNode != null) {
+                if (this.selectedNode != null)
                     tertiaryController.setStartNode(this.selectedNode);
-                }
 
                 thirdStage = new Stage();
                 thirdStage.setTitle("Creazione nuovo edge");
@@ -264,12 +249,8 @@ public class MainPageController {
 
                 thirdStage.setOnCloseRequest(event -> {thirdStage = null;});
                 thirdStage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            thirdStage.toFront();
-        }
+            } catch (Exception e) { e.printStackTrace(); }
+        } else { thirdStage.toFront(); }
     }
 
     private void createNode(double positionX, double positionY) {
@@ -298,9 +279,7 @@ public class MainPageController {
 
                 secondStage.setOnCloseRequest(event -> {this.secondStage = null; this.secondaryController = null;});
                 secondStage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) { e.printStackTrace(); }
         } else {
             secondStage.toFront();
             secondaryController.setPositionX(positionX);
@@ -357,9 +336,7 @@ public class MainPageController {
                 Node node = new Node(positionX, positionY, name, this, isInitial, isFinal);
                 createNode(node);
             } else { System.out.println("Nome esistente"); }
-        } else {
-            System.out.println("Errore");
-        }
+        } else { System.out.println("Errore"); }
     }
     
     private void createEdge(Node start, Node end, String name, double positionX, double positionY) {
@@ -386,27 +363,19 @@ public class MainPageController {
     public void delete(Node node) {
         System.out.println("Node cancellato");
         // cancello il contextMenu del nodo
-        for (int i = 0; i < nodeList.size(); i++) {
+        for (int i = 0; i < nodeList.size(); i++)
             if (nodeList.get(i) == node) {
                 // contextMenuNodiList.get(i).hide();
                 contextMenuNodiList.remove(i);
                 break;
             }
-        }
 
         // concello tutti gli edge che partono o arrivano al nodo
-        int i = 0;
-        while (i < edgeList.size()) {
-            if (i < edgeList.size()) {
-                for (Node edgesNode: edgeList.get(i).getNodes()) {
-                    if (node == edgesNode) {
-                        edgeList.get(i).deleteEdge();
-                        i--;
-                    }
-                }
-            }
-            i++;
-        }
+        for (int i = 0; i < edgeList.size(); i++)
+            if (i < edgeList.size())
+                for (Node edgesNode: edgeList.get(i).getNodes())
+                    if (node == edgesNode)
+                        edgeList.get(i--).deleteEdge();
     }
 
     public Boolean isThereInitial() {
