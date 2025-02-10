@@ -32,8 +32,8 @@ class FileManager {
     }
     public void readFromFile(String fileName) throws IOException {
         FileReader file = new FileReader("graphs/"+fileName);
-        if(!savedFiles.contains(file.toString()))
-            throw new IOException("File not found");
+        if(!savedFiles.contains(fileName))
+            throw new IOException("eh son mi");
         translate(file);
         file.close();
     }
@@ -49,22 +49,22 @@ class FileManager {
         
         result += "NODI:\n";
         for(Node n : listNode) {
-            result += "\t";
-            result += Double.toString(n.getCoordinates()[0]) + "," +
-                Double.toString(n.getCoordinates()[1]) + "\n";
             result += n.getName() + ",";
+            result += Double.toString(n.getCoordinates()[0]) + "," +
+                Double.toString(n.getCoordinates()[1]) + ",";
             result += ((n.isNodeInitial()) ? 1 : 0) + "," +
                 ((n.isNodeFinal()) ? 1 : 0) + ",";
+            result += "\n";
         }
         
         result += "\nARCHI:\n";
         for(Edge e : listEdge) {
-            result += "\t";
+            result += e.getValue() + ",";
             result += e.getNodes()[0].getName() + "," +
                 e.getNodes()[1].getName() + ",";
-            result += e.getValue() + ",";
             result += Double.toString(e.getControlX()) + "," +
-                Double.toString(e.getControlY()) + "\n";
+                Double.toString(e.getControlY());
+            result += "\n";
         }
 
         return result;
@@ -78,8 +78,8 @@ class FileManager {
         listNode = new ArrayList<>();
         while(!line.isEmpty()) {
             String[] t = line.split(",");
-            Node n = new Node(Double.parseDouble(t[0]), Double.parseDouble(t[1]),
-                t[2], t[3].equals("true"), t[4].equals("true"));
+            Node n = new Node(Double.parseDouble(t[1]), Double.parseDouble(t[2]),
+                t[0], t[3].equals("1"), t[4].equals("1"));
             listNode.add(n);
             line = scanner.nextLine();
         }
@@ -87,12 +87,14 @@ class FileManager {
         line = scanner.nextLine();
         line = scanner.nextLine();
         listEdge = new ArrayList<>();
-        while(!line.isEmpty()) {
+        while(true) {
             String[] t = line.split(",");
-            Edge e = new Edge(getNode(t[0]), getNode(t[1]), t[2],
+            Edge e = new Edge(getNode(t[1]), getNode(t[2]), t[0],
                 Double.parseDouble(t[3]), Double.parseDouble(t[4]));
             listEdge.add(e);
             line = scanner.nextLine();
+            if(!scanner.hasNextLine())
+                break;
         }
 
         scanner.close();
@@ -112,6 +114,7 @@ class FileManager {
         return files;
     }
 
+    public void updateFileList() { savedFiles = getExistingFiles(); }
     public void setLists(ArrayList<Node> n, ArrayList<Edge> e) { listNode = n; listEdge = e; }
 
     public ArrayList<Node> getListNode() { return listNode; }

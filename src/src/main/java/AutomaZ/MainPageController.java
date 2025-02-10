@@ -304,6 +304,9 @@ public class MainPageController {
     private void generateFileManager() {
         if (this.fileManager == null) {
             this.fileManager = new FileManager(nodeList, edgeList);
+            fileManager.updateFileList();
+            for(String s : fileManager.savedFiles)
+                System.out.println(s);
         }
     }
 
