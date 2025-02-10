@@ -12,17 +12,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -42,8 +46,9 @@ public class MainPageController {
     private ArrayList<Node> nodeList = new ArrayList<>();
     private ArrayList<Edge> edgeList = new ArrayList<>();
     
-    FileManager fileManager = null;
-    String fileName = null;
+    private FileManager fileManager = null;
+    private String fileName = null;
+    public Boolean isSaved = false;
 
     private Pane graphPane;
     private double paneWidth = 0;
@@ -156,6 +161,7 @@ public class MainPageController {
     private void reposition() {
         int nodeListLength = nodeList.size();
         if (nodeListLength != 0){
+            isSaved = false;
             double angleNode = 0;
             angleNode = 360 / nodeListLength;
             double count = 0;
@@ -176,22 +182,25 @@ public class MainPageController {
     }
 
     @FXML
-    private void newFile() throws IOException {
+    private ButtonType newFile() throws IOException {
         System.out.println("newFile");
         generateFileManager();
-        if (this.fileName == null) {
+        if (!isSaved && (nodeList.size() != 0 || edgeList.size() != 0)) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Attenzione");
             alert.setHeaderText("Attenzione");
-            alert.setContentText("Il file non e' stato salvato, creare un nuovo file?");
+            alert.setContentText("Il file non e' stato salvato, sicuro di voler procedere?");
             
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 deleteAll();
                 this.fileName = null;
             }
+            return result.get();
         } else {
-            saveFile();
+            deleteAll();
+            this.fileName = null;
+            return ButtonType.OK;
         }
     }
 
@@ -202,26 +211,94 @@ public class MainPageController {
         if (this.fileName == null) {
             this.fileName = "prova";
         }
-        nodeList.clear();
-        edgeList.clear();
-        // fileManager.readFromFile("prova"); // non funziona
+        ButtonType result = newFile();
+        if (result == ButtonType.OK) {
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Apri File");
+            dialog.setHeaderText("Seleziona il file da aprire:");
+
+            // Aggiungi i pulsanti OK e Cancel al dialogo
+            ButtonType okButtonType = new ButtonType("OK", ButtonType.OK.getButtonData());
+            dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+            // Crea la ComboBox e aggiungi gli elementi
+            ComboBox<String> comboBox = new ComboBox<>();
+            comboBox.getItems().addAll(fileManager.savedFiles);
+
+            // Aggiungi la ComboBox al layout del dialogo
+            VBox vbox = new VBox(comboBox);
+            dialog.getDialogPane().setContent(vbox);
+
+            // Imposta il risultato del dialogo quando l'utente preme OK
+            dialog.setResultConverter(new Callback<ButtonType, String>() {
+                @Override
+                public String call(ButtonType button) {
+                    if (button == okButtonType) {
+                        return comboBox.getValue();
+                    }
+                    return null;
+                }
+            });
+
+            // Mostra il dialogo e attendi la risposta dell'utente
+            Optional<String> result2 = dialog.showAndWait();
+            result2.ifPresent(fileName -> {
+                this.fileName = fileName;
+                nodeList.clear();
+                edgeList.clear();
+                try {
+                    System.out.println("Apertura file: "+fileName);
+                    fileManager.readFromFile(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
     
     @FXML
     private void saveFile() throws IOException {
         generateFileManager();
         System.out.println("saveFile");
-        if (this.fileName == null) {
-            this.fileName = "prova";
+        if (nodeList.size() == 0 && edgeList.size() == 0) {
+            return;
         }
-        fileManager.writeToFile(this.fileName);
+        if (this.fileName != null) {
+            fileManager.writeToFile(this.fileName);
+            isSaved = true;
+        } else {
+            TextInputDialog dialog = new TextInputDialog("defaultFileName");
+            dialog.setTitle("Salva File");
+            dialog.setHeaderText("Inserisci il nome del file da aprire:");
+            dialog.setContentText("Nome file:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(fileName -> {
+                this.fileName = fileName;
+                try {
+                    fileManager.writeToFile(fileName);
+                    isSaved = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
     
     @FXML
-    private void exit() {
-        System.out.println("exit");
-        generateFileManager();
+    private void saveNewFile() throws IOException {
+        this.fileName = null;
+        saveFile();
+    }
 
+    @FXML
+    private void exit() throws IOException {
+        System.out.println("exit");
+        ButtonType result = newFile();
+        if (result == ButtonType.OK) {
+            Platform.exit();
+            System.exit(0);
+        }
     }
 
     private void generateFileManager() {
@@ -431,6 +508,7 @@ public class MainPageController {
         
         node.setContextMenuNodiList(contextMenuNodi);
         contextMenuNodiList.add(contextMenuNodi);
+        isSaved = false;
     }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
@@ -457,6 +535,7 @@ public class MainPageController {
         graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
         edgeMenuList.getChildren().add(edge.getStackPane());
         edge.setEdgeList(edgeList);
+        isSaved = false;
     }
 
     public void createEdge(Node start, Node end, String name) {
@@ -497,7 +576,7 @@ public class MainPageController {
         return false;
     }
 
-    public void coordinatesChanged() { for (Edge edge: edgeList) edge.updateEdge(); }
+    public void coordinatesChanged() { for (Edge edge: edgeList) edge.updateEdge(); isSaved = false; }
     public void newEdge(Node node) { System.out.println(node); }
 
     public ArrayList<Node> getNodeList() { return this.nodeList; }

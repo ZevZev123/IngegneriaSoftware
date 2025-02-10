@@ -283,6 +283,7 @@ public class Node {
     }
 
     public void setName(String name) {
+        if (this.controller != null) { this.controller.isSaved = false; }
         this.name = name;
         if (contextMenuNodi != null)
             contextMenuNodi.getItems().get(0).setText("Cancella Nodo "+this.name);

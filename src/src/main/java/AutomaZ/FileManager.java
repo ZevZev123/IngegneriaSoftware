@@ -31,7 +31,7 @@ class FileManager {
         savedFiles = getExistingFiles();
     }
     public void readFromFile(String fileName) throws IOException {
-        FileReader file = new FileReader("graphs/"+fileName+".graph");
+        FileReader file = new FileReader("graphs/"+fileName);
         if(!savedFiles.contains(file.toString()))
             throw new IOException("File not found");
         translate(file);

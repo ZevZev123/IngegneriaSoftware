@@ -25,6 +25,7 @@
                <MenuItem text="New" onAction="#newFile"/>
                <MenuItem text="Open" onAction="#openFile"/>
                <MenuItem text="Save" onAction="#saveFile"/>
+               <MenuItem text="Save new file" onAction="#saveNewFile"/>
                <MenuItem text="Exit" onAction="#exit"/>
             </Menu>
             <Menu text="Edit">
