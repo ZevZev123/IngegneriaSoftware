@@ -217,7 +217,6 @@ public class MainPageController {
             dialog.setTitle("Apri File");
             dialog.setHeaderText("Seleziona il file da aprire:");
 
-            // Aggiungi i pulsanti OK e Cancel al dialogo
             ButtonType okButtonType = new ButtonType("OK", ButtonType.OK.getButtonData());
             dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
@@ -247,8 +246,11 @@ public class MainPageController {
                 nodeList.clear();
                 edgeList.clear();
                 try {
-                    System.out.println("Apertura file: "+fileName);
                     fileManager.readFromFile(fileName);
+                    this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
+                    this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
+                    isSaved = true;
+                    updateGraphPane();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -277,6 +279,8 @@ public class MainPageController {
                 this.fileName = fileName;
                 try {
                     fileManager.writeToFile(fileName);
+                    System.out.println(fileManager.getListEdge()+"\n"+fileManager.getListNode());
+                    updateGraphPane();
                     isSaved = true;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -298,6 +302,26 @@ public class MainPageController {
         if (result == ButtonType.OK) {
             Platform.exit();
             System.exit(0);
+        }
+    }
+
+    private void updateGraphPane() {
+        for (Edge edge: edgeList) {
+            edge.setEdgeList(edgeList);
+
+            graphPane.getChildren().add(edge.getGroup());
+            edgeMenuList.getChildren().add(edge.getStackPane());
+            edge.setEdgeList(edgeList);
+        }
+
+        for (Node node: nodeList) {
+            node.setListFX(nodeList);
+
+            graphPane.getChildren().add(node.getGroup());
+            nodeMenuList.getChildren().add(node.getStackPane());
+            node.setListFX(nodeList);
+
+            setContextMenuNode(node);
         }
     }
 
@@ -488,6 +512,11 @@ public class MainPageController {
         
         nodeMenuList.getChildren().add(node.getStackPane());
         
+        setContextMenuNode(node);
+        isSaved = false;
+    }
+
+    private void setContextMenuNode(Node node) {
         ContextMenu contextMenuNodi = new ContextMenu();
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
@@ -511,7 +540,6 @@ public class MainPageController {
         
         node.setContextMenuNodiList(contextMenuNodi);
         contextMenuNodiList.add(contextMenuNodi);
-        isSaved = false;
     }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
