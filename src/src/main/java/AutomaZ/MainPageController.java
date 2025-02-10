@@ -1,6 +1,7 @@
 package AutomaZ;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,12 +9,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,6 +28,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
+import java.io.IOException;
+
 public class MainPageController {
     @FXML private VBox nodeMenuList;
     @FXML private VBox edgeMenuList;
@@ -32,9 +38,12 @@ public class MainPageController {
 
     @FXML private Button runButton;
     @FXML private TextField textField;
-
+    
     private ArrayList<Node> nodeList = new ArrayList<>();
     private ArrayList<Edge> edgeList = new ArrayList<>();
+    
+    FileManager fileManager = null;
+    String fileName = null;
 
     private Pane graphPane;
     private double paneWidth = 0;
@@ -50,7 +59,7 @@ public class MainPageController {
     private NewNodeController secondaryController;
 
     @FXML
-    private void initialize() {
+    private void initialize() throws IOException {
         // updateToolTip();
 
         graphPane = new Pane(); // creazione del foglio
@@ -89,6 +98,7 @@ public class MainPageController {
             }
         });
         
+        // openFile(); // da togliere tutto il resto, non funziona ancora
         createNode(0, 0, "F", true, false);
         createNode(0, 0, "A", false, false);
         createNode(0, 0, "B", false, true);
@@ -165,6 +175,61 @@ public class MainPageController {
         }
     }
 
+    @FXML
+    private void newFile() throws IOException {
+        System.out.println("newFile");
+        generateFileManager();
+        if (this.fileName == null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Attenzione");
+            alert.setHeaderText("Attenzione");
+            alert.setContentText("Il file non e' stato salvato, creare un nuovo file?");
+            
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                deleteAll();
+                this.fileName = null;
+            }
+        } else {
+            saveFile();
+        }
+    }
+
+    @FXML
+    private void openFile() throws IOException {
+        System.out.println("openFile");
+        generateFileManager();
+        if (this.fileName == null) {
+            this.fileName = "prova";
+        }
+        nodeList.clear();
+        edgeList.clear();
+        // fileManager.readFromFile("prova"); // non funziona
+    }
+    
+    @FXML
+    private void saveFile() throws IOException {
+        generateFileManager();
+        System.out.println("saveFile");
+        if (this.fileName == null) {
+            this.fileName = "prova";
+        }
+        fileManager.writeToFile(this.fileName);
+    }
+    
+    @FXML
+    private void exit() {
+        System.out.println("exit");
+        generateFileManager();
+
+    }
+
+    private void generateFileManager() {
+        if (this.fileManager == null) {
+            this.fileManager = new FileManager(nodeList, edgeList);
+        }
+    }
+
     private void createHistory() {
         history.getChildren().clear();
         for (Edge edge: edgeList) edge.setColor(Color.BLACK);
@@ -188,6 +253,7 @@ public class MainPageController {
         }
     }
 
+    // cambia colore agli edge percorsi
     private void changeColor() {
         String nodeName = "";
         for (int i = 0; i < history.getChildren().size(); i++) {
@@ -207,6 +273,7 @@ public class MainPageController {
         }
     }
 
+    // controlla se l'ultimo node inserito è uguale a quello precedente
     private Boolean equalToLast(String state) {
         for (int i = history.getChildren().size()-1; i > 0; i--) {
             if (history.getChildren().get(i).getStyleClass().contains("label1")) {

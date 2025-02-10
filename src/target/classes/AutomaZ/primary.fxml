@@ -22,9 +22,10 @@
          <MenuBar>
             <!-- Menu Items -->
             <Menu text="File">
-               <MenuItem text="Open" />
-               <MenuItem text="Save" />
-               <MenuItem text="Exit" />
+               <MenuItem text="New" onAction="#newFile"/>
+               <MenuItem text="Open" onAction="#openFile"/>
+               <MenuItem text="Save" onAction="#saveFile"/>
+               <MenuItem text="Exit" onAction="#exit"/>
             </Menu>
             <Menu text="Edit">
                <MenuItem text="Delete All" onAction="#deleteAll"/>
