@@ -44,6 +44,12 @@
     -fx-border-color: gray;
     -fx-border-size: 1px;
 }
+.label2 {
+    -fx-min-height: 15px;
+    -fx-border-color: gray;
+    -fx-border-size: 1px;
+    -fx-background-color: lightblue;
+}
 .labelHover {
     -fx-background-color: lightgray;
 }

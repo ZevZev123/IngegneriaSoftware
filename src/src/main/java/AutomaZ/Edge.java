@@ -36,6 +36,8 @@ public class Edge {
 
     private List<Edge> edgeList = new ArrayList<>();
 
+    private Color color = Color.BLACK;
+
     public Edge(Node start, Node end, String name, double controlX, double controlY) {
         this.start = start;
         this.end = end;
@@ -45,7 +47,7 @@ public class Edge {
         control = new double[]{controlX, controlY};
 
         arrow = new Polygon();
-        arrow.setFill(Color.BLACK);
+        arrow.setFill(this.color);
 
         if(start != end) {
             curve = new QuadCurve();
@@ -60,7 +62,7 @@ public class Edge {
             ((Arc)curve).setType(ArcType.OPEN);
             setArc();
         }
-        curve.setStroke(Color.BLACK);
+        curve.setStroke(this.color);
         curve.setFill(null);
         curve.setStrokeWidth(3);
 
@@ -202,10 +204,10 @@ public class Edge {
     }
     
     private void edgeNotHover() {
-        this.curve.setStroke(Color.BLACK);
-        this.arrow.setStroke(Color.BLACK);
-        this.arrow.setFill(Color.BLACK);
-        this.text.setFill(Color.BLACK);
+        this.curve.setStroke(this.color);
+        this.arrow.setStroke(this.color);
+        this.arrow.setFill(this.color);
+        this.text.setFill(this.color);
         if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().remove("labelHover");
     }
@@ -283,11 +285,16 @@ public class Edge {
     }
 
     public void setControl(double controlX, double controlY) {
-        control[0] = controlX;
-        control[1] = controlY;
+        this.control[0] = controlX;
+        this.control[1] = controlY;
     }
+    
     private void setName(String name) { this.name = name; }
     public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
+    public void setColor (Color color) {
+        this.color = color;
+        edgeNotHover();
+    }
     
     public StackPane getStackPane() { return this.stackPane; }
     public Node[] getNodes() { return new Node[] {this.start, this.end}; }

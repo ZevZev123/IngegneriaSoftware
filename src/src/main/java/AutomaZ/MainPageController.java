@@ -16,6 +16,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
@@ -122,10 +123,10 @@ public class MainPageController {
 
     @FXML
     private void changeIcon() { // metodo per il pulsante di RUN
-        if (runButton.getStyleClass().contains("RunButton"))
-            runButton.getStyleClass().setAll("button", "loadingButton"); 
-        else
-            runButton.getStyleClass().setAll("button", "RunButton");
+        // if (runButton.getStyleClass().contains("RunButton"))
+        //     runButton.getStyleClass().setAll("button", "loadingButton"); 
+        // else
+        //     runButton.getStyleClass().setAll("button", "RunButton");
 
         // System.out.println("Il grafico è valido? -> "+isGraphValid());
 
@@ -165,25 +166,68 @@ public class MainPageController {
     }
 
     private void createHistory() {
+        history.getChildren().clear();
+        for (Edge edge: edgeList) edge.setColor(Color.BLACK);
         WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
         
         if (wordAutomata.run(textField.getText())) {
-            ArrayList<String> stateHistory = wordAutomata.getStateHistory();
-            history.getChildren().clear();
-            for (String s : stateHistory)
-                for (Node node: nodeList)
-                    if (node.getName().equals(s)) {
-                        history.getChildren().add(createLableNode(s));
-                        break;
-                    }
+            ArrayList<String> historyList = wordAutomata.getStringHistory();
+            ArrayList<String> stateList = wordAutomata.getStateHistory();
+            Label label;
+            for (int i = 0; i < historyList.size(); i++) {
+                if (!equalToLast(stateList.get(i))) {
+                    label = createLableNode(stateList.get(i), true);
+                    history.getChildren().add(label);
+                }
+                label = createLableNode(historyList.get(i), false);
+                history.getChildren().add(label);
+            }
+            label = createLableNode(stateList.get(stateList.size()-1), true);
+            history.getChildren().add(label);
+            changeColor();
         }
     }
 
-    private Label createLableNode(String name) {
+    private void changeColor() {
+        String nodeName = "";
+        for (int i = 0; i < history.getChildren().size(); i++) {
+            if (history.getChildren().get(i) instanceof Label label) {
+                if (label.getStyleClass().contains("label1")) {
+                    nodeName = label.getText();
+                } else {
+                    for (Edge edge: edgeList) {
+                        if (history.getChildren().get(i) instanceof Label label2) {
+                            if (edge.getStartNode().getName().equals(nodeName) && edge.getValue().equals(label2.getText())) {
+                                edge.setColor(Color.BLUE);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Boolean equalToLast(String state) {
+        for (int i = history.getChildren().size()-1; i > 0; i--) {
+            if (history.getChildren().get(i).getStyleClass().contains("label1")) {
+                if (history.getChildren().get(i) instanceof Label label) {
+                    if (label.getText().equals(state)) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+
+        return false;
+    }
+
+    private Label createLableNode(String name, Boolean isNode) {
         Label label = new Label();
         label.setText(name);
         label.setTextAlignment(TextAlignment.LEFT);
-        label.getStyleClass().add("label1");
+        if (isNode) label.getStyleClass().add("label1");
+        else label.getStyleClass().add("label2");
         label.setMaxWidth(Double.MAX_VALUE);
         label.setPadding(new Insets(0, 0, 0, 10));
 
