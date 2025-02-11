@@ -56,6 +56,7 @@ public class MainPageController {
 
     private ContextMenu contextMenu;
     private ArrayList<ContextMenu> contextMenuNodiList = new ArrayList<>();
+    private ArrayList<ContextMenu> contextMenuEdgeList = new ArrayList<>();
     private double contextX = 0, contextY = 0;
 
     private Node selectedNode = null;
@@ -73,6 +74,12 @@ public class MainPageController {
             runButton();
         });
 
+        textField.setOnKeyTyped(event ->  {
+            if (!event.getCharacter().equals("\r")) {
+                textField.setStyle("");
+            }
+        });
+
         // creazione menu contestuale
         this.contextMenu = new ContextMenu();
         
@@ -81,6 +88,8 @@ public class MainPageController {
             this.contextMenu.hide();
             for (int i = 0; i < contextMenuNodiList.size(); i++)
                 contextMenuNodiList.get(i).hide();
+            for (int i = 0; i < contextMenuEdgeList.size(); i++)
+                contextMenuEdgeList.get(i).hide();
             if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 if (event.isShiftDown()) createEdge();
                 else createNode(event.getX(), event.getY());
@@ -300,6 +309,8 @@ public class MainPageController {
 
             graphPane.getChildren().add(edge.getGroup());
             edgeMenuList.getChildren().add(edge.getStackPane());
+
+            setContextMenuEdge(edge);
         }
 
         for (Node node: nodeList) {
@@ -325,7 +336,12 @@ public class MainPageController {
         for (Edge edge: edgeList) edge.setColor(Color.BLACK);
         WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
         
-        System.out.println(wordAutomata.run(textField.getText()));
+        if (wordAutomata.run(textField.getText())) {
+            textField.setStyle("-fx-background-color: rgba(4, 255, 0, 0.2);");
+        } else {
+            textField.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
+        }
+
         ArrayList<String> historyList = wordAutomata.getStringHistory();
         ArrayList<String> stateList = wordAutomata.getStateHistory();
         if (historyList.size() != 0 && stateList.size() != 0) {
@@ -500,6 +516,7 @@ public class MainPageController {
 
     private void setContextMenuNode(Node node) {
         ContextMenu contextMenuNodi = new ContextMenu();
+        
         MenuItem delete = new MenuItem("Cancella Nodo "+node.getName());
         delete.setOnAction(event -> {node.deleteNode();});
         MenuItem newEdge = new MenuItem("Crea nuovo edge");
@@ -507,13 +524,16 @@ public class MainPageController {
             this.selectedNode = node;
             createEdge();
         });
+
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+
         MenuItem rename = new MenuItem("Rinomina Nodo");
         rename.setOnAction(event -> { node.textFieldRename(); });
         MenuItem setInitial = new MenuItem("Nodo iniziale");
         setInitial.setOnAction(event -> { node.setInitial(); });
         MenuItem setFinal = new MenuItem("Nodo terminale");
         setFinal.setOnAction(event -> { node.setFinal(); });
+
         contextMenuNodi.getItems().addAll(delete, newEdge, separatorMenuItem, rename, setInitial, setFinal);
         
         node.getGroup().setOnContextMenuRequested(event -> {
@@ -524,18 +544,23 @@ public class MainPageController {
         contextMenuNodiList.add(contextMenuNodi);
     }
 
-    // private void setContextManuEdge(Edge edge) {
-    //     ContextMenu contextMenuEdge = new ContextMenu();
-    //     MenuItem delete = new MenuItem("Cancella Edge "+edge.getValue());
-    //     delete.setOnAction(event -> {edge.deleteEdge();});
-    //     MenuItem revalue = new MenuItem("Cambia valore");
-    //     revalue.setOnAction(event -> { /*edge.textFieldRename();*/ });
-    //     contextMenuEdge.getItems().addAll(delete);
+    private void setContextMenuEdge(Edge edge) {
+        ContextMenu contextMenuEdge = new ContextMenu();
+
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+
+        MenuItem delete = new MenuItem("Cancella Edge");
+        delete.setOnAction(event -> {edge.deleteEdge();});
+        MenuItem revalue = new MenuItem("Cambia valore");
+        revalue.setOnAction(event -> { edge.textFieldRename(); });
+        contextMenuEdge.getItems().addAll(delete, separatorMenuItem, revalue);
         
-    //     edge.getGroup().setOnContextMenuRequested(event -> {
-    //         contextMenuEdge.show(graphPane, event.getScreenX(), event.getScreenY());
-    //     });
-    // }
+        edge.getGroup().setOnContextMenuRequested(event -> {
+            contextMenuEdge.show(graphPane, event.getScreenX(), event.getScreenY());
+        });
+
+        contextMenuEdgeList.add(contextMenuEdge);
+    }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
         if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
@@ -561,6 +586,7 @@ public class MainPageController {
         graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
         edgeMenuList.getChildren().add(edge.getStackPane());
         edge.setEdgeList(edgeList);
+        setContextMenuEdge(edge);
         isSaved = false;
     }
 

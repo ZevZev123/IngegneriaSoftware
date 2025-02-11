@@ -250,7 +250,7 @@ public class Node {
 
         TextField textField = new TextField(this.name);
         textField.setPrefWidth(label.getWidth());
-        textField.setStyle("-fx-min-height: 30px;");
+        textField.getStyleClass().add("textField");
         textField.setPadding(new Insets(0, 0, 0, 10));
         textField.selectAll();
         

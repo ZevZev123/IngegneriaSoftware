@@ -16,7 +16,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         stage.setMinHeight(500);
         stage.setMinWidth(600);
-        scene = new Scene(loadFXML("primary"), 1000, 600);
+        scene = new Scene(loadFXML("primary"), 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/AutomaZ/style.css").toExternalForm());
         stage.setScene(scene);
         stage.show();

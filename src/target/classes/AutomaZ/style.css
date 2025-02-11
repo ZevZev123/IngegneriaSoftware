@@ -39,6 +39,12 @@
     -fx-max-height: 30px;
 }
 
+.textField {
+    -fx-border-color: gray;
+    -fx-min-height: 30px;
+    -fx-background-color: lightgreen;
+}
+
 .label1 {
     -fx-min-height: 30px;
     -fx-border-color: gray;

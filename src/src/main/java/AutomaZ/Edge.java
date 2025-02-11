@@ -104,57 +104,72 @@ public class Edge {
         
         label.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                TextField textField = new TextField(this.name);
-                textField.setPrefWidth(label.getWidth());
-                textField.setStyle("-fx-min-height: 30px;");
-                textField.setPadding(new Insets(0, 0, 0, 10));
-                
-                this.stackPane.getChildren().clear();
-                this.stackPane.getChildren().add(textField);
-    
-                textField.setOnAction(e -> {
-                    if (!textField.getText().isEmpty()) {
-                        label.setText(textField.getText());
-                        setName(textField.getText());
-                        updateToolTip();
-                    }
-                    updateEdge();
-                    this.stackPane.getChildren().clear();
-                    this.stackPane.getChildren().addAll(label, button);
-                    StackPane.setAlignment(button, Pos.TOP_RIGHT);
-                });
-    
-                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
-                    if (!isNowFocused) {
-                        if (!textField.getText().isEmpty()) {
-                            label.setText(textField.getText());
-                            setName(textField.getText());
-                            updateToolTip();
-                        }
-                        updateEdge();
-                        this.stackPane.getChildren().clear();
-                        this.stackPane.getChildren().addAll(label, button);
-                        StackPane.setAlignment(button, Pos.TOP_RIGHT);
-                    }
-                });
-    
-                textField.requestFocus();
+                textFieldRename();
             }
         });
 
         button.setOnMouseEntered(event -> {
             button.setVisible(true);
-            toggleHover(true);
+            edgeHover();
         });
 
         button.setOnMouseExited(event -> {
             button.setVisible(false);
-            toggleHover(false);
+            edgeNotHover();
         });
 
         button.setOnAction(event -> {
             deleteEdge();
         });
+    }
+
+    public void textFieldRename() {
+        Label label;
+        Button button;
+        if (this.stackPane.getChildren().get(0) instanceof Label labelPane) {
+            label = labelPane;
+        } else { return; }
+        if (this.stackPane.getChildren().get(1) instanceof Button buttonPane) {
+            button = buttonPane;
+        } else { return; }
+
+        TextField textField = new TextField(this.name);
+        textField.setPrefWidth(label.getWidth());
+        textField.getStyleClass().add("textField");
+        textField.setPadding(new Insets(0, 0, 0, 10));
+        
+        this.stackPane.getChildren().clear();
+        this.stackPane.getChildren().add(textField);
+
+        textField.setOnAction(e -> {
+            if (!textField.getText().isEmpty()) {
+                label.setText(textField.getText());
+                setName(textField.getText());
+                this.text.setText(this.name);
+                updateToolTip();
+            }
+            updateEdge();
+            this.stackPane.getChildren().clear();
+            this.stackPane.getChildren().addAll(label, button);
+            StackPane.setAlignment(button, Pos.TOP_RIGHT);
+        });
+
+        textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                if (!textField.getText().isEmpty()) {
+                    label.setText(textField.getText());
+                    setName(textField.getText());
+                    this.text.setText(this.name);
+                    updateToolTip();
+                }
+                updateEdge();
+                this.stackPane.getChildren().clear();
+                this.stackPane.getChildren().addAll(label, button);
+                StackPane.setAlignment(button, Pos.TOP_RIGHT);
+            }
+        });
+
+        textField.requestFocus();
     }
 
     private QuadCurve initQuad(QuadCurve q) {
