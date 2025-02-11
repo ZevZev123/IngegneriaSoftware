@@ -13,6 +13,7 @@ public class WordAutomata {
 
     private ArrayList<String> stateHistory;
     private ArrayList<String> stringHistory;
+    private String remainingWord;
 
     public WordAutomata(ArrayList<Node> nList, ArrayList<Edge> eList) {
         listNode = nList;
@@ -65,6 +66,7 @@ public class WordAutomata {
                     break;
                 }
             }
+            this.remainingWord = remainingWord;
             if (!found) return false;
         }
         stateHistory.add(stateList.get(currStateInd).name);
@@ -93,6 +95,7 @@ public class WordAutomata {
 
     public ArrayList<String> getStateHistory() { return stateHistory; }
     public ArrayList<String> getStringHistory() { return stringHistory; }
+    public String getRemainingWord() { return remainingWord; }
 
 
 
