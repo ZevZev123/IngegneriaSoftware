@@ -58,7 +58,7 @@
          <!-- Left Section -->
          <GridPane>
             <!-- Prima riga: Label e Button sulla stessa riga -->
-            <Button fx:id="runButton" styleClass="RunButton" onAction="#changeIcon" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+            <Button fx:id="runButton" styleClass="RunButton" onAction="#runButton" GridPane.rowIndex="0" GridPane.columnIndex="0" />
             <TextField fx:id="textField" styleClass="NodeHistory" promptText="Parola da testare..." GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
             <!-- Seconda riga: Main Content -->
             <VBox fx:id="GraphViewBox" styleClass="BlackBorder" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" GridPane.rowIndex="1" GridPane.columnSpan="2"/>

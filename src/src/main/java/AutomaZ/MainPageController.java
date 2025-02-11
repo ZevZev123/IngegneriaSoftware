@@ -69,6 +69,10 @@ public class MainPageController {
 
         graphPane = new Pane(); // creazione del foglio
         
+        textField.setOnAction(event -> {
+            runButton();
+        });
+
         // creazione menu contestuale
         this.contextMenu = new ContextMenu();
         
@@ -110,9 +114,9 @@ public class MainPageController {
 
         // Codice eseguito al termine della creazione della finestra
         // Serve per poter prendere le grandezze della GraphViewBox e organizzare i nodi
-        Platform.runLater(() -> {
-            reposition();
-        });
+        // Platform.runLater(() -> {
+        //     reposition();
+        // });
         
         // I SEGUENTI LISTENER SONO PER ORGANIZZARE I NODI QUANDO VIENE RIDIMENSIONATA LA FINESTRA
         // graphPane.widthProperty().addListener((observable, oldValue, newValue) -> { reposition(); });
@@ -120,7 +124,7 @@ public class MainPageController {
     }
 
     @FXML
-    private void changeIcon() { // metodo per il pulsante di RUN
+    private void runButton() { // metodo per il pulsante di RUN
         if (isGraphValid())
             createHistory();
     }
@@ -237,6 +241,7 @@ public class MainPageController {
         fileManager.readFromFile(fileName);
         this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
         this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
+        this.fileName = fileName;
         isSaved = true;
         updateGraphPane();
     }
@@ -248,8 +253,10 @@ public class MainPageController {
         if (nodeList.size() == 0 && edgeList.size() == 0) {
             return;
         }
+
         if (this.fileName != null) {
-            fileManager.writeToFile(this.fileName);
+            fileManager.setLists(nodeList, edgeList);
+            fileManager.writeToFile(this.fileName.replace(".graph", ""));
             isSaved = true;
         } else {
             TextInputDialog dialog = new TextInputDialog("defaultFileName");
@@ -261,9 +268,8 @@ public class MainPageController {
             result.ifPresent(fileName -> {
                 this.fileName = fileName;
                 try {
-                    fileManager.writeToFile(fileName);
-                    System.out.println(fileManager.getListEdge()+"\n"+fileManager.getListNode());
-                    updateGraphPane();
+                    fileManager.setLists(nodeList, edgeList);
+                    fileManager.writeToFile(fileName.replace(".graph", ""));
                     isSaved = true;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -294,7 +300,6 @@ public class MainPageController {
 
             graphPane.getChildren().add(edge.getGroup());
             edgeMenuList.getChildren().add(edge.getStackPane());
-            edge.setEdgeList(edgeList);
         }
 
         for (Node node: nodeList) {
@@ -303,7 +308,6 @@ public class MainPageController {
 
             graphPane.getChildren().add(node.getGroup());
             nodeMenuList.getChildren().add(node.getStackPane());
-            node.setListFX(nodeList);
 
             setContextMenuNode(node);
         }
@@ -313,8 +317,6 @@ public class MainPageController {
         if (this.fileManager == null) {
             this.fileManager = new FileManager(nodeList, edgeList);
             fileManager.updateFileList();
-            for(String s : fileManager.savedFiles)
-                System.out.println(s);
         }
     }
 
@@ -522,6 +524,19 @@ public class MainPageController {
         contextMenuNodiList.add(contextMenuNodi);
     }
 
+    private void setContextManuEdge(Edge edge) {
+        ContextMenu contextMenuEdge = new ContextMenu();
+        MenuItem delete = new MenuItem("Cancella Edge "+edge.getValue());
+        delete.setOnAction(event -> {edge.deleteEdge();});
+        MenuItem revalue = new MenuItem("Cambia valore");
+        revalue.setOnAction(event -> { /*edge.textFieldRename();*/ });
+        contextMenuEdge.getItems().addAll(delete);
+        
+        edge.getGroup().setOnContextMenuRequested(event -> {
+            contextMenuEdge.show(graphPane, event.getScreenX(), event.getScreenY());
+        });
+    }
+
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
         if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
             Boolean nameAlreadyExist = false;
@@ -592,7 +607,6 @@ public class MainPageController {
     }
 
     public void coordinatesChanged() { for (Edge edge: edgeList) edge.updateEdge(); isSaved = false; }
-    public void newEdge(Node node) { System.out.println(node); }
 
     public ArrayList<Node> getNodeList() { return this.nodeList; }
 }

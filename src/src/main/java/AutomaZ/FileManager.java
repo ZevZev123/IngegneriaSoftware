@@ -85,14 +85,13 @@ class FileManager {
         }
 
         line = scanner.nextLine();
-        line = scanner.nextLine();
         listEdge = new ArrayList<>();
         while(true) {
+            line = scanner.nextLine();
             String[] t = line.split(",");
             Edge e = new Edge(getNode(t[1]), getNode(t[2]), t[0],
                 Double.parseDouble(t[3]), Double.parseDouble(t[4]));
             listEdge.add(e);
-            line = scanner.nextLine();
             if(!scanner.hasNextLine())
                 break;
         }
