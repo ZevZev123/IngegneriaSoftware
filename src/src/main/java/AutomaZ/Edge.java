@@ -256,7 +256,7 @@ public class Edge {
 
     public Boolean deleteEdge() {
         if (this.group.getParent() instanceof javafx.scene.layout.Pane parent)
-        parent.getChildren().remove(this.group);
+            parent.getChildren().remove(this.group);
         if (this.stackPane.getParent() instanceof javafx.scene.layout.Pane parent)
             parent.getChildren().remove(this.stackPane);
         if (edgeList != null && edgeList.contains(this)) edgeList.remove(this);

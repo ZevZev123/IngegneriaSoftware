@@ -103,24 +103,7 @@ public class MainPageController {
             }
         });
         
-        // openFile(); // da togliere tutto il resto, non funziona ancora
-        createNode(0, 0, "F", true, false);
-        createNode(0, 0, "A", false, false);
-        createNode(0, 0, "B", false, true);
-        createNode(0, 0, "C", false, false);
-        createNode(0, 0, "D", false, false);
-        createNode(0, 0, "E", false, false);
-        createNode(0, 0, "T", false, false);
-
-        createEdge(nodeList.get(0), nodeList.get(1), "ab", 425, 235);
-        createEdge(nodeList.get(1), nodeList.get(2), "bc", 329, 150);
-        createEdge(nodeList.get(1), nodeList.get(3), "av", 291, 233);
-        createEdge(nodeList.get(2), nodeList.get(3), "ac", 217, 166);
-        createEdge(nodeList.get(3), nodeList.get(0), "ad", 274, 328);
-        createEdge(nodeList.get(5), nodeList.get(4), "ae", 240, 325);
-        createEdge(nodeList.get(5), nodeList.get(4), "af", 183, 394);
-        createEdge(nodeList.get(6), nodeList.get(2), "principessa", 324, 262);
-        createEdge(nodeList.get(1), nodeList.get(1), "lalala", 400, 150);
+        openFile("prova.graph"); // da togliere tutto il resto, non funziona ancora
 
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
@@ -138,13 +121,6 @@ public class MainPageController {
 
     @FXML
     private void changeIcon() { // metodo per il pulsante di RUN
-        // if (runButton.getStyleClass().contains("RunButton"))
-        //     runButton.getStyleClass().setAll("button", "loadingButton"); 
-        // else
-        //     runButton.getStyleClass().setAll("button", "RunButton");
-
-        // System.out.println("Il grafico è valido? -> "+isGraphValid());
-
         if (isGraphValid())
             createHistory();
     }
@@ -194,11 +170,13 @@ public class MainPageController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 deleteAll();
+                this.history.getChildren().clear();
                 this.fileName = null;
             }
             return result.get();
         } else {
             deleteAll();
+            this.history.getChildren().clear();
             this.fileName = null;
             return ButtonType.OK;
         }
@@ -246,16 +224,21 @@ public class MainPageController {
                 nodeList.clear();
                 edgeList.clear();
                 try {
-                    fileManager.readFromFile(fileName);
-                    this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
-                    this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
-                    isSaved = true;
-                    updateGraphPane();
+                    openFile(fileName);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
         }
+    }
+
+    private void openFile(String fileName) throws IOException {
+        generateFileManager();
+        fileManager.readFromFile(fileName);
+        this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
+        this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
+        isSaved = true;
+        updateGraphPane();
     }
     
     @FXML
@@ -336,24 +319,25 @@ public class MainPageController {
     }
 
     private void createHistory() {
-        history.getChildren().clear();
+        this.history.getChildren().clear();
         for (Edge edge: edgeList) edge.setColor(Color.BLACK);
         WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
         
-        if (wordAutomata.run(textField.getText())) {
-            ArrayList<String> historyList = wordAutomata.getStringHistory();
-            ArrayList<String> stateList = wordAutomata.getStateHistory();
+        System.out.println(wordAutomata.run(textField.getText()));
+        ArrayList<String> historyList = wordAutomata.getStringHistory();
+        ArrayList<String> stateList = wordAutomata.getStateHistory();
+        if (historyList.size() != 0 && stateList.size() != 0) {
             Label label;
             for (int i = 0; i < historyList.size(); i++) {
                 if (!equalToLast(stateList.get(i))) {
                     label = createLableNode(stateList.get(i), true);
-                    history.getChildren().add(label);
+                    this.history.getChildren().add(label);
                 }
                 label = createLableNode(historyList.get(i), false);
-                history.getChildren().add(label);
+                this.history.getChildren().add(label);
             }
             label = createLableNode(stateList.get(stateList.size()-1), true);
-            history.getChildren().add(label);
+            this.history.getChildren().add(label);
             changeColor();
         }
     }
@@ -433,11 +417,6 @@ public class MainPageController {
 
         return true;
     }
-
-    // private void updateToolTip() {
-    //     Tooltip tooltip = new Tooltip(textField.getText());
-    //     textField.setTooltip(tooltip);
-    // }
 
     private void createEdge() {
         if (thirdStage == null || !thirdStage.isShowing()) {
@@ -584,6 +563,7 @@ public class MainPageController {
 
     public void delete(Node node) {
         System.out.println("Node cancellato");
+        isSaved = false;
         // cancello il contextMenu del nodo
         for (int i = 0; i < nodeList.size(); i++)
             if (nodeList.get(i) == node) {
@@ -596,8 +576,11 @@ public class MainPageController {
         for (int i = 0; i < edgeList.size(); i++)
             if (i < edgeList.size())
                 for (Node edgesNode: edgeList.get(i).getNodes())
-                    if (node == edgesNode)
+                    if (node == edgesNode) {
                         edgeList.get(i--).deleteEdge();
+                        break;
+                    }
+                        
     }
 
     public Boolean isThereInitial() {
