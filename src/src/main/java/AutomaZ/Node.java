@@ -50,7 +50,7 @@ public class Node {
 
     public Node(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
         this.circle = new Circle(x, y, RADIUS, Color.TRANSPARENT);
-        this.circle2 = new Circle(x, y, RADIUS * (3 / 4), Color.TRANSPARENT);
+        this.circle2 = new Circle(x, y, RADIUS - (RADIUS / 4), Color.TRANSPARENT);
         this.text = new Text(x-4, y+4, "");
         
         this.isInitial = isInitial;
@@ -349,6 +349,7 @@ public class Node {
     
     public void setListFX(ArrayList<Node> nodeList) { this.nodeList = nodeList; }
     public void setContextMenuNodiList(ContextMenu contextMenuNodi) { this.contextMenuNodi = contextMenuNodi; }
+    public void setController(MainPageController controller) { this.controller = controller; }
 
     public Circle getCircle() { return this.circle; }
     public Circle getCircle2() { return this.circle2; }

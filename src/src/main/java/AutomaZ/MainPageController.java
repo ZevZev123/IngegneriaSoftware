@@ -316,6 +316,7 @@ public class MainPageController {
 
         for (Node node: nodeList) {
             node.setListFX(nodeList);
+            node.setController(this);
 
             graphPane.getChildren().add(node.getGroup());
             nodeMenuList.getChildren().add(node.getStackPane());
