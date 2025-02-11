@@ -109,13 +109,14 @@ public class Edge {
         });
 
         button.setOnMouseEntered(event -> {
+            button.setCursor(javafx.scene.Cursor.HAND);
             button.setVisible(true);
-            edgeHover();
+            toggleHover(true);
         });
 
         button.setOnMouseExited(event -> {
             button.setVisible(false);
-            edgeNotHover();
+            toggleHover(false);
         });
 
         button.setOnAction(event -> {
@@ -145,7 +146,6 @@ public class Edge {
             if (!textField.getText().isEmpty()) {
                 label.setText(textField.getText());
                 setName(textField.getText());
-                this.text.setText(this.name);
                 updateToolTip();
             }
             updateEdge();
@@ -159,7 +159,6 @@ public class Edge {
                 if (!textField.getText().isEmpty()) {
                     label.setText(textField.getText());
                     setName(textField.getText());
-                    this.text.setText(this.name);
                     updateToolTip();
                 }
                 updateEdge();
@@ -220,12 +219,11 @@ public class Edge {
         });
     
         hoverCurve.setOnMouseEntered(event -> {
-            curve.setCursor(javafx.scene.Cursor.HAND);
+            hoverCurve.setCursor(javafx.scene.Cursor.HAND);
             toggleHover(true);
         });
     
         hoverCurve.setOnMouseExited(event -> {
-            curve.setCursor(javafx.scene.Cursor.HAND);
             toggleHover(false);
         });
     }
@@ -235,10 +233,10 @@ public class Edge {
         curve.setStroke(c);
         arrow.setStroke(c);
         arrow.setFill(c);
-        if (this.stackPane.getChildren().get(0) instanceof Label label)
-            label.getStyleClass().remove("labelHover");
-        else if (this.stackPane.getChildren().get(0) instanceof Label label && flag)
+        if (this.stackPane.getChildren().get(0) instanceof Label label && flag) 
             label.getStyleClass().add("labelHover");
+        else if (this.stackPane.getChildren().get(0) instanceof Label label)
+            label.getStyleClass().remove("labelHover");
     }
 
     private double[] calculateEdgePoint(double x, double y) {

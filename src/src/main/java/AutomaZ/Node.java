@@ -127,6 +127,7 @@ public class Node {
         StackPane.setAlignment(button, Pos.TOP_RIGHT);
         
         label.setOnMouseEntered(event -> {
+            button.setCursor(javafx.scene.Cursor.HAND);
             button.setVisible(true);
             if (isInitial) initialNodeHover();
             else if (isFinal) finalNodeHover();
@@ -147,6 +148,7 @@ public class Node {
         });
 
         button.setOnMouseEntered(event -> {
+            button.setCursor(javafx.scene.Cursor.HAND);
             button.setVisible(true);
             if (isInitial) initialNodeHover();
             else if (isFinal) finalNodeHover();
