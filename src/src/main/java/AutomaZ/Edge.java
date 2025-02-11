@@ -18,18 +18,17 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class Edge {
     private Node start;
     private Node end;
     private Shape curve;
+    private Shape hoverCurve;
     private static final double ARC_LENGTH = 230;
     private Polygon arrow;
     private Group group;
     private double[] control;
-    private Text text;
     private String name;
 
     private StackPane stackPane;
@@ -41,7 +40,6 @@ public class Edge {
     public Edge(Node start, Node end, String name, double controlX, double controlY) {
         this.start = start;
         this.end = end;
-        this.text = new Text(this.name);
         this.name = name;
 
         control = new double[]{controlX, controlY};
@@ -50,23 +48,23 @@ public class Edge {
         arrow.setFill(this.color);
 
         if(start != end) {
-            curve = new QuadCurve();
-            ((QuadCurve)curve).setControlX(control[0]);
-            ((QuadCurve)curve).setControlY(control[1]);
+            curve = initQuad((QuadCurve)curve);
+            hoverCurve = initQuad((QuadCurve)hoverCurve);
         }
         else {
-            curve = new Arc();
-            ((Arc)curve).setRadiusX(Node.RADIUS * 0.8);
-            ((Arc)curve).setRadiusY(Node.RADIUS * 0.8);
-            ((Arc)curve).setLength(ARC_LENGTH);
-            ((Arc)curve).setType(ArcType.OPEN);
-            setArc();
+            curve = initArc((Arc)curve);
+            hoverCurve = initArc((Arc)hoverCurve);
         }
+
         curve.setStroke(this.color);
         curve.setFill(null);
         curve.setStrokeWidth(3);
 
-        group = new Group(curve, arrow);
+        hoverCurve.setStroke(Color.TRANSPARENT);
+        hoverCurve.setFill(null);
+        hoverCurve.setStrokeWidth(15);
+
+        group = new Group(curve, arrow, hoverCurve);
 
         updateEdge();
         addDragHandler();
@@ -96,12 +94,12 @@ public class Edge {
         
         label.setOnMouseEntered(event -> {
             button.setVisible(true);
-            edgeHover();
+            toggleHover(true);
         });
 
         label.setOnMouseExited(event -> {
             button.setVisible(false);
-            edgeNotHover();
+            toggleHover(false);
         });
         
         label.setOnMouseClicked(event -> {
@@ -118,7 +116,6 @@ public class Edge {
                     if (!textField.getText().isEmpty()) {
                         label.setText(textField.getText());
                         setName(textField.getText());
-                        this.text.setText(this.name);
                         updateToolTip();
                     }
                     updateEdge();
@@ -132,7 +129,6 @@ public class Edge {
                         if (!textField.getText().isEmpty()) {
                             label.setText(textField.getText());
                             setName(textField.getText());
-                            this.text.setText(this.name);
                             updateToolTip();
                         }
                         updateEdge();
@@ -148,17 +144,33 @@ public class Edge {
 
         button.setOnMouseEntered(event -> {
             button.setVisible(true);
-            edgeHover();
+            toggleHover(true);
         });
 
         button.setOnMouseExited(event -> {
             button.setVisible(false);
-            edgeNotHover();
+            toggleHover(false);
         });
 
         button.setOnAction(event -> {
             deleteEdge();
         });
+    }
+
+    private QuadCurve initQuad(QuadCurve q) {
+        q = new QuadCurve();
+        q.setControlX(control[0]);
+        q.setControlY(control[1]);
+        return q;
+    }
+    private Arc initArc(Arc a) {
+        a = new Arc();
+        a.setRadiusX(Node.RADIUS * 0.8);
+        a.setRadiusY(Node.RADIUS * 0.8);
+        a.setLength(ARC_LENGTH);
+        a.setType(ArcType.OPEN);
+        a = setArc(a);
+        return a;
     }
 
     private void updateArrow(double[] target) {
@@ -187,37 +199,30 @@ public class Edge {
     }
 
     private void addDragHandler() {
-        curve.setOnMouseDragged((MouseEvent event) -> {
+        hoverCurve.setOnMouseDragged((MouseEvent event) -> {
             setControl(event.getX(), event.getY());
             updateEdge();
         });
     
-        curve.setOnMouseEntered(event -> {
+        hoverCurve.setOnMouseEntered(event -> {
             curve.setCursor(javafx.scene.Cursor.HAND);
-            edgeHover();
+            toggleHover(true);
         });
     
-        curve.setOnMouseExited(event -> {
+        hoverCurve.setOnMouseExited(event -> {
             curve.setCursor(javafx.scene.Cursor.HAND);
-            edgeNotHover();
+            toggleHover(false);
         });
-    }
-    
-    private void edgeNotHover() {
-        this.curve.setStroke(this.color);
-        this.arrow.setStroke(this.color);
-        this.arrow.setFill(this.color);
-        this.text.setFill(this.color);
-        if (this.stackPane.getChildren().get(0) instanceof Label label)
-            label.getStyleClass().remove("labelHover");
     }
 
-    private void edgeHover() {
-        this.curve.setStroke(Color.RED);
-        this.arrow.setStroke(Color.RED);
-        this.arrow.setFill(Color.RED);
-        this.text.setFill(Color.RED);
+    private void toggleHover(boolean flag) {
+        Color c = (flag) ? Color.RED : color;
+        curve.setStroke(c);
+        arrow.setStroke(c);
+        arrow.setFill(c);
         if (this.stackPane.getChildren().get(0) instanceof Label label)
+            label.getStyleClass().remove("labelHover");
+        else if (this.stackPane.getChildren().get(0) instanceof Label label && flag)
             label.getStyleClass().add("labelHover");
     }
 
@@ -236,22 +241,30 @@ public class Edge {
 
     public void updateEdge() {
         if(start == end) {
-            setArc();
+            curve = setArc((Arc)curve);
+            hoverCurve = setArc((Arc)hoverCurve);
             updateArrow(arcEdgePoint());
-            return;
         }
+        else {
+            double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
+            double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
+            
+            ((QuadCurve)curve).setStartX(sourcePoint[0]);
+            ((QuadCurve)curve).setStartY(sourcePoint[1]);
+            ((QuadCurve)curve).setControlX(control[0]);
+            ((QuadCurve)curve).setControlY(control[1]);
+            ((QuadCurve)curve).setEndX(targetPoint[0]);
+            ((QuadCurve)curve).setEndY(targetPoint[1]);
 
-        double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
-        double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
+            ((QuadCurve)hoverCurve).setStartX(sourcePoint[0]);
+            ((QuadCurve)hoverCurve).setStartY(sourcePoint[1]);
+            ((QuadCurve)hoverCurve).setControlX(control[0]);
+            ((QuadCurve)hoverCurve).setControlY(control[1]);
+            ((QuadCurve)hoverCurve).setEndX(targetPoint[0]);
+            ((QuadCurve)hoverCurve).setEndY(targetPoint[1]);
     
-        ((QuadCurve)curve).setStartX(sourcePoint[0]);
-        ((QuadCurve)curve).setStartY(sourcePoint[1]);
-        ((QuadCurve)curve).setControlX(control[0]);
-        ((QuadCurve)curve).setControlY(control[1]);
-        ((QuadCurve)curve).setEndX(targetPoint[0]);
-        ((QuadCurve)curve).setEndY(targetPoint[1]);
-    
-        updateArrow(targetPoint);
+            updateArrow(targetPoint);
+        }
     }
 
     public Boolean deleteEdge() {
@@ -263,14 +276,16 @@ public class Edge {
         return true;
     }
 
-    private void setArc() {
+    private Arc setArc(Arc a) {
         double stX = start.getX(), stY = start.getY();
         double dx = control[0] - stX, dy = control[1] - stY;
         double m = Math.sqrt(dx * dx + dy * dy);
         
-        ((Arc)curve).setCenterX(stX + Node.RADIUS * 1.4 * (dx / m));
-        ((Arc)curve).setCenterY(stY + Node.RADIUS * 1.4 * (dy / m));
-        ((Arc)curve).setStartAngle(145 + Math.atan2(dx, dy) * 180.0 / Math.PI);
+        a.setCenterX(stX + Node.RADIUS * 1.4 * (dx / m));
+        a.setCenterY(stY + Node.RADIUS * 1.4 * (dy / m));
+        a.setStartAngle(145 + Math.atan2(dx, dy) * 180.0 / Math.PI);
+
+        return a;
     }
 
     private double[] arcEdgePoint() {
@@ -293,9 +308,8 @@ public class Edge {
     public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
     public void setColor (Color color) {
         this.color = color;
-        edgeNotHover();
+        toggleHover(false);
     }
-    
     public StackPane getStackPane() { return this.stackPane; }
     public Node[] getNodes() { return new Node[] {this.start, this.end}; }
     public Node getStartNode() { return this.start; }

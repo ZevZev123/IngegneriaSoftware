@@ -524,18 +524,18 @@ public class MainPageController {
         contextMenuNodiList.add(contextMenuNodi);
     }
 
-    private void setContextManuEdge(Edge edge) {
-        ContextMenu contextMenuEdge = new ContextMenu();
-        MenuItem delete = new MenuItem("Cancella Edge "+edge.getValue());
-        delete.setOnAction(event -> {edge.deleteEdge();});
-        MenuItem revalue = new MenuItem("Cambia valore");
-        revalue.setOnAction(event -> { /*edge.textFieldRename();*/ });
-        contextMenuEdge.getItems().addAll(delete);
+    // private void setContextManuEdge(Edge edge) {
+    //     ContextMenu contextMenuEdge = new ContextMenu();
+    //     MenuItem delete = new MenuItem("Cancella Edge "+edge.getValue());
+    //     delete.setOnAction(event -> {edge.deleteEdge();});
+    //     MenuItem revalue = new MenuItem("Cambia valore");
+    //     revalue.setOnAction(event -> { /*edge.textFieldRename();*/ });
+    //     contextMenuEdge.getItems().addAll(delete);
         
-        edge.getGroup().setOnContextMenuRequested(event -> {
-            contextMenuEdge.show(graphPane, event.getScreenX(), event.getScreenY());
-        });
-    }
+    //     edge.getGroup().setOnContextMenuRequested(event -> {
+    //         contextMenuEdge.show(graphPane, event.getScreenX(), event.getScreenY());
+    //     });
+    // }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
         if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
