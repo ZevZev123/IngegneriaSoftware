@@ -70,9 +70,6 @@ public class Node {
                     if (event.isShiftDown()) { setFinal(); }
                     else { setInitial(); }
                 }
-                else if (event.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
-                    setFinal();
-                }
             }
         });
 
@@ -230,7 +227,7 @@ public class Node {
         Tooltip.install(this.group, tooltip);
     }
 
-    private void setGroup() { this.group = new Group(this.circle2, this.circle, this.text); }
+    private void setGroup() { this.group = new Group(this.circle, this.circle2, this.text); }
 
     public void textFieldRename() {
         Label label;
@@ -295,13 +292,14 @@ public class Node {
     }
 
     public void setInitial() {
+        // Controlla tutti i node e se c'è un nodo iniziale lo toglie
         if (nodeList != null)
             for (Node node: nodeList)
                 if (node.isNodeInitial() && node != this)
                     node.setNotInitial();
         resetNodeColor();
-        if (this.isFinal) this.isFinal = false;
         this.isInitial = !this.isInitial;
+        if (this.isFinal) finalNode();
         if (this.isInitial) initialNodeHover();
         else normalNodeHover();
     }
@@ -314,10 +312,18 @@ public class Node {
 
     public void setFinal() {
         resetNodeColor();
-        if (isInitial) isInitial = false;
         isFinal = !isFinal;
-        if (isFinal) finalNodeHover();
-        else normalNodeHover();
+        if (isFinal) {
+            if (isInitial) {
+                finalNode();
+                initialNodeHover();
+            }
+            else finalNodeHover();
+        }
+        else {
+            if (isInitial) initialNodeHover();
+            else normalNodeHover();
+        }
     }
 
     public void changeCoordinates(double x, double y) {
