@@ -49,11 +49,16 @@
 
    <center>
       <SplitPane orientation="HORIZONTAL" dividerPositions="0.7">
-         <ScrollPane styleClass="BlackBorder" fitToWidth="true" maxWidth="200" prefWidth="100" minWidth="100" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-            <VBox fx:id="history" alignment="TOP_LEFT">
-               <!-- Elementi aggiunti dinamicamente nel Controller -->
-            </VBox>
-         </ScrollPane>
+         <VBox maxWidth="200" prefWidth="100" minWidth="100">
+            <Label text="PERCORSO" styleClass="label1" VBox.vgrow="ALWAYS" />
+            <ScrollPane styleClass="BlackBorder" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+               <VBox fx:id="history" alignment="TOP_LEFT">
+                     <!-- Elementi aggiunti dinamicamente nel Controller -->
+               </VBox>
+            </ScrollPane>
+
+            <Label fx:id="remainingWord" styleClass="label1" VBox.vgrow="ALWAYS" />
+         </VBox>
 
          <!-- Left Section -->
          <GridPane>
@@ -66,16 +71,19 @@
          
          <!-- Right Section -->
          <SplitPane orientation="VERTICAL" maxWidth="200" prefWidth="100" minWidth="100">
-            <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefHeight="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-               <VBox fx:id="nodeMenuList" alignment="TOP_LEFT">
-                  <!-- Elementi aggiunti dinamicamente nel Controller -->
-               </VBox>
-            </ScrollPane>
-            <ScrollPane styleClass="BlackBorder" fitToWidth="true" prefHeight="200" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-               <VBox fx:id="edgeMenuList" alignment="TOP_LEFT">
-                  <!-- Elementi aggiunti dinamicamente nel Controller -->
-               </VBox>
-            </ScrollPane>
+            <VBox styleClass="BlackBorder">
+               <Label text="LISTA NODI" styleClass="label1"/>
+               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                     <VBox fx:id="nodeMenuList" alignment="TOP_LEFT"/>
+               </ScrollPane>
+            </VBox>
+
+            <VBox styleClass="BlackBorder">
+               <Label text="LISTA EDGE" styleClass="label1"/>
+               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                     <VBox fx:id="edgeMenuList" alignment="TOP_LEFT"/>
+               </ScrollPane>
+            </VBox>
          </SplitPane>
       </SplitPane>
    </center>

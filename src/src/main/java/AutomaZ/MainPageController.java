@@ -38,7 +38,9 @@ public class MainPageController {
     @FXML private VBox nodeMenuList;
     @FXML private VBox edgeMenuList;
     @FXML private VBox GraphViewBox;
+
     @FXML private VBox history;
+    @FXML private Label remainingWord;
 
     @FXML private Button runButton;
     @FXML private TextField textField;
@@ -77,6 +79,8 @@ public class MainPageController {
         textField.setOnKeyTyped(event ->  {
             if (!event.getCharacter().equals("\r")) {
                 textField.setStyle("");
+                remainingWord.setStyle("");
+                remainingWord.setText("");
             }
         });
 
@@ -336,10 +340,14 @@ public class MainPageController {
         for (Edge edge: edgeList) edge.setColor(Color.BLACK);
         WordAutomata wordAutomata = new WordAutomata(nodeList, edgeList);
         
+        remainingWord.setText("");
+        remainingWord.setStyle("");
         if (wordAutomata.run(textField.getText())) {
-            textField.setStyle("-fx-background-color: rgba(4, 255, 0, 0.2);");
+            textField.setStyle("-fx-background-color: rgba(4, 255, 0, 0.2);");    
         } else {
             textField.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
+            remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
+            remainingWord.setText(wordAutomata.getRemainingWord());
         }
 
         ArrayList<String> historyList = wordAutomata.getStringHistory();

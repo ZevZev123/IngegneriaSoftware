@@ -1,7 +1,7 @@
 .NodeHistory {
     -fx-border-color: black;
     -fx-border-width: 2px;
-    -fx-padding: 5px;
+    -fx-padding: 5 10 5 10;
     -fx-min-height: 40px;
     -fx-max-height: 40px;
     -fx-max-Width: "Infinity";
@@ -46,9 +46,11 @@
 }
 
 .label1 {
+    -fx-padding: 0 0 0 10;
     -fx-min-height: 30px;
     -fx-border-color: gray;
     -fx-border-size: 1px;
+    -fx-max-Width: "Infinity";
 }
 .label2 {
     -fx-min-height: 15px;
