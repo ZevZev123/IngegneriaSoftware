@@ -42,22 +42,14 @@ public class Node {
         
         this.isInitial = isInitial;
         this.isFinal = isFinal;
-        this.controller = controller;
+        if(controller != null)
+            this.controller = controller;
         this.name = name;
         
         setUpAll();
     }
-
     public Node(double x, double y, String name, Boolean isInitial, Boolean isFinal) {
-        this.circle = new Circle(x, y, RADIUS, Color.TRANSPARENT);
-        this.circle2 = new Circle(x, y, RADIUS - (RADIUS / 4), Color.TRANSPARENT);
-        this.text = new Text(x-4, y+4, "");
-        
-        this.isInitial = isInitial;
-        this.isFinal = isFinal;
-        this.name = name;
-        
-        setUpAll();
+        this(x, y, name, null, isInitial, isFinal);
     }
 
     private void setUpAll() {
