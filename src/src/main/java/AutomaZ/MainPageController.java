@@ -189,12 +189,14 @@ public class MainPageController {
                 deleteAll();
                 this.history.getChildren().clear();
                 this.fileName = null;
+                changePageTitle();
             }
             return result.get();
         } else {
             deleteAll();
             this.history.getChildren().clear();
             this.fileName = null;
+            changePageTitle();
             return ButtonType.OK;
         }
     }
@@ -203,9 +205,6 @@ public class MainPageController {
     private void openFile() throws IOException {
         System.out.println("openFile");
         generateFileManager();
-        if (this.fileName == null) {
-            this.fileName = "prova";
-        }
         ButtonType result = newFile();
         if (result == ButtonType.OK) {
             Dialog<String> dialog = new Dialog<>();
@@ -255,6 +254,7 @@ public class MainPageController {
         this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
         this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
         this.fileName = fileName;
+        changePageTitle();
         isSaved = true;
         updateGraphPane();
     }
@@ -280,6 +280,7 @@ public class MainPageController {
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(fileName -> {
                 this.fileName = fileName;
+                changePageTitle();
                 try {
                     fileManager.setLists(nodeList, edgeList);
                     fileManager.writeToFile(fileName.replace(".graph", ""));
@@ -568,6 +569,14 @@ public class MainPageController {
         });
 
         contextMenuEdgeList.add(contextMenuEdge);
+    }
+
+    private void changePageTitle() {
+        Platform.runLater(() -> {
+            Stage stage = (Stage) graphPane.getScene().getWindow();
+            if (this.fileName != null) stage.setTitle("AutomaZ - " + this.fileName);
+            else stage.setTitle("AutomaZ");
+        });
     }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
