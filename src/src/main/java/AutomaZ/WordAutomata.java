@@ -97,8 +97,6 @@ public class WordAutomata {
     public ArrayList<String> getStringHistory() { return stringHistory; }
     public String getRemainingWord() { return remainingWord; }
 
-
-
     private class State {
         private final String name;
         private final boolean isInitial;
