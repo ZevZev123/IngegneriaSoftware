@@ -72,14 +72,14 @@
          <!-- Right Section -->
          <SplitPane orientation="VERTICAL" maxWidth="200" prefWidth="100" minWidth="100">
             <VBox styleClass="BlackBorder">
-               <Label text="LISTA NODI" styleClass="label1"/>
+               <Label text="NODI" styleClass="label1"/>
                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
                      <VBox fx:id="nodeMenuList" alignment="TOP_LEFT"/>
                </ScrollPane>
             </VBox>
 
             <VBox styleClass="BlackBorder">
-               <Label text="LISTA EDGE" styleClass="label1"/>
+               <Label text="ARCHI" styleClass="label1"/>
                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
                      <VBox fx:id="edgeMenuList" alignment="TOP_LEFT"/>
                </ScrollPane>
