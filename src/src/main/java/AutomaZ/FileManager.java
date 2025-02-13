@@ -38,9 +38,11 @@ class FileManager {
         file.close();
     }
     public void deleteFile(String fileName) {
-        File file = new File("graphs/"+fileName+".graph");
+        File file = new File("graphs/"+fileName);
         if(file.delete())
             savedFiles = getExistingFiles();
+        else
+            System.out.println(fileName);
         savedFiles = getExistingFiles();
     }
 
