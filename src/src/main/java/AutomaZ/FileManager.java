@@ -25,7 +25,7 @@ class FileManager {
     public void writeToFile(String fileName) throws IOException{
         if(listNode.isEmpty() || listEdge.isEmpty())
             throw new IOException("One or more lists are empty");
-        FileWriter file = new FileWriter("graphs/"+fileName+".graph");
+        FileWriter file = new FileWriter("graphs/"+fileName);
         file.write(toFile());
         file.close();
         savedFiles = getExistingFiles();

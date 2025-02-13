@@ -269,7 +269,7 @@ public class MainPageController {
 
         if (this.fileName != null) {
             fileManager.setLists(nodeList, edgeList);
-            fileManager.writeToFile(this.fileName.replace(".graph", ""));
+            fileManager.writeToFile(this.fileName);
             isSaved = true;
         } else {
             TextInputDialog dialog = new TextInputDialog("defaultFileName");
@@ -283,7 +283,7 @@ public class MainPageController {
                 changePageTitle();
                 try {
                     fileManager.setLists(nodeList, edgeList);
-                    fileManager.writeToFile(fileName.replace(".graph", ""));
+                    fileManager.writeToFile(fileName);
                     isSaved = true;
                 } catch (IOException e) {
                     e.printStackTrace();
