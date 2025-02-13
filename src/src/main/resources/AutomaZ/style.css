@@ -45,6 +45,14 @@
     -fx-background-color: lightgreen;
 }
 
+.centerTextLabel {
+    -fx-alignment: center;
+    -fx-min-height: 30px;
+    -fx-border-color: gray;
+    -fx-border-size: 1px;
+    -fx-max-Width: "Infinity";
+}
+
 .label1 {
     -fx-padding: 0 0 0 10;
     -fx-min-height: 30px;

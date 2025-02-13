@@ -299,6 +299,62 @@ public class MainPageController {
     }
 
     @FXML
+    private void deleteFile() throws IOException {
+        if (this.fileName != null) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Cancella File");
+            alert.setHeaderText("Cancella File");
+            alert.setContentText("Sei sicuro di voler cancellare il file "+this.fileName+"?");
+            
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                fileManager.deleteFile(this.fileName);
+                this.fileName = null;
+                newFile();
+            }
+        } else {
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Cancella file");
+            dialog.setHeaderText("Seleziona il file da cancellare:");
+
+            ButtonType okButtonType = new ButtonType("OK", ButtonType.OK.getButtonData());
+            dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+
+            // Crea la ComboBox e aggiungi gli elementi
+            ComboBox<String> comboBox = new ComboBox<>();
+            comboBox.getItems().addAll(fileManager.savedFiles);
+
+            // Aggiungi la ComboBox al layout del dialogo
+            VBox vbox = new VBox(comboBox);
+            dialog.getDialogPane().setContent(vbox);
+
+            // Imposta il risultato del dialogo quando l'utente preme OK
+            dialog.setResultConverter(new Callback<ButtonType, String>() {
+                @Override
+                public String call(ButtonType button) {
+                    if (button == okButtonType) {
+                        return comboBox.getValue();
+                    }
+                    return null;
+                }
+            });
+
+            // Mostra il dialogo e attendi la risposta dell'utente
+            Optional<String> result2 = dialog.showAndWait();
+            result2.ifPresent(fileName -> {
+                fileManager.deleteFile(this.fileName);
+                this.fileName = null;
+                try {
+                    newFile();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    @FXML
     private void exit() throws IOException {
         System.out.println("exit");
         ButtonType result = newFile();

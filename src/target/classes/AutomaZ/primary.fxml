@@ -26,6 +26,7 @@
                <MenuItem text="Open" onAction="#openFile" />
                <MenuItem text="Save" onAction="#saveFile" />
                <MenuItem text="Save new file" onAction="#saveNewFile" />
+               <MenuItem text="Delete file" onAction="#deleteFile" />
                <MenuItem text="Exit" onAction="#exit" />
             </Menu>
             <Menu text="Edit" >
@@ -50,7 +51,7 @@
    <center>
       <SplitPane orientation="HORIZONTAL" dividerPositions="0.7" >
          <VBox maxWidth="200" prefWidth="100" minWidth="100" >
-            <Label text="PERCORSO" styleClass="label1" VBox.vgrow="ALWAYS" />
+            <Label text="PERCORSO" styleClass="centerTextLabel" VBox.vgrow="ALWAYS" />
             <ScrollPane styleClass="BlackBorder" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS" >
                <VBox fx:id="history" alignment="TOP_LEFT" >
                      <!-- Elementi aggiunti dinamicamente nel Controller -->
@@ -72,14 +73,14 @@
          <!-- Right Section -->
          <SplitPane orientation="VERTICAL" maxWidth="200" prefWidth="100" minWidth="100" >
             <VBox styleClass="BlackBorder" >
-               <Label text="NODI" styleClass="label1" />
+               <Label text="NODI" styleClass="centerTextLabel" />
                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS" >
                      <VBox fx:id="nodeMenuList" alignment="TOP_LEFT" />
                </ScrollPane>
             </VBox>
 
             <VBox styleClass="BlackBorder" >
-               <Label text="ARCHI" styleClass="label1" />
+               <Label text="ARCHI" styleClass="centerTextLabel" />
                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS" >
                      <VBox fx:id="edgeMenuList" alignment="TOP_LEFT" />
                </ScrollPane>
