@@ -250,13 +250,17 @@ public class MainPageController {
 
     private void openFile(String fileName) throws IOException {
         generateFileManager();
-        fileManager.readFromFile(fileName);
-        this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
-        this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
-        this.fileName = fileName;
-        changePageTitle();
-        isSaved = true;
-        updateGraphPane();
+        try {
+            fileManager.readFromFile(fileName);
+            this.edgeList = new ArrayList<>(){{addAll(fileManager.getListEdge());}};
+            this.nodeList = new ArrayList<>(){{addAll(fileManager.getListNode());}};
+            this.fileName = fileName;
+            changePageTitle();
+            isSaved = true;
+            updateGraphPane();
+        } catch (Exception e) {
+            newFile();
+        }
     }
     
     @FXML
