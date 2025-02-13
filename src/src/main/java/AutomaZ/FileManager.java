@@ -18,9 +18,6 @@ class FileManager {
         listEdge = e;
         savedFiles = getExistingFiles();
     }
-    public FileManager() {
-        this(new ArrayList<>(), new ArrayList<>());
-    }
 
     public void writeToFile(String fileName) throws IOException{
         if(listNode.isEmpty() || listEdge.isEmpty())

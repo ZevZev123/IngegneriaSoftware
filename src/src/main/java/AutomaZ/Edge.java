@@ -46,14 +46,8 @@ public class Edge {
         arrow = new Polygon();
         arrow.setFill(this.color);
 
-        if(start != end) {
-            curve = initQuad((QuadCurve)curve);
-            hoverCurve = initQuad((QuadCurve)hoverCurve);
-        }
-        else {
-            curve = initArc((Arc)curve);
-            hoverCurve = initArc((Arc)hoverCurve);
-        }
+        curve = initShape(curve);
+        hoverCurve = initShape(hoverCurve);
 
         curve.setStroke(this.color);
         curve.setFill(null);
@@ -169,20 +163,22 @@ public class Edge {
         textField.requestFocus();
     }
 
-    private QuadCurve initQuad(QuadCurve q) {
-        q = new QuadCurve();
-        q.setControlX(control[0]);
-        q.setControlY(control[1]);
-        return q;
-    }
-    private Arc initArc(Arc a) {
-        a = new Arc();
-        a.setRadiusX(Node.RADIUS * 0.8);
-        a.setRadiusY(Node.RADIUS * 0.8);
-        a.setLength(230);
-        a.setType(ArcType.OPEN);
-        a = setArc(a);
-        return a;
+    private Shape initShape(Shape s) {
+        if(start != end) {
+            s = new QuadCurve();
+            ((QuadCurve)s).setControlX(control[0]);
+            ((QuadCurve)s).setControlY(control[1]);
+            return s;
+        }
+        else {
+            s = new Arc();
+            ((Arc)s).setRadiusX(Node.RADIUS * 0.8);
+            ((Arc)s).setRadiusY(Node.RADIUS * 0.8);
+            ((Arc)s).setLength(230);
+            ((Arc)s).setType(ArcType.OPEN);
+            s = setArc((Arc)s);
+            return s;
+        }
     }
 
     private void addDragHandler() {
@@ -222,8 +218,7 @@ public class Edge {
             curve = setArc((Arc)curve);
             hoverCurve = setArc((Arc)hoverCurve);
             updateArrow(arcEdgePoint());
-        }
-        else {
+        } else {
             double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
             double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
             

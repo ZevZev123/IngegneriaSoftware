@@ -5,6 +5,20 @@ import java.util.HashMap;
 import java.util.List;
 
 public class WordAutomata {
+    private class State {
+        private final String name;
+        private final boolean isInitial;
+        private final boolean isFinal;
+        private HashMap<String, String> edges;
+    
+        private State(String name, boolean isInitial, boolean isFinal) {
+            this.name = name;
+            this.isInitial = isInitial;
+            this.isFinal = isFinal;
+            edges = new HashMap<String, String>();
+        }
+    }
+
     private final ArrayList<Node> listNode;
     private final ArrayList<Edge> listEdge;
 
@@ -96,18 +110,4 @@ public class WordAutomata {
     public ArrayList<String> getStateHistory() { return stateHistory; }
     public ArrayList<String> getStringHistory() { return stringHistory; }
     public String getRemainingWord() { return remainingWord; }
-
-    private class State {
-        private final String name;
-        private final boolean isInitial;
-        private final boolean isFinal;
-        private HashMap<String, String> edges;
-    
-        private State(String name, boolean isInitial, boolean isFinal) {
-            this.name = name;
-            this.isInitial = isInitial;
-            this.isFinal = isFinal;
-            edges = new HashMap<String, String>();
-        }
-    }
 }

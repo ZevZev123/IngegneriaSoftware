@@ -17,8 +17,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 public class Node {
-    private Circle circle;
     public static final int RADIUS = 25;
+    private Circle circle;
     private Circle circle2;
     private Text text;
 
