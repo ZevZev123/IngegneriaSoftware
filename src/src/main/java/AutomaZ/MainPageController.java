@@ -118,20 +118,8 @@ public class MainPageController {
             }
         });
         
-        openFile("prova.graph"); // da togliere tutto il resto, non funziona ancora
-
         GraphViewBox.getChildren().add(graphPane); // aggiunta del foglio nella VBox
         VBox.setVgrow(graphPane, javafx.scene.layout.Priority.ALWAYS);
-
-        // Codice eseguito al termine della creazione della finestra
-        // Serve per poter prendere le grandezze della GraphViewBox e organizzare i nodi
-        // Platform.runLater(() -> {
-        //     reposition();
-        // });
-        
-        // I SEGUENTI LISTENER SONO PER ORGANIZZARE I NODI QUANDO VIENE RIDIMENSIONATA LA FINESTRA
-        // graphPane.widthProperty().addListener((observable, oldValue, newValue) -> { reposition(); });
-        // graphPane.heightProperty().addListener((observable, oldValue, newValue) -> { reposition(); });
     }
 
     @FXML
