@@ -124,8 +124,8 @@ public class MainPageController {
 
     @FXML
     private void runButton() { // metodo per il pulsante di RUN
-        if (isGraphValid())
-            createHistory();
+        if (isGraphValid()) createHistory();
+        else { remainingWord.setText("GRAFO NON VALIDO"); remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);"); }
     }
 
     @FXML
