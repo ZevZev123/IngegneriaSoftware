@@ -90,10 +90,8 @@ public class MainPageController {
         // creazione nodi con doppio click del mouse sul foglio
         graphPane.setOnMouseClicked(event -> {
             this.contextMenu.hide();
-            for (int i = 0; i < contextMenuNodiList.size(); i++)
-                contextMenuNodiList.get(i).hide();
-            for (int i = 0; i < contextMenuEdgeList.size(); i++)
-                contextMenuEdgeList.get(i).hide();
+            for (ContextMenu menu : contextMenuNodiList) menu.hide();
+            for (ContextMenu menu : contextMenuEdgeList) menu.hide();
             if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY && event.getClickCount() == 2 && event.getTarget() == graphPane) {
                 if (event.isShiftDown()) createEdge();
                 else createNode(event.getX(), event.getY());
@@ -156,7 +154,7 @@ public class MainPageController {
         if (nodeListLength != 0){
             isSaved = false;
             double angleNode = 0;
-            angleNode = 360 / nodeListLength;
+            angleNode = (double) 360 / nodeListLength;
             double count = 0;
             double x = 0, y = 0;
             this.paneWidth = GraphViewBox.getWidth();
@@ -178,7 +176,7 @@ public class MainPageController {
     private ButtonType newFile() throws IOException {
         System.out.println("newFile");
         generateFileManager();
-        if (!isSaved && (nodeList.size() != 0 || edgeList.size() != 0)) {
+        if (!isSaved && (!nodeList.isEmpty() || !edgeList.isEmpty())) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Attenzione");
             alert.setHeaderText("Attenzione");
@@ -226,10 +224,7 @@ public class MainPageController {
             dialog.setResultConverter(new Callback<ButtonType, String>() {
                 @Override
                 public String call(ButtonType button) {
-                    if (button == okButtonType) {
-                        return comboBox.getValue();
-                    }
-                    return null;
+                    return (button == okButtonType) ? comboBox.getValue() : null;
                 }
             });
 
@@ -267,9 +262,7 @@ public class MainPageController {
     private void saveFile() throws IOException {
         generateFileManager();
         System.out.println("saveFile");
-        if (nodeList.size() == 0 && edgeList.size() == 0) {
-            return;
-        }
+        if (nodeList.isEmpty() && edgeList.isEmpty()) return;
 
         if (this.fileName != null) {
             fileManager.setLists(nodeList, edgeList);
@@ -336,10 +329,7 @@ public class MainPageController {
             dialog.setResultConverter(new Callback<ButtonType, String>() {
                 @Override
                 public String call(ButtonType button) {
-                    if (button == okButtonType) {
-                        return comboBox.getValue();
-                    }
-                    return null;
+                    return (button == okButtonType) ? comboBox.getValue() : null;
                 }
             });
 
@@ -403,9 +393,9 @@ public class MainPageController {
         
         remainingWord.setText("");
         remainingWord.setStyle("");
-        if (wordAutomata.run(textField.getText())) {
+        if (wordAutomata.run(textField.getText()))
             textField.setStyle("-fx-background-color: rgba(4, 255, 0, 0.2);");    
-        } else {
+        else {
             textField.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
             remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
             remainingWord.setText(wordAutomata.getRemainingWord());
@@ -413,7 +403,7 @@ public class MainPageController {
 
         ArrayList<String> historyList = wordAutomata.getStringHistory();
         ArrayList<String> stateList = wordAutomata.getStateHistory();
-        if (historyList.size() != 0 && stateList.size() != 0) {
+        if (!historyList.isEmpty() && !stateList.isEmpty()) {
             Label label;
             for (int i = 0; i < historyList.size(); i++) {
                 if (!equalToLast(stateList.get(i))) {
@@ -432,35 +422,27 @@ public class MainPageController {
     // cambia colore agli edge percorsi
     private void changeColor() {
         String nodeName = "";
-        for (int i = 0; i < history.getChildren().size(); i++) {
-            if (history.getChildren().get(i) instanceof Label label) {
-                if (label.getStyleClass().contains("label1")) {
+        for (int i = 0; i < history.getChildren().size(); i++)
+            if (history.getChildren().get(i) instanceof Label label)
+                if (label.getStyleClass().contains("label1"))
                     nodeName = label.getText();
-                } else {
-                    for (Edge edge: edgeList) {
-                        if (history.getChildren().get(i) instanceof Label label2) {
-                            if (edge.getStartNode().getName().equals(nodeName) && edge.getValue().equals(label2.getText())) {
-                                edge.setColor(Color.BLUE);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                else
+                    for (Edge edge: edgeList)
+                        if (history.getChildren().get(i) instanceof Label label2 &&
+                            (edge.getStartNode().getName().equals(nodeName) &&
+                            edge.getValue().equals(label2.getText())))
+                            edge.setColor(Color.BLUE);
     }
 
     // controlla se l'ultimo node inserito è uguale a quello precedente
     private Boolean equalToLast(String state) {
-        for (int i = history.getChildren().size()-1; i > 0; i--) {
+        for (int i = history.getChildren().size()-1; i > 0; i--)
             if (history.getChildren().get(i).getStyleClass().contains("label1")) {
-                if (history.getChildren().get(i) instanceof Label label) {
-                    if (label.getText().equals(state)) {
+                if (history.getChildren().get(i) instanceof Label label)
+                    if (label.getText().equals(state))
                         return true;
-                    }
-                }
                 break;
             }
-        }
 
         return false;
     }
@@ -532,7 +514,7 @@ public class MainPageController {
                 thirdStage.setOnCloseRequest(event -> {thirdStage = null;});
                 thirdStage.show();
             } catch (Exception e) { e.printStackTrace(); }
-        } else { thirdStage.toFront(); }
+        } else thirdStage.toFront();
     }
 
     private void createNode(double positionX, double positionY) {
@@ -640,20 +622,17 @@ public class MainPageController {
     }
 
     public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
-        if (isInitial && !isThereInitial() || !isInitial && !(isInitial && isFinal)) {
-            Boolean nameAlreadyExist = false;
-            for (Node node: nodeList) {
+        if (!isInitial || !isThereInitial()) {
+            boolean nameAlreadyExist = false;
+            for (Node node: nodeList)
                 if (node.getName().equals(name)) {
                     nameAlreadyExist = true;
                     break;
                 }
-            }
 
-            if (!nameAlreadyExist) {
-                Node node = new Node(positionX, positionY, name, this, isInitial, isFinal);
-                createNode(node);
-            } else { System.out.println("Nome esistente"); }
-        } else { System.out.println("Errore"); }
+            if (!nameAlreadyExist) createNode(new Node(positionX, positionY, name, this, isInitial, isFinal));
+            else System.out.println("Nome esistente");
+        } else System.out.println("Errore");
     }
     
     private void createEdge(Node start, Node end, String name, double positionX, double positionY) {
@@ -668,9 +647,8 @@ public class MainPageController {
     }
 
     public void createEdge(Node start, Node end, String name) {
-        if (start.equals(end)) {
-            createEdge(start, end, name, 430, 430);
-        } else {
+        if (start.equals(end)) createEdge(start, end, name, 430, 430);
+        else {
             double meanWidth = end.getX() + ((start.getX() - end.getX()) / 2);
             double meanHeight = end.getY() + ((start.getY() - end.getY()) / 2);
             if (meanWidth < 0) meanWidth = -meanWidth;
@@ -692,20 +670,17 @@ public class MainPageController {
 
         // concello tutti gli edge che partono o arrivano al nodo
         for (int i = 0; i < edgeList.size(); i++)
-            if (i < edgeList.size())
-                for (Node edgesNode: edgeList.get(i).getNodes())
-                    if (node == edgesNode) {
-                        edgeList.get(i--).deleteEdge();
-                        break;
-                    }
-                        
+            for (Node edgesNode: edgeList.get(i).getNodes())
+                if (node == edgesNode) {
+                    edgeList.get(i--).deleteEdge();
+                    break;
+                }
     }
 
     public Boolean isThereInitial() {
         for (Node node: this.nodeList)
             if (node.isNodeInitial())
                 return true;
-            
         return false;
     }
 

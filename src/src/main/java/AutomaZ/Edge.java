@@ -21,12 +21,12 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.TextAlignment;
 
 public class Edge {
-    private Node start;
-    private Node end;
+    private final Node start;
+    private final Node end;
     private Shape curve;
     private Shape hoverCurve;
-    private Polygon arrow;
-    private Group group;
+    private final Polygon arrow;
+    private final Group group;
     private double[] control;
     private String name;
 
@@ -176,7 +176,7 @@ public class Edge {
             ((Arc)s).setRadiusY(Node.RADIUS * 0.8);
             ((Arc)s).setLength(230);
             ((Arc)s).setType(ArcType.OPEN);
-            s = setArc((Arc)s);
+            setArc((Arc)s);
             return s;
         }
     }
@@ -215,20 +215,20 @@ public class Edge {
 
     public void updateEdge() {
         if(start == end) {
-            curve = setArc((Arc)curve);
-            hoverCurve = setArc((Arc)hoverCurve);
+            setArc((Arc)curve);
+            setArc((Arc)hoverCurve);
             updateArrow(arcEdgePoint());
         } else {
             double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
             double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
             
-            curve = setQuad((QuadCurve)curve, sourcePoint, targetPoint);
-            hoverCurve = setQuad((QuadCurve)hoverCurve, sourcePoint, targetPoint);
+            setQuad((QuadCurve)curve, sourcePoint, targetPoint);
+            setQuad((QuadCurve)hoverCurve, sourcePoint, targetPoint);
     
             updateArrow(targetPoint);
         }
     }
-    private Arc setArc(Arc a) {
+    private void setArc(Arc a) {
         double stX = start.getX(), stY = start.getY();
         double dx = control[0] - stX, dy = control[1] - stY;
         double m = Math.sqrt(dx * dx + dy * dy);
@@ -236,8 +236,6 @@ public class Edge {
         a.setCenterX(stX + Node.RADIUS * 1.4 * (dx / m));
         a.setCenterY(stY + Node.RADIUS * 1.4 * (dy / m));
         a.setStartAngle(145 + Math.atan2(dx, dy) * 180.0 / Math.PI);
-
-        return a;
     }
     private void updateArrow(double[] target) {
         double dx, dy;
@@ -280,14 +278,13 @@ public class Edge {
                 y + Node.RADIUS * Math.sin(angle)
         };
     }
-    private QuadCurve setQuad(QuadCurve q, double[] s, double[] t) {
+    private void setQuad(QuadCurve q, double[] s, double[] t) {
         q.setStartX(s[0]);
         q.setStartY(s[1]);
         q.setControlX(control[0]);
         q.setControlY(control[1]);
         q.setEndX(t[0]);
         q.setEndY(t[1]);
-        return q;
     }
 
     public Boolean deleteEdge() {
