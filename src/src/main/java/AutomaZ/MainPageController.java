@@ -20,6 +20,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -68,8 +69,7 @@ public class MainPageController {
 
     @FXML
     private void initialize() throws IOException {
-        // updateToolTip();
-
+        changePageTitle();
         graphPane = new Pane(); // creazione del foglio
         
         textField.setOnAction(event -> {
@@ -478,14 +478,15 @@ public class MainPageController {
                 
                 Scene scene = new Scene(root);
                 scene.getStylesheets().add(getClass().getResource("/AutomaZ/style2.css").toExternalForm());
-
+                
                 NewEdgeController tertiaryController = loader.getController();
                 tertiaryController.setPrimaryController(this);
                 tertiaryController.setNodeList(nodeList);
                 if (this.selectedNode != null)
-                    tertiaryController.setStartNode(this.selectedNode);
-
+                tertiaryController.setStartNode(this.selectedNode);
+                
                 thirdStage = new Stage();
+                thirdStage.getIcons().add(new Image(getClass().getResourceAsStream("/AutomaZ/images/icon.png")));
                 thirdStage.setTitle("Creazione nuovo edge");
                 thirdStage.setScene(scene);
 
@@ -515,6 +516,7 @@ public class MainPageController {
                 secondaryController.setPosition(positionX, positionY);
 
                 secondStage = new Stage();
+                secondStage.getIcons().add(new Image(getClass().getResourceAsStream("/AutomaZ/images/icon.png")));
                 secondStage.setTitle("Creazione nuovo nodo");
                 secondStage.setScene(scene);
 

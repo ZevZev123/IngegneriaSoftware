@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -16,6 +17,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         stage.setMinHeight(500);
         stage.setMinWidth(600);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/AutomaZ/images/icon.png")));
         scene = new Scene(loadFXML("primary"), 1000, 700);
         scene.getStylesheets().add(getClass().getResource("/AutomaZ/style.css").toExternalForm());
         stage.setScene(scene);
