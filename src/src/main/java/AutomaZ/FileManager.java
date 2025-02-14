@@ -61,8 +61,8 @@ class FileManager {
             result += e.getValue() + ",";
             result += e.getNodes()[0].getName() + "," +
                 e.getNodes()[1].getName() + ",";
-            result += Double.toString(e.getControlX()) + "," +
-                Double.toString(e.getControlY());
+            result += Double.toString(e.getControl()[0]) + "," +
+                Double.toString(e.getControl()[1]);
             result += "\n";
         }
 

@@ -26,7 +26,7 @@ public class Node {
 
     private StackPane stackPane = new StackPane();
     private ArrayList<Node> nodeList = new ArrayList<>();
-    private ContextMenu contextMenuNodi;
+    private ContextMenu contextMenuNodes;
 
     private Boolean isInitial = false;
     private Boolean isFinal = false;
@@ -276,8 +276,8 @@ public class Node {
     public void setName(String name) {
         if (this.controller != null) { this.controller.isSaved = false; }
         this.name = name;
-        if (contextMenuNodi != null)
-            contextMenuNodi.getItems().get(0).setText("Cancella Nodo "+this.name);
+        if (contextMenuNodes != null)
+            contextMenuNodes.getItems().get(0).setText("Cancella Nodo "+this.name);
         text.setX(circle.getCenterX()-6);
         if (name.length() > 2) {
             text.setText(name.substring(0,2)+"...");
@@ -348,20 +348,16 @@ public class Node {
     }
     
     public void setListFX(ArrayList<Node> nodeList) { this.nodeList = nodeList; }
-    public void setContextMenuNodiList(ContextMenu contextMenuNodi) { this.contextMenuNodi = contextMenuNodi; }
+    public void setContextMenuNodesList(ContextMenu contextMenuNodi) { this.contextMenuNodes = contextMenuNodi; }
     public void setController(MainPageController controller) { this.controller = controller; }
 
-    public Circle getCircle() { return this.circle; }
-    public Circle getCircle2() { return this.circle2; }
     public Text getText() { return this.text; }
     public String getName() { return this.name; }
     public Group getGroup() { return this.group; }
     public double[] getCoordinates() { return new double[] {this.circle.getCenterX(), this.circle.getCenterY()}; }
-    public double getX() { return this.circle.getCenterX(); }
-    public double getY() { return this.circle.getCenterY(); }
     public ArrayList<Node> getListFX() { return this.nodeList; }
     public StackPane getStackPane() { return this.stackPane; }
 
-    public Boolean isNodeInitial() { return this.isInitial; }
-    public Boolean isNodeFinal() { return this.isFinal; }
+    public boolean isNodeInitial() { return this.isInitial; }
+    public boolean isNodeFinal() { return this.isFinal; }
 }

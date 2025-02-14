@@ -50,7 +50,7 @@ public class MainPageController {
     
     private FileManager fileManager = null;
     private String fileName = null;
-    public Boolean isSaved = false;
+    public boolean isSaved = false;
 
     private Pane graphPane;
     private double paneWidth = 0;
@@ -423,7 +423,7 @@ public class MainPageController {
     }
 
     // controlla se l'ultimo node inserito è uguale a quello precedente
-    private Boolean equalToLast(String state) {
+    private boolean equalToLast(String state) {
         for (int i = history.getChildren().size()-1; i > 0; i--)
             if (history.getChildren().get(i).getStyleClass().contains("label1")) {
                 if (history.getChildren().get(i) instanceof Label label)
@@ -435,7 +435,7 @@ public class MainPageController {
         return false;
     }
 
-    private Label createLableNode(String name, Boolean isNode) {
+    private Label createLableNode(String name, boolean isNode) {
         Label label = new Label();
         label.setText(name);
         label.setTextAlignment(TextAlignment.LEFT);
@@ -447,7 +447,7 @@ public class MainPageController {
         return label;
     }
 
-    private Boolean isGraphValid() {
+    private boolean isGraphValid() {
         // controllo se esiste almeno un nodo iniziale e non piu' di uno
         // controllo se esiste almeno un nodo finale
         int initialCount = 0, finalCount = 0;
@@ -517,8 +517,7 @@ public class MainPageController {
                 this.secondaryController = loader.getController();
                 secondaryController.setPrimaryController(this);
                 secondaryController.setNodeList(nodeList);
-                secondaryController.setPositionX(positionX);
-                secondaryController.setPositionY(positionY);
+                secondaryController.setPosition(positionX, positionY);
 
                 secondStage = new Stage();
                 secondStage.setTitle("Creazione nuovo nodo");
@@ -534,8 +533,7 @@ public class MainPageController {
             } catch (Exception e) { e.printStackTrace(); }
         } else {
             secondStage.toFront();
-            secondaryController.setPositionX(positionX);
-            secondaryController.setPositionY(positionY);
+            secondaryController.setPosition(positionX, positionY);
         }
     }
 
@@ -579,7 +577,7 @@ public class MainPageController {
             contextMenuNodi.show(graphPane, event.getScreenX(), event.getScreenY());
         });
         
-        node.setContextMenuNodiList(contextMenuNodi);
+        node.setContextMenuNodesList(contextMenuNodi);
         contextMenuNodiList.add(contextMenuNodi);
     }
 
@@ -609,7 +607,7 @@ public class MainPageController {
         });
     }
 
-    public void createNode(double positionX, double positionY, String name, Boolean isInitial, Boolean isFinal) {
+    public void createNode(double positionX, double positionY, String name, boolean isInitial, boolean isFinal) {
         if (!isInitial || !isThereInitial()) {
             boolean nameAlreadyExist = false;
             for (Node node: nodeList)
@@ -637,8 +635,9 @@ public class MainPageController {
     public void createEdge(Node start, Node end, String name) {
         if (start.equals(end)) createEdge(start, end, name, 430, 430);
         else {
-            double meanWidth = end.getX() + ((start.getX() - end.getX()) / 2);
-            double meanHeight = end.getY() + ((start.getY() - end.getY()) / 2);
+            double[] endCoords = end.getCoordinates(), startCoords = start.getCoordinates();
+            double meanWidth = endCoords[0] + ((startCoords[0] - endCoords[0]) / 2);
+            double meanHeight = endCoords[1] + ((startCoords[1] - endCoords[1]) / 2);
             if (meanWidth < 0) meanWidth = -meanWidth;
             if (meanHeight < 0) meanHeight = -meanHeight;
             createEdge(start, end, name, meanWidth, meanHeight);
@@ -665,7 +664,7 @@ public class MainPageController {
                 }
     }
 
-    public Boolean isThereInitial() {
+    public boolean isThereInitial() {
         for (Node node: this.nodeList)
             if (node.isNodeInitial())
                 return true;

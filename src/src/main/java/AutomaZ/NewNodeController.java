@@ -65,7 +65,6 @@ public class NewNodeController {
     }
 
     public void setPrimaryController(MainPageController controller) { this.controller = controller; }
-    public void setPositionX(double positionX) { this.positionX = positionX; }
-    public void setPositionY(double positionY) { this.positionY = positionY; }
+    public void setPosition(double positionX, double positionY) { this.positionX = positionX; this.positionY = positionY; }
     public void setNodeList(ArrayList<Node> nodeList) { this.nodeList = nodeList; }
 }

@@ -70,17 +70,12 @@ public class NewEdgeController {
         stage.close();
     }
 
-    public void setPrimaryController(MainPageController controller) { 
-        this.controller = controller; 
-    }
-
     public void setNodeList(ArrayList<Node> nodeList) { 
         this.nodeList = nodeList; 
         if (nodeStart != null && nodeEnd != null)
             initialize();
     }
 
-    public void setStartNode(Node node) { 
-        nodeStart.setValue(node.getName()); 
-    }
+    public void setPrimaryController(MainPageController controller) { this.controller = controller; }
+    public void setStartNode(Node node) { nodeStart.setValue(node.getName()); }
 }

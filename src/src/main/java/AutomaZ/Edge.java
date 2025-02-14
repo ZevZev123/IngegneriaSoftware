@@ -21,10 +21,8 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.text.TextAlignment;
 
 public class Edge {
-    private final Node start;
-    private final Node end;
-    private Shape curve;
-    private Shape hoverCurve;
+    private final Node start, end;
+    private Shape curve, hoverCurve;
     private final Polygon arrow;
     private final Group group;
     private double[] control;
@@ -219,8 +217,9 @@ public class Edge {
             setArc((Arc)hoverCurve);
             updateArrow(arcEdgePoint());
         } else {
-            double[] sourcePoint = calculateEdgePoint(start.getX(), start.getY());
-            double[] targetPoint = calculateEdgePoint(end.getX(), end.getY());
+            double[] sC = start.getCoordinates(), eC = end.getCoordinates();
+            double[] sourcePoint = calculateEdgePoint(sC[0], sC[1]);
+            double[] targetPoint = calculateEdgePoint(eC[0], eC[1]);
             
             setQuad((QuadCurve)curve, sourcePoint, targetPoint);
             setQuad((QuadCurve)hoverCurve, sourcePoint, targetPoint);
@@ -229,7 +228,7 @@ public class Edge {
         }
     }
     private void setArc(Arc a) {
-        double stX = start.getX(), stY = start.getY();
+        double stX = start.getCoordinates()[0], stY = start.getCoordinates()[1];
         double dx = control[0] - stX, dy = control[1] - stY;
         double m = Math.sqrt(dx * dx + dy * dy);
         
@@ -240,8 +239,8 @@ public class Edge {
     private void updateArrow(double[] target) {
         double dx, dy;
         if(start == end) {
-            dx = start.getX() - target[0];
-            dy = start.getY() - target[1];
+            dx = start.getCoordinates()[0] - target[0];
+            dy = start.getCoordinates()[1] - target[1];
         }
         else {
             dx = target[0] - control[0];
@@ -307,7 +306,6 @@ public class Edge {
     public Node getStartNode() { return this.start; }
     public Node getEndNode() { return this.end; }
     public Group getGroup() { return group; }
-    public double getControlX() { return control[0]; }
-    public double getControlY() { return control[1]; }
+    public double[] getControl() { return control; }
     public String getValue() { return this.name; }
 }
