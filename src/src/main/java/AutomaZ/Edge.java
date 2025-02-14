@@ -30,7 +30,7 @@ public class Edge {
 
     private StackPane stackPane;
 
-    private List<Edge> edgeList = new ArrayList<>();
+    public static List<Edge> edgeList = new ArrayList<>();
 
     private Color color = Color.BLACK;
 
@@ -296,7 +296,6 @@ public class Edge {
     }
     
     private void setName(String name) { this.name = name; }
-    public void setEdgeList(List<Edge> edgeList) { this.edgeList = edgeList; }
     public void setColor (Color color) {
         this.color = color;
         toggleHover(false);

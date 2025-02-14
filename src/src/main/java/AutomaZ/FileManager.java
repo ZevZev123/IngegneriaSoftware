@@ -38,8 +38,6 @@ class FileManager {
         File file = new File("graphs/"+fileName);
         if(file.delete())
             savedFiles = getExistingFiles();
-        else
-            System.out.println(fileName);
         savedFiles = getExistingFiles();
     }
 

@@ -130,7 +130,6 @@ public class MainPageController {
 
     @FXML
     private void deleteAll() {
-        System.out.println("Cancellato tutto il grafo");
         int val = nodeList.size();
         for (int i = 0; i < val; i++)
             nodeList.get(0).deleteNode();
@@ -162,7 +161,6 @@ public class MainPageController {
 
     @FXML
     private ButtonType newFile() throws IOException {
-        System.out.println("newFile");
         generateFileManager();
         if (!isSaved && (!nodeList.isEmpty() || !edgeList.isEmpty())) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -189,7 +187,6 @@ public class MainPageController {
 
     @FXML
     private void openFile() throws IOException {
-        System.out.println("openFile");
         generateFileManager();
         ButtonType result = newFile();
         if (result == ButtonType.OK) {
@@ -249,7 +246,6 @@ public class MainPageController {
     @FXML
     private void saveFile() throws IOException {
         generateFileManager();
-        System.out.println("saveFile");
         if (nodeList.isEmpty() && edgeList.isEmpty()) return;
 
         if (this.fileName != null) {
@@ -338,7 +334,6 @@ public class MainPageController {
 
     @FXML
     private void exit() throws IOException {
-        System.out.println("exit");
         ButtonType result = newFile();
         if (result == ButtonType.OK) {
             Platform.exit();
@@ -348,7 +343,7 @@ public class MainPageController {
 
     private void updateGraphPane() {
         for (Edge edge: edgeList) {
-            edge.setEdgeList(edgeList);
+            Edge.edgeList = edgeList;
 
             graphPane.getChildren().add(edge.getGroup());
             edgeMenuList.getChildren().add(edge.getStackPane());
@@ -357,7 +352,7 @@ public class MainPageController {
         }
 
         for (Node node: nodeList) {
-            node.setListFX(nodeList);
+            Node.nodeList = nodeList;
             node.setController(this);
 
             graphPane.getChildren().add(node.getGroup());
@@ -539,7 +534,7 @@ public class MainPageController {
 
     private void createNode(Node node) {
         nodeList.add(node);
-        node.setListFX(nodeList);
+        Node.nodeList = nodeList;
         
         graphPane.getChildren().add(node.getGroup());
         paneWidth = GraphViewBox.getWidth();
@@ -617,8 +612,7 @@ public class MainPageController {
                 }
 
             if (!nameAlreadyExist) createNode(new Node(positionX, positionY, name, this, isInitial, isFinal));
-            else System.out.println("Nome esistente");
-        } else System.out.println("Errore");
+        }
     }
     
     private void createEdge(Node start, Node end, String name, double positionX, double positionY) {
@@ -627,7 +621,7 @@ public class MainPageController {
 
         graphPane.getChildren().add(edge.getGroup()); // aggiunta di tutti gli edge nel foglio
         edgeMenuList.getChildren().add(edge.getStackPane());
-        edge.setEdgeList(edgeList);
+        Edge.edgeList = edgeList;
         setContextMenuEdge(edge);
         isSaved = false;
     }
@@ -645,7 +639,6 @@ public class MainPageController {
     }
 
     public void delete(Node node) {
-        System.out.println("Node cancellato");
         isSaved = false;
         // cancello il contextMenu del nodo
         for (int i = 0; i < nodeList.size(); i++)

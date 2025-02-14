@@ -25,7 +25,7 @@ public class Node {
     private MainPageController controller;
 
     private StackPane stackPane = new StackPane();
-    private ArrayList<Node> nodeList = new ArrayList<>();
+    public static ArrayList<Node> nodeList = new ArrayList<>();
     private ContextMenu contextMenuNodes;
 
     private Boolean isInitial = false;
@@ -347,7 +347,6 @@ public class Node {
         return true;
     }
     
-    public void setListFX(ArrayList<Node> nodeList) { this.nodeList = nodeList; }
     public void setContextMenuNodesList(ContextMenu contextMenuNodi) { this.contextMenuNodes = contextMenuNodi; }
     public void setController(MainPageController controller) { this.controller = controller; }
 
@@ -355,7 +354,6 @@ public class Node {
     public String getName() { return this.name; }
     public Group getGroup() { return this.group; }
     public double[] getCoordinates() { return new double[] {this.circle.getCenterX(), this.circle.getCenterY()}; }
-    public ArrayList<Node> getListFX() { return this.nodeList; }
     public StackPane getStackPane() { return this.stackPane; }
 
     public boolean isNodeInitial() { return this.isInitial; }
