@@ -264,7 +264,7 @@ public class MainPageController {
                 changePageTitle();
                 try {
                     fileManager.setLists(nodeList, edgeList);
-                    fileManager.writeToFile(fileName);
+                    fileManager.writeToFile(fileName+".graph");
                     isSaved = true;
                 } catch (IOException e) {
                     e.printStackTrace();

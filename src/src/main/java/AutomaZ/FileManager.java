@@ -20,8 +20,8 @@ class FileManager {
     }
 
     public void writeToFile(String fileName) throws IOException{
-        if(listNode.isEmpty() || listEdge.isEmpty())
-            throw new IOException("One or more lists are empty");
+        if(listNode.isEmpty())
+            throw new IOException("NodeList is empty");
         FileWriter file = new FileWriter("graphs/"+fileName);
         file.write(toFile());
         file.close();
@@ -54,7 +54,9 @@ class FileManager {
             result += "\n";
         }
         
-        result += "\nARCHI:\n";
+        result += "---\nARCHI:\n";
+        if (listEdge.isEmpty())
+            return result += "---";
         for(Edge e : listEdge) {
             result += e.getValue() + ",";
             result += e.getNodes()[0].getName() + "," +
@@ -64,16 +66,16 @@ class FileManager {
             result += "\n";
         }
 
-        return result;
+        return result + "---\n";
     }
 
     private void translate(FileReader file) {
         Scanner scanner = new Scanner(file);
-        String line = scanner.nextLine();
+        String line = scanner.nextLine(); // NODI:
         line = scanner.nextLine();
         
         listNode = new ArrayList<>();
-        while(!line.isEmpty()) {
+        while(!line.contains("---")) {
             String[] t = line.split(",");
             Node n = new Node(Double.parseDouble(t[1]), Double.parseDouble(t[2]),
                 t[0], t[3].equals("1"), t[4].equals("1"));
@@ -81,16 +83,15 @@ class FileManager {
             line = scanner.nextLine();
         }
 
-        line = scanner.nextLine();
+        line = scanner.nextLine(); // ARCHI:
         listEdge = new ArrayList<>();
-        while(true) {
-            line = scanner.nextLine();
+        line = scanner.nextLine();
+        while(!line.contains("---")) {
             String[] t = line.split(",");
             Edge e = new Edge(getNode(t[1]), getNode(t[2]), t[0],
                 Double.parseDouble(t[3]), Double.parseDouble(t[4]));
             listEdge.add(e);
-            if(!scanner.hasNextLine())
-                break;
+            line = scanner.nextLine();
         }
 
         scanner.close();
