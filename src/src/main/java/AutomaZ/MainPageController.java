@@ -246,7 +246,7 @@ public class MainPageController {
     @FXML
     private void saveFile() throws IOException {
         generateFileManager();
-        if (nodeList.isEmpty() && edgeList.isEmpty()) return;
+        if (nodeList.isEmpty()) return;
 
         if (this.fileName != null) {
             fileManager.setLists(nodeList, edgeList);
