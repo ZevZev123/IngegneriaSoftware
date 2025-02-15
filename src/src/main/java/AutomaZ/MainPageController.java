@@ -254,7 +254,7 @@ public class MainPageController {
         } else {
             TextInputDialog dialog = new TextInputDialog("defaultFileName");
             dialog.setTitle("Salva File");
-            dialog.setHeaderText("Inserisci il nome del file da aprire:");
+            dialog.setHeaderText("Inserisci il nome del file da salvare:");
             dialog.setContentText("Nome file:");
 
             Optional<String> result = dialog.showAndWait();
