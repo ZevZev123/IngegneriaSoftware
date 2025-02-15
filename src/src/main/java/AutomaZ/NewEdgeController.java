@@ -19,7 +19,7 @@ public class NewEdgeController {
     @FXML private Label errorLabel;
 
     private MainPageController controller = null;
-    private ArrayList<Node> nodeList;
+    private ArrayList<Node> nodeList = Node.nodeList;
 
     @FXML
     private void initialize() {
@@ -68,12 +68,6 @@ public class NewEdgeController {
     private void closePage() {
         Stage stage = (Stage) this.errorLabel.getScene().getWindow();
         stage.close();
-    }
-
-    public void setNodeList(ArrayList<Node> nodeList) { 
-        this.nodeList = nodeList; 
-        if (nodeStart != null && nodeEnd != null)
-            initialize();
     }
 
     public void setPrimaryController(MainPageController controller) { this.controller = controller; }

@@ -481,7 +481,6 @@ public class MainPageController {
                 
                 NewEdgeController tertiaryController = loader.getController();
                 tertiaryController.setPrimaryController(this);
-                tertiaryController.setNodeList(nodeList);
                 if (this.selectedNode != null)
                 tertiaryController.setStartNode(this.selectedNode);
                 
@@ -512,7 +511,6 @@ public class MainPageController {
 
                 this.secondaryController = loader.getController();
                 secondaryController.setPrimaryController(this);
-                secondaryController.setNodeList(nodeList);
                 secondaryController.setPosition(positionX, positionY);
 
                 secondStage = new Stage();
