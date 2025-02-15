@@ -135,7 +135,7 @@ public class Edge {
         textField.setOnAction(e -> {
             if (!textField.getText().isEmpty()) {
                 label.setText(textField.getText());
-                setName(textField.getText());
+                setValue(textField.getText());
                 updateToolTip();
             }
             updateEdge();
@@ -148,7 +148,7 @@ public class Edge {
             if (!isNowFocused) {
                 if (!textField.getText().isEmpty()) {
                     label.setText(textField.getText());
-                    setName(textField.getText());
+                    setValue(textField.getText());
                     updateToolTip();
                 }
                 updateEdge();
@@ -295,7 +295,7 @@ public class Edge {
         return true;
     }
     
-    private void setName(String name) { this.name = name; }
+    private void setValue(String name) { this.name = name; }
     public void setColor (Color color) {
         this.color = color;
         toggleHover(false);
