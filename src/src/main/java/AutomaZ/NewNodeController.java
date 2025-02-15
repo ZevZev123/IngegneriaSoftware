@@ -33,19 +33,19 @@ public class NewNodeController {
 
     @FXML
     private void newNode() {
-        String nomeNodo = textField.getText();
+        String nodeName = textField.getText();
 
         if (controller != null) {
-            if (!nomeNodo.isEmpty()) {
+            if (!nodeName.isEmpty()) {
                 Boolean nameAlreadyExist = false;
                 for (Node node: nodeList)
-                    if (node.getName().equals(nomeNodo)) {
+                    if (node.getName().equals(nodeName)) {
                         nameAlreadyExist = true;
                         break;
                     }
 
                 if (!nameAlreadyExist) {
-                    controller.createNode(positionX, positionY, nomeNodo, false, false);
+                    controller.createNode(positionX, positionY, nodeName, false, false);
                     closePage();
                 } else {
                     errorLabel.setText("Nome gia' esistente!");
