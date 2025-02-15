@@ -64,7 +64,6 @@ public class MainPageController {
 
     private Node selectedNode = null;
     private Stage secondStage;
-    private Stage thirdStage;
     private NewNodeController secondaryController;
 
     @FXML
@@ -471,9 +470,9 @@ public class MainPageController {
     }
 
     private void createEdge() {
-        if (thirdStage == null || !thirdStage.isShowing()) {
+        if (secondStage == null || !secondStage.isShowing()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("tertiary.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("newEdge.fxml"));
                 Parent root = loader.load();
                 
                 Scene scene = new Scene(root);
@@ -484,26 +483,26 @@ public class MainPageController {
                 if (this.selectedNode != null)
                 tertiaryController.setStartNode(this.selectedNode);
                 
-                thirdStage = new Stage();
-                thirdStage.getIcons().add(new Image(getClass().getResourceAsStream("/AutomaZ/images/icon.png")));
-                thirdStage.setTitle("Creazione nuovo edge");
-                thirdStage.setScene(scene);
+                secondStage = new Stage();
+                secondStage.getIcons().add(new Image(getClass().getResourceAsStream("/AutomaZ/images/icon.png")));
+                secondStage.setTitle("Creazione nuovo edge");
+                secondStage.setScene(scene);
 
-                thirdStage.setMinHeight(200);
-                thirdStage.setMinWidth(320);
-                thirdStage.setMaxHeight(200);
-                thirdStage.setMaxWidth(320);
+                secondStage.setMinHeight(200);
+                secondStage.setMinWidth(320);
+                secondStage.setMaxHeight(200);
+                secondStage.setMaxWidth(320);
 
-                thirdStage.setOnCloseRequest(event -> {thirdStage = null;});
-                thirdStage.show();
+                secondStage.setOnCloseRequest(event -> {secondStage = null;});
+                secondStage.show();
             } catch (Exception e) { e.printStackTrace(); }
-        } else thirdStage.toFront();
+        } else secondStage.toFront();
     }
 
     private void createNode(double positionX, double positionY) {
         if (secondStage == null || !secondStage.isShowing()) {
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("secondary.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("newNode.fxml"));
                 Parent root = loader.load();
                 
                 Scene scene = new Scene(root);
