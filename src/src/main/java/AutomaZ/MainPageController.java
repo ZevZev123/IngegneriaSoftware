@@ -54,8 +54,6 @@ public class MainPageController {
     public boolean isSaved = false;
 
     private Pane graphPane;
-    private double paneWidth = 0;
-    private double paneHeight = 0;
 
     private ContextMenu contextMenu;
     private ArrayList<ContextMenu> contextMenuNodiList = new ArrayList<>();
@@ -143,8 +141,8 @@ public class MainPageController {
             angleNode = (double) 360 / nodeListLength;
             double count = 0;
             double x = 0, y = 0;
-            this.paneWidth = GraphViewBox.getWidth();
-            this.paneHeight = GraphViewBox.getHeight();
+            double paneWidth = GraphViewBox.getWidth();
+            double paneHeight = GraphViewBox.getHeight();
 
             for (Node node: nodeList) {
                 x = (paneWidth/2) + (paneWidth/4)*cos(toRadians(count));
@@ -536,8 +534,6 @@ public class MainPageController {
         Node.nodeList = nodeList;
         
         graphPane.getChildren().add(node.getGroup());
-        paneWidth = GraphViewBox.getWidth();
-        paneHeight = GraphViewBox.getHeight();
         
         nodeMenuList.getChildren().add(node.getStackPane());
         
