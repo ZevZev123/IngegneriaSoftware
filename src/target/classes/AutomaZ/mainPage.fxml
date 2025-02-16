@@ -34,7 +34,7 @@
                <MenuItem text="Reposition" onAction="#reposition" />
             </Menu>
             <Menu text="Help" >
-               <MenuItem text="About" />
+               <MenuItem text="About" onAction="#about" />
             </Menu>
          </MenuBar>
 

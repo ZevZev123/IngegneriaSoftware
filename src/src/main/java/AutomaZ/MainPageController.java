@@ -347,6 +347,17 @@ public class MainPageController {
         }
     }
 
+    @FXML
+    private void about() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Informazioni");
+        alert.setHeaderText("AutomaZ");
+        alert.setContentText("Per dubbi o domande contattateci ai seguenti indirizzi\n\n" +
+                            "Giulio Bovina: giulio.bovina@studenti.univr.it\n" +
+                            "David Zahariev: david.zahariev@studenti.univr.it");
+        alert.showAndWait();
+    }
+
     private void updateGraphPane() {
         for (Edge edge: edgeList) {
             Edge.edgeList = edgeList;
