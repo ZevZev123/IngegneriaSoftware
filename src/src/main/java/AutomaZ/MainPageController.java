@@ -121,8 +121,17 @@ public class MainPageController {
 
     @FXML
     private void runButton() { // metodo per il pulsante di RUN
-        if (isGraphValid()) createHistory();
-        else { remainingWord.setText("GRAFO NON VALIDO"); remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);"); }
+        if (isGraphValid()) {
+            if (textField.getText().isEmpty()) {
+                remainingWord.setText("Inserire una parola");
+                remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
+            }
+            else createHistory();
+        }
+        else {
+            remainingWord.setText("GRAFO NON VALIDO");
+            remainingWord.setStyle("-fx-background-color:rgba(255, 0, 0, 0.2);");
+        }
     }
 
     @FXML
@@ -278,6 +287,7 @@ public class MainPageController {
 
     @FXML
     private void deleteFile() throws IOException {
+        generateFileManager();
         if (this.fileName != null) {
             Alert alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Cancella File");

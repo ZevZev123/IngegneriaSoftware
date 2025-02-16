@@ -46,7 +46,7 @@ public class NewEdgeController {
             errorLabel.setTextFill(Color.RED);
             return;
         } else if (textField.getText().isEmpty()) {
-            errorLabel.setText("Inserisci un nome!");
+            errorLabel.setText("Inserisci un valore!");
             errorLabel.setTextFill(Color.RED);
             return;
         }
