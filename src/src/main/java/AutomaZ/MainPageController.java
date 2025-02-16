@@ -322,7 +322,6 @@ public class MainPageController {
                 try {
                     newFile();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             });
