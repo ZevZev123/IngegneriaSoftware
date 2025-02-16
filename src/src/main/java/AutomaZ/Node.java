@@ -177,12 +177,11 @@ public class Node {
 
     private void updateNodeColor() {
         resetNodeColor();
-        if (isInitial) initialNode();
         if (isFinal) finalNode();
+        if (isInitial) initialNode();
     }
     
     private void normalNodeHover(){
-        resetLabelStyleClass();
         if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("labelHover");
         if (isFinal) this.circle2.setFill(Color.LIGHTGRAY);
@@ -190,7 +189,6 @@ public class Node {
     }
     
     private void initialNode() {
-        resetLabelStyleClass();
         if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("initial");
         this.circle.setFill(Color.YELLOW);
@@ -204,7 +202,6 @@ public class Node {
     }
     
     private void finalNode() {
-        resetLabelStyleClass();
         if (this.stackPane.getChildren().get(0) instanceof Label label)
             label.getStyleClass().add("final");
         this.circle2.setStroke(Color.BLACK);
@@ -213,7 +210,6 @@ public class Node {
     }
     
     private void finalNodeHover() {
-        resetLabelStyleClass();
         if (this.stackPane.getChildren().get(0) instanceof Label label) {
             label.getStyleClass().add("final");
             label.getStyleClass().add("labelHover");
